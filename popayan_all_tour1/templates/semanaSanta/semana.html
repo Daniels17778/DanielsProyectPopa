@@ -1,0 +1,695 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popayán All Tour</title>
+
+    <!-- Fuentes e íconos -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="{% static 'css/semanaSanta/semana.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="../static/img/home/imagen_2025-03-16_185953883-removebg-preview.png"
+        type="image/x-icon">
+</head>
+
+<body>
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <!-- Usuario autenticado: mostrar dropdown -->
+                    <div class="user-menu-home">
+                            <div class="profile-avatar-home" id="userIconHome" title="Menú de usuario">
+                                <img src="{{ request.user.get_imagen_perfil }}" alt="Perfil de {{ request.user.nombre_completo }}">
+                            </div>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <!-- Opciones para empresario -->
+                            <a href="{% url 'redirect_by_role' %}">
+                                <i class="fas fa-briefcase"></i> Panel Empresarial
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <!-- Opciones para administrador -->
+                            <a href="{% url 'dashboard_administrador' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% else %}
+                            <!-- Opciones para turista -->
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Usuario invitado: redirige al login -->
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+
+
+        <!-- Modal de Cerrar Sesión -->
+        <div id="logoutModalHome" class="modal-home" style="display: none;">
+            <div class="modal-content-home">
+                <span class="close-home" data-close="logout">&times;</span>
+                <h3>Cerrar Sesión</h3>
+                <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                <div class="modal-actions-home">
+                    <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete-home">
+                            <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+    <!--comienzo-->
+
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-subtitle">PATRIMONIO CULTURAL DE LA HUMANIDAD</span>
+            <h2 class="hero-title">
+                <span class="title-line">SEMANA</span>
+                <span class="title-line">SANTA</span>
+                <span class="title-accent">POPAYÁN </span>
+            </h2>
+            <p class="hero-description">
+                Vive la tradición más antigua de Colombia. Más de 450 años de historia, fe y cultura.
+            </p>
+            <div class="hero-buttons">
+                <a href="#procesiones" class="btn-primary">Explorar Procesiones</a>
+                <a href="#historia" class="btn-secondary">Nuestra Historia</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <span class="section-label">Historia y Tradición</span>
+                    <h2 class="section-title">450 Años de Fe</h2>
+                    <p class="about-text">
+                        Desde 1566, las calles empedradas de Popayán se transforman cada Semana Santa en un escenario
+                        sagrado donde la fe, el arte y la tradición se entrelazan en procesiones nocturnas que han
+                        cautivado a generaciones.
+                    </p>
+                    <p class="about-text">
+                        Declarada Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO, nuestra Semana Santa
+                        es una experiencia única que combina el fervor religioso con la riqueza cultural del Cauca.
+                    </p>
+                    <div class="stats-grid">
+                        <!-- MODIFICADO: Agregados enlaces y onclick a cada estadística -->
+                        <div class="stat-item clickable" onclick="location.href='#historia'">
+                            <span class="stat-number">450+</span>
+                            <span class="stat-label">Años de tradición</span>
+                            <span class="stat-hint"></span>
+                        </div>
+                        <div class="stat-item clickable" onclick="location.href='#procesiones'">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Procesiones nocturnas</span>
+                            <span class="stat-hint"></span>
+                        </div>
+                        <div class="stat-item clickable" onclick="location.href='#informacion'">
+                            <span class="stat-number">100K+</span>
+                            <span class="stat-label">Visitantes anuales</span>
+                            <span class="stat-hint"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="about-image">
+                    <div class="image-frame">
+                        <img src="{% static 'img/img_se/decoracion_1.jpg' %}"
+                            alt="Procesión histórica Semana Santa Popayán" class="frame-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Procesiones Section -->
+    <section class="procesiones-section" id="procesiones">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Recorridos Sagrados</span>
+                <h2 class="section-title">Procesiones Nocturnas</h2>
+            </div>
+
+            <div class="procesiones-grid">
+
+                <div class="procesion-card" data-day="lunes">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/Lunes.jpg' %}" alt="lunes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Lunes Santo</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Misa del Carguero
+                        </p>
+                        <a href="/procesiones/#lunes" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+
+                <div class="procesion-card" data-day="martes">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/martes_1.jpg' %}" alt="viernes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Martes Santo</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Procesión del Señor del Perdón y María Santísima de los Dolores
+                        </p>
+                        <a href="/procesiones/" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+
+                <div class="procesion-card" data-day="miercoles">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/miercoles_1.jpg' %}" alt="viernes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Miércoles Santo</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Procesión del Amo Jesús y la Virgen Dolorosa
+                        </p>
+                        <a href="/procesiones/#miercoles" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+
+                <div class="procesion-card" data-day="jueves">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/jueves_1.jpg' %}" alt="viernes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Jueves Santo</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Procesión de la Pasión y Muerte de Nuestro Señor
+                        </p>
+                        <a href="/procesiones/#jueves" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+
+                <div class="procesion-card featured" data-day="viernes">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/viernes_2.jpg' %}" alt="viernes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Viernes Santo</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Procesión del Santo Entierro de Cristo - La más solemne y concurrida
+                        </p>
+                        <a href="/procesiones/#viernes" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+
+                <div class="procesion-card" data-day="sabado">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/sabado_1.jpg' %}" alt="viernes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Sábado Santo</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Procesión de la Soledad de María
+                        </p>
+                        <a href="/procesiones/#sabado" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+
+                <div class="procesion-card" data-day="domingo">
+                    <div class="card-image">
+                        <img src="{% static 'img/img_se/domingo.jpg' %}" alt="viernes" class="img_procesion">
+                    </div>
+                    <div class="card-content">
+                        <h3>Domingo de Ramos</h3>
+                        <p class="procesion-time">8:00 PM</p>
+                        <p class="procesion-description">
+                            Procesión de la Soledad de María
+                        </p>
+                        <a href="/procesiones/#domingo" class="card-link">Ver Recorrido →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--agregate carrusel-->
+    <h2 class="section-title">Historia</h2>
+
+    <div class="carousel-container" id="historia">
+        <!-- Slide 1 -->
+        <div class="carousel-slide active">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h3 class="main-title">1537 - Fundación de Popayán</h3>
+                    <p class="description">
+                        Según el presbítero e historiador Manuel A. Bueno, la primera vez que se dio
+                        culto a Dios fue el 15 de agosto de 1537, día de La Asunción a pocos meses de la fundación de
+                        Popayán
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('fundacion')">Ver historia completa</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_7.jpg' %}" alt="Fundación de Popayán" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">1556 - Inicio de las Procesiones</h2>
+                    <p class="description">
+                        Las Procesiones de Semana Santa de Popayán inician en el año 1556, como muestra religiosa en
+                        conmemoración de la pasión, muerte y resurrección de Jesús. Una de las primeras referencias la
+                        hizo Juan de Castellanos en sus Elegías de varones ilustres de Indias.
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('procesiones')">Conocer tradición</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_8.jpg' %}" alt="Inicio procesiones" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">1826 - Procesión en Honor a Bolívar</h2>
+                    <p class="description">
+                        Cuando Simón Bolívar regresaba triunfante después de la batalla de Ayacucho en la
+                        última semana de octubre de 1826, en Popayán organizaron en su honor una procesión semejante a
+                        las de Semana Santa
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('bolivar')">Leer más</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_9.jpg' %}" alt="Época de Bolívar" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">1840 - Los Supremos Participan</h2>
+                    <p class="description">
+                        El 14 de abril de 1840, José María Obando y Juan Gregorio Sarria, conocidos como los "supremos",
+                        dejan sus armas durante la Semana Santa para participar en la procesión del martes santo
+                        vestidos de cargueros al estilo sevillano.
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('supremos')">Ver detalles</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_10.jpg' %}" alt="Los Supremos" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">1859 - Descripción de Vergara y Vergara</h2>
+                    <p class="description">
+                        El cronista José María Vergara y Vergara en uno de sus escritos del año 1859 describió la Semana
+                        mayor de Popayán como un acto solemne e importante para el pueblo payanés que cada año lo
+                        recibía con fervor y fe.
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('vergara')">Leer crónica</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_11.jpg' %}" alt="Crónicas históricas" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">1983 - El Terremoto</h2>
+                    <p class="description">
+                        El 31 de marzo de 1983, Jueves Santo, Popayán fue sacudida por un terremoto que destruyó el
+                        centro histórico y mató a más de 300 personas. En más de 450 años no se había presenciado una
+                        suspensión de las procesiones payanesas.
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('terremoto')">Ver impacto</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_12.jpg' %}" alt="Terremoto 1983" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">2009 - Declaración UNESCO</h2>
+                    <p class="description">
+                        Las procesiones de Semana Santa de Popayán fueron declaradas Patrimonio Cultural Inmaterial de
+                        la Humanidad por la UNESCO, reconociendo una tradición que había sido celebrada desde la época
+                        colonial.
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('unesco')">Ver reconocimiento</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_13.jpg' %}" alt="Patrimonio UNESCO" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8 -->
+        <div class="carousel-slide">
+            <div class="content-wrapper">
+                <div class="text-section">
+                    <h2 class="main-title">2020-2021 - Pandemia COVID-19</h2>
+                    <p class="description">
+                        En los años 2020 y 2021, se suspenden nuevamente los desfiles procesionales debido a la pandemia
+                        mundial por COVID-19, siendo la segunda vez en la historia que se suspendían las procesiones
+                        después del terremoto de 1983.
+                    </p>
+                    <button class="cta-button" onclick="openHistoryModal('pandemia')">Ver contexto</button>
+                </div>
+                <div class="image-section">
+                    <img src="{% static 'img/img_se/decoracion_14.jpg' %}" alt="Pandemia COVID-19" class="team-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation arrows -->
+        <button class="carousel-nav prev">‹</button>
+        <button class="carousel-nav next">›</button>
+
+        <!-- Dots navigation -->
+        <div class="carousel-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="history-modal" id="historyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+
+            <div class="modal-header">
+                <div class="icon" id="modalIcon">⛪</div>
+                <h2 class="modal-title" id="modalTitle">Historia de Popayán</h2>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <!-- Contenido dinámico se carga aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="galeria">
+        <div class="gallery-header">
+            <span class="section-label">Momentos Únicos</span>
+            <h2 class="section-title">Galería Fotográfica</h2>
+        </div>
+
+        <div class="gallery-container">
+            <div class="gallery-grid">
+                <div class="gallery-item large">
+                    <img src="{% static 'img/img_se/viernes_1.jpg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Procesión del Viernes Santo</span>
+
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="{% static 'img/img_se/decoracion_2.jpg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Cargueros Tradicionales</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="{% static 'img/img_se/decoracion_3.jpg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Pasos Procesionales</span>
+                    </div>
+                </div>
+                <div class="gallery-item tall">
+                    <img src="{% static 'img/img_se/decoracion_4.jpeg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Calles de Popayán</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="{% static 'img/img_se/decoracion_5.jpg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Incienso y Tradición</span>
+                    </div>
+                </div>
+                <div class="gallery-item wide">
+                    <img src="{% static 'img/img_se/decoracion_6.jpg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Multitud de Fieles</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="{% static 'img/img_se/semanaSanta.jpg' %}" alt="viernes" class="img_procesion">
+                    <div class="gallery-overlay">
+                        <span class="gallery-caption">Incienso y Tradición</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section" id="informacion">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Planifica tu Visita</span>
+                <h2 class="section-title">Guía del Visitante</h2>
+            </div>
+
+            <div class="info-grid">
+                <!-- UBICACIÓN -->
+                <div class="info-card">
+                    <div class="info-icon-wrapper">
+                        <div class="info-icon">📍</div>
+                    </div>
+                    <h3>Cómo Llegar</h3>
+                    <p class="info-intro">Popayán, conocida como la Ciudad Blanca, está ubicada en el suroccidente
+                        colombiano. Su centro histórico, patrimonio de la humanidad, es el escenario de las procesiones.
+                    </p>
+
+                    <div class="info-details-grid">
+                        <div class="info-detail">
+                            <strong>Vía Aérea</strong>
+                            <span>Aeropuerto Guillermo León Valencia, conectado con Bogotá, Cali y Medellín. 20 minutos
+                                al centro histórico.</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>Vía Terrestre</strong>
+                            <span>Terminal de Transportes a 10 minutos del centro. Conexiones frecuentes desde Cali
+                                (2h), Pasto (4h) y Bogotá (12h).</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>En la Ciudad</strong>
+                            <span>El centro histórico es completamente peatonal durante Semana Santa. Se recomienda
+                                caminar o usar transporte público.</span>
+                        </div>
+                    </div>
+
+                    <div class="info-highlight">
+                        <strong>Recorrido Procesional</strong>
+                        <span>Inicia en el Templo de San Francisco (Carrera 9 con Calle 4) y recorre las principales
+                            calles del centro: Calles 4, 5, 6 y Carreras 5 al 9.</span>
+                    </div>
+                </div>
+
+                <!-- FECHAS Y HORARIOS -->
+                <div class="info-card">
+                    <div class="info-icon-wrapper">
+                        <div class="info-icon">📅</div>
+                    </div>
+                    <h3>Calendario 2025</h3>
+                    <p class="info-intro">Las procesiones se realizan durante toda la Semana Santa, cada noche a las
+                        8:00 PM en punto. La puntualidad es una tradición inquebrantable de 500 años.</p>
+
+                    <div class="info-details-grid">
+                        <div class="info-detail">
+                            <strong>Domingo de Ramos</strong>
+                            <span>13 de Abril - Procesión de la Entrada Triunfal a Jerusalén</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>Martes Santo</strong>
+                            <span>15 de Abril - Procesión de Nuestro Señor Jesucristo</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>Miércoles Santo</strong>
+                            <span>16 de Abril - Procesión del Señor de la Veracruz</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>Jueves Santo</strong>
+                            <span>17 de Abril - Procesión del Amo Jesús Nazareno (la más concurrida)</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>Viernes Santo</strong>
+                            <span>18 de Abril - Procesión del Santo Entierro de Cristo (la más solemne)</span>
+                        </div>
+
+                        <div class="info-detail">
+                            <strong>Sábado Santo</strong>
+                            <span>19 de Abril - Procesión de Nuestra Señora de los Dolores</span>
+                        </div>
+                    </div>
+
+                    <div class="info-highlight">
+                        <strong>Duración</strong>
+                        <span>Cada procesión dura entre 3 y 4 horas. El clima es frío (12-16°C) por las noches.</span>
+                    </div>
+                </div>
+
+                <!-- RECOMENDACIONES -->
+                <div class="info-card">
+                    <div class="info-icon-wrapper">
+                        <div class="info-icon">💡</div>
+                    </div>
+                    <h3>Consejos Esenciales</h3>
+                    <p class="info-intro">Para vivir esta experiencia única con comodidad y respeto, ten en cuenta estas
+                        recomendaciones de visitantes experimentados y organizadores.</p>
+
+                    <ul class="info-list">
+                        <li><strong>Hospedaje:</strong> Reserva con 4-6 meses de anticipación. Los hoteles del centro se
+                            agotan rápidamente. Considera barrios cercanos como El Empedrado.</li>
+
+                        <li><strong>Vestimenta:</strong> Ropa oscura y respetuosa (negro, azul oscuro, gris). Evita
+                            colores br
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+
+
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan
+                                AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+    <script src="{% static 'js/semanaSanta/semana.js' %}"></script>
+
+</body>
+
+</html>

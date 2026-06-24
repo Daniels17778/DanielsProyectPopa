@@ -1,0 +1,11 @@
+{ 
+    
+    "bota_diablito - copia": [
+        
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   11, 8  ,  17, 12  ,  17.200000762939453, 17  ,  2, 17  ,  1, 4  ]
+        }
+    ]
+}

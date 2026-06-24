@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registro de usuario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/registro/registro.css' %}" />
+    <script src="{% static 'js/registro/registro.js' %}" defer></script>
+    <link rel="shortcut icon" href="{% static 'img/registro/logo.png' %}" type="image/x-icon" />
+    <!-- Script requerido por django-recaptcha -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="register-box">
+
+        <div class="logo-container">
+          <img src="{% static 'img/registro/{A64E7BBC-BFDF-4F9A-9F8C-2F315ABBB51E}.png' %}" class="logo" alt="Logo" />
+        </div>
+
+        <h2>Registro de usuario</h2>
+
+        <!-- CARRUSEL DE AVATARES -->
+        <div class="avatar-carousel-section">
+          <h3 class="carousel-title">Elige tu foto de perfil</h3>
+          <div class="carousel-wrapper">
+            <button type="button" class="carousel-arrow" id="prevBtn">◀</button>
+            <div class="avatar-display">
+              <div class="avatar-image-container">
+                <img id="currentAvatarImg" src="" alt="Avatar">
+              </div>
+              <div class="avatar-name" id="avatarName"></div>
+              <div class="avatar-counter" id="avatarCounter"></div>
+            </div>
+            <button type="button" class="carousel-arrow" id="nextBtn">▶</button>
+          </div>
+          <div class="confirm-avatar-container">
+            <button type="button" class="confirm-avatar-btn" id="confirmAvatarBtn">
+              Seleccionar este avatar
+            </button>
+          </div>
+          <div class="selected-avatar-info" id="selectedAvatarInfo">
+            <strong>✓ Avatar seleccionado:</strong> <span id="selectedAvatarName"></span>
+          </div>
+        </div>
+
+        <form method="POST" class="form-section" id="registro-form">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="messages error">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <input type="hidden" name="avatar_predeterminado" id="avatarInput" value="">
+
+          <div class="form-grid">
+            <div>
+              <label for="id_email">Correo electrónico</label>
+              {{ form.email }}
+              {% if form.email.errors %}<span class="messages error">{{ form.email.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_telefono">Teléfono</label>
+              {{ form.telefono }}
+              {% if form.telefono.errors %}<span class="messages error">{{ form.telefono.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_password">Contraseña</label>
+              {{ form.password }}
+              {% if form.password.errors %}<span class="messages error">{{ form.password.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_profesion">Profesión</label>
+              {{ form.profesion }}
+              {% if form.profesion.errors %}<span class="messages error">{{ form.profesion.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_nombre_completo">Nombre completo</label>
+              {{ form.nombre_completo }}
+              {% if form.nombre_completo.errors %}<span class="messages error">{{ form.nombre_completo.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_identificacion">Identificación</label>
+              {{ form.identificacion }}
+              {% if form.identificacion.errors %}<span class="messages error">{{ form.identificacion.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_fecha_nacimiento">Fecha de nacimiento</label>
+              {{ form.fecha_nacimiento }}
+              {% if form.fecha_nacimiento.errors %}<span class="messages error">{{ form.fecha_nacimiento.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_rol">Rol</label>
+              {{ form.rol }}
+              {% if form.rol.errors %}<span class="messages error">{{ form.rol.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div class="full-width">
+              <label for="id_direccion">Dirección</label>
+              {{ form.direccion }}
+              {% if form.direccion.errors %}<span class="messages error">{{ form.direccion.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div class="form-group full-width" id="tipo_establecimiento-container" style="display: none;">
+              <label for="id_tipo_establecimiento">Tipo de Establecimiento</label>
+              {{ form.tipo_establecimiento }}
+              {% if form.tipo_establecimiento.errors %}<span class="messages error">{{ form.tipo_establecimiento.errors.0 }}</span>{% endif %}
+            </div>
+          </div>
+
+          <!-- ✅ RECAPTCHA — widget renderizado por Django desde el formulario -->
+          <div style="margin: 20px 0;">
+            {{ form.captcha }}
+            {% if form.captcha.errors %}
+            <span class="messages error">{{ form.captcha.errors.0 }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" class="btn">Registrarme</button>
+            <br><br>
+            <a href="{% url 'terminos' %}">Al registrarte estás aceptando nuestros términos y condiciones</a>
+            <br>
+            <a href="{% url 'login' %}">¿Ya tienes una cuenta? Inicia sesión</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <script>
+      window.avataresList = [
+        {% for avatar in avatares %}
+        {
+          id: "{{ avatar.id }}",
+          nombre: "{{ avatar.nombre|escapejs }}",
+          url: "{{ avatar.url|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
+    </script>
+  </body>
+</html>

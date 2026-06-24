@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Completa tu perfil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/registro/registro.css' %}" />
+    <link
+      rel="shortcut icon"
+      href="{% static 'img/registro/logo.png' %}"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="register-box">
+
+        <!-- Logo -->
+        <div class="logo-container">
+          <img
+            src="{% static 'img/registro/{A64E7BBC-BFDF-4F9A-9F8C-2F315ABBB51E}.png' %}"
+            class="logo"
+            alt="Logo"
+          />
+        </div>
+
+        <h2>Completa tu perfil</h2>
+        <p style="text-align:center; color:#666; margin-bottom:20px; font-size:0.95rem;">
+          Necesitamos algunos datos adicionales para continuar
+        </p>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="messages error">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="form-section">
+          {% csrf_token %}
+
+          <div class="form-grid">
+
+            <div>
+              <label for="id_fecha_nacimiento">Fecha de nacimiento</label>
+              {{ form.fecha_nacimiento }}
+              {% if form.fecha_nacimiento.errors %}
+                <span class="messages error">{{ form.fecha_nacimiento.errors.0 }}</span>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="id_telefono">Teléfono</label>
+              {{ form.telefono }}
+              {% if form.telefono.errors %}
+                <span class="messages error">{{ form.telefono.errors.0 }}</span>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="id_identificacion">Número de identificación</label>
+              {{ form.identificacion }}
+              {% if form.identificacion.errors %}
+                <span class="messages error">{{ form.identificacion.errors.0 }}</span>
+              {% endif %}
+            </div>
+
+            <div class="full-width">
+              <label for="id_direccion">Dirección</label>
+              {{ form.direccion }}
+              {% if form.direccion.errors %}
+                <span class="messages error">{{ form.direccion.errors.0 }}</span>
+              {% endif %}
+            </div>
+
+          </div>
+
+          <br>
+          <div class="form-footer">
+            <button type="submit" class="btn">Guardar y continuar</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

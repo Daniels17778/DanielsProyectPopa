@@ -1,0 +1,1521 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: #0a0a0a;
+  color: #ffffff;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ==================== NAVBAR ==================== */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 20px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.navbar.scrolled {
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 50px;
+}
+
+.logo-nav img {
+  height: 60px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo-nav img:hover {
+  transform: scale(1.05);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+}
+
+/* ==================== MENÚ DE USUARIO EMPRESARIAL - ESTILO ELEGANTE ==================== */
+
+/* Contenedor principal del menú */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+/* Ícono de usuario */
+.user-menu i {
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.user-menu i:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Dropdown - OCULTO por defecto */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: rgba(20, 20, 20, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  min-width: 220px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  z-index: 2000;
+  animation: slideDown 0.3s ease;
+}
+
+/* Dropdown VISIBLE cuando tiene la clase "open" */
+.dropdown.open {
+  display: block;
+}
+
+/* Animación de entrada suave */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Enlaces dentro del dropdown */
+.dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+/* Efecto de línea lateral al hover */
+.dropdown a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.dropdown a:hover::before {
+  transform: scaleY(1);
+}
+
+.dropdown a:last-child {
+  border-bottom: none;
+}
+
+.dropdown a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  padding-left: 22px;
+}
+
+.dropdown a i {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.dropdown a:hover i {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Estilo especial para "Cerrar Sesión" */
+.dropdown a#logoutBtn {
+  color: rgba(255, 107, 107, 0.9);
+}
+
+.dropdown a#logoutBtn:hover {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+}
+
+.dropdown a#logoutBtn::before {
+  background: linear-gradient(180deg, #ff6b6b 0%, rgba(255, 107, 107, 0.5) 100%);
+}
+
+/* ==================== MODALES ELEGANTES ==================== */
+
+/* Modal Base */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Contenido del Modal */
+.modal-content {
+  background: rgba(20, 20, 20, 0.98);
+  backdrop-filter: blur(20px);
+  margin: 8% auto;
+  padding: 35px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.4s ease;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Borde superior decorativo */
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+/* Animación de entrada del modal */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Título del Modal */
+.modal-content h3 {
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  padding-top: 10px;
+}
+
+/* Texto del Modal */
+.modal-content p {
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* Botón de cerrar (X) */
+.close {
+  color: rgba(255, 255, 255, 0.5);
+  float: right;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: -10px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  transform: rotate(90deg);
+}
+
+/* Acciones del Modal */
+.modal-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Botón Secundario (Cancelar) */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Botón Primario (Ir al Perfil) */
+.btn-primary {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 100%);
+  color: #000000;
+  padding: 12px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: "Poppins", sans-serif;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary i {
+  font-size: 1rem;
+}
+
+/* Botón de Eliminar/Cerrar Sesión */
+.modal-actions .btn-delete {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Poppins", sans-serif;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.modal-actions .btn-delete:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.modal-actions .btn-delete i {
+  font-size: 1rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+  .dropdown {
+    right: -10px;
+    min-width: 200px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 15% auto;
+    padding: 25px;
+  }
+
+  .modal-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .modal-content p {
+    font-size: 0.95rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-secondary,
+  .btn-primary,
+  .modal-actions .btn-delete {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-menu i {
+    font-size: 1.3rem;
+    width: 36px;
+    height: 36px;
+  }
+
+  .dropdown {
+    right: -20px;
+    min-width: 180px;
+  }
+
+  .dropdown a {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  .modal-content {
+    padding: 20px;
+    margin: 20% auto;
+  }
+
+  .modal-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .btn-secondary,
+  .btn-primary,
+  .modal-actions .btn-delete {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==================== ANIMACIÓN DE FADE IN ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==================== MEJORAS DE ACCESIBILIDAD ==================== */
+
+/* Focus visible para teclado */
+.dropdown a:focus,
+.btn-secondary:focus,
+.btn-primary:focus,
+.modal-actions .btn-delete:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Reducir movimiento para usuarios con preferencias de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .dropdown,
+  .modal-content,
+  .dropdown a,
+  .btn-secondary,
+  .btn-primary,
+  .modal-actions .btn-delete {
+    animation: none;
+    transition: none;
+  }
+}
+
+.hamburger {
+  display: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+}
+
+/* ==================== HERO SECTION ==================== */
+.hero {
+  min-height: 550px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 150px 2rem 80px;
+  background-image: url('../../img/fondo_empresario.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.39) 100%);
+  z-index: 1;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  z-index: 1;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 1s ease-out;
+  top: -43px;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  letter-spacing: -1px;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hero p span {
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 2rem 40px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #ffffff 0%, transparent 100%);
+}
+
+.add-btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  padding: 14px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3);
+  background: #ffffff;
+}
+
+.add-btn i {
+  font-size: 1.1rem;
+}
+
+/* ==================== ESTABLECIMIENTOS GRID ==================== */
+.establecimientos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.establecimiento-card {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.establecimiento-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5));
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.establecimiento-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 50px rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 30, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.establecimiento-card:hover::before {
+  transform: scaleX(1);
+}
+
+.establecimiento-image {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.establecimiento-image::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  pointer-events: none;
+}
+
+.establecimiento-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  filter: brightness(0.9);
+}
+
+.establecimiento-card:hover .establecimiento-image img {
+  transform: scale(1.1);
+  filter: brightness(1);
+}
+
+.establecimiento-info {
+  padding: 24px;
+}
+
+.establecimiento-info h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.establecimiento-info p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.establecimiento-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==================== BOTONES DE ACCIÓN ==================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+}
+
+.btn i {
+  font-size: 1.1rem;
+}
+
+.btn-link {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex: 1;
+}
+
+.btn-link:hover {
+  background: rgba(52, 152, 219, 0.2);
+  border-color: rgba(52, 152, 219, 0.4);
+  color: #3498db;
+  transform: translateY(-2px);
+}
+
+.btn-edit {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex: 1;
+}
+
+.btn-edit:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+}
+
+.btn-delete {
+  background: rgb(255, 255, 255);
+  color: #000000;
+  border: 1px solid rgb(255, 255, 255);
+  flex: 1;
+}
+
+.btn-delete:hover {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #ffffff;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+}
+
+/* ==================== MENSAJE SIN ESTABLECIMIENTOS ==================== */
+.no-hoteles {
+  text-align: center;
+  padding: 80px 40px;
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  max-width: 600px;
+  margin: 40px auto;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+}
+
+/* ==================== MODALES ==================== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(20px);
+  margin: 10% auto;
+  padding: 35px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.4s ease;
+  color: #ffffff;
+}
+
+.modal-content h3 {
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.modal-content p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+#hotelName {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.close {
+  color: rgba(255, 255, 255, 0.5);
+  float: right;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: -10px;
+}
+
+.close:hover {
+  color: #e74c3c;
+  transform: rotate(90deg);
+}
+
+.modal-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.modal-actions form {
+  display: inline;
+}
+
+.modal-actions form .btn-delete {
+  padding: 12px 28px;
+  font-weight: 600;
+}
+
+/* ==================== ANIMACIONES ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1200px) {
+  .establecimientos-grid {
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 25px;
+  }
+
+  .logo-nav img {
+    height: 50px;
+  }
+
+  .hero {
+    min-height: 450px;
+    padding: 120px 1.5rem 60px;
+    background-attachment: scroll;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .establecimientos-grid {
+    gap: 20px;
+    padding: 15px 0;
+  }
+
+  .establecimiento-card {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 25px;
+    margin: 20% auto;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-secondary,
+  .modal-actions form .btn-delete {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    min-height: 400px;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+  }
+
+  .establecimiento-image {
+    height: 200px;
+  }
+
+  .establecimiento-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .establecimiento-info p {
+    font-size: 0.9rem;
+  }
+
+  .establecimiento-actions {
+    flex-wrap: wrap;
+  }
+
+  .establecimiento-actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* ============================================================
+   ESTILOS PARA ESTABLECIMIENTOS INACTIVOS
+   ============================================================ */
+
+/* Tarjeta de establecimiento inactivo */
+.inactive-card {
+  position: relative;
+  opacity: 0.85;
+  border: 2px dashed #ccc !important;
+}
+
+/* Badge de "Desactivado" */
+.inactive-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.inactive-badge i {
+  font-size: 14px;
+}
+
+/* Efecto blanco y negro en la imagen */
+.grayscale img {
+  filter: grayscale(100%) brightness(0.8);
+  transition: filter 0.3s ease;
+}
+
+.inactive-card:hover .grayscale img {
+  filter: grayscale(80%) brightness(0.9);
+}
+
+/* Overlay oscuro sobre la imagen */
+.inactive-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.inactive-overlay i {
+  font-size: 60px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.inactive-card:hover .inactive-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Botón de reactivar */
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #218838, #1aa179);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
+.btn-success i {
+  font-size: 16px;
+}
+
+/* Modal de reactivación */
+#reactivateModal .modal-content {
+  border-top: 4px solid #28a745;
+}
+
+/* Ajuste para que los botones de acción se vean mejor */
+.inactive-card .establecimiento-actions {
+  justify-content: center;
+  margin-top: 15px;
+}
+
+/* Responsive para badge */
+@media (max-width: 768px) {
+  .inactive-badge {
+    font-size: 10px;
+    padding: 4px 10px;
+    top: 5px;
+    right: 5px;
+  }
+  
+  .inactive-overlay i {
+    font-size: 40px;
+  }
+}
+
+/* ==================== ESTADÍSTICAS ELEGANTES ==================== */
+.stats-header-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 3rem;
+}
+
+.stats-icon {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.stats-header-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.stats-header-section h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #ffffff 0%, transparent 100%);
+}
+
+/* Banner Total de Visitas */
+.total-visits-banner {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    color: #000000;
+    padding: 35px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 35px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(255, 255, 255, 0.15);
+}
+
+.total-visits-banner::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.total-number {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.total-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+    opacity: 0.8;
+}
+
+/* Grid de Tarjetas de Estadísticas */
+.stats-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.mini-stat-card {
+    background: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.mini-stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+    transition: width 0.3s ease;
+}
+
+.mini-stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(40, 40, 40, 0.9);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 40px rgba(255, 255, 255, 0.1);
+}
+
+.mini-stat-card:hover::before {
+    width: 6px;
+}
+
+.stat-card-header-mini {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-card-header-mini h4 {
+    font-size: 1.15rem;
+    color: #ffffff;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Números de Estadísticas */
+.stat-numbers-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 15px 0;
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+    position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 5px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+/* Estadísticas de Usuarios */
+.user-type-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.user-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    border-radius: 10px;
+    flex: 1;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.user-stat.registered {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-stat.anonymous {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.user-stat:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.user-stat i {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.user-stat span {
+    font-weight: 500;
+}
+
+/* Animación de entrada */
+.mini-stat-card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.mini-stat-card:nth-child(1) { animation-delay: 0.1s; }
+.mini-stat-card:nth-child(2) { animation-delay: 0.2s; }
+.mini-stat-card:nth-child(3) { animation-delay: 0.3s; }
+.mini-stat-card:nth-child(4) { animation-delay: 0.4s; }
+.mini-stat-card:nth-child(5) { animation-delay: 0.5s; }
+.mini-stat-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Responsive para Estadísticas */
+@media (max-width: 768px) {
+    .stats-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .total-number {
+        font-size: 3rem;
+    }
+
+    .total-label {
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.6rem;
+    }
+
+    .stat-numbers-row {
+        flex-wrap: wrap;
+    }
+
+    .stat-item:not(:last-child)::after {
+        display: none;
+    }
+
+    .user-type-stats {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .total-number {
+        font-size: 2.5rem;
+    }
+
+    .stats-header-section h2 {
+        font-size: 1.6rem;
+    }
+
+    .stats-icon {
+        font-size: 1.5rem;
+    }
+}
+/* Separador entre opciones del dropdown */
+.dropdown a {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown a:last-child {
+  border-bottom: none;
+}
+
+/* Color diferente para cerrar sesión */
+.dropdown a#logoutBtn {
+  color: #ff6b6b;
+}
+
+.dropdown a#logoutBtn:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.export-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.export-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.pdf-btn {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.pdf-btn:hover {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+}
+
+.excel-btn {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+}
+
+.excel-btn:hover {
+    background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+}
+
+@media (max-width: 768px) {
+    .export-buttons {
+        flex-direction: column;
+    }
+    
+    .export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

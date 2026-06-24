@@ -1,0 +1,348 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo_pagina }} - Popayán Tour</title>
+    <link rel="stylesheet" href="{% static 'css/noticia.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <style>
+        .form-container {
+            max-width: 900px;
+            margin: 8em auto 3em;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .form-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group label .required {
+            color: #dc3545;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #000;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .current-image {
+            margin-top: 10px;
+            max-width: 300px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 6em 1em 2em;
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="hero-container">
+        <nav class="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+        </nav>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'noticia' %}" style="color: #666; text-decoration: none;">
+           <i class="fas fa-arrow-left"></i> Volver a todas las noticias
+        </a>
+    </div>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h1><i class="fas fa-newspaper"></i> {{ titulo_pagina }}</h1>
+            {% if noticia %}
+                <p style="color: #666;">Editando: <strong>{{ noticia.titulo }}</strong></p>
+            {% endif %}
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Por favor corrige los siguientes errores:</strong>
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Título -->
+            <div class="form-group">
+                <label for="{{ form.titulo.id_for_label }}">
+                    {{ form.titulo.label }} <span class="required">*</span>
+                </label>
+                {{ form.titulo }}
+                {% if form.titulo.help_text %}
+                    <small class="help-text">{{ form.titulo.help_text }}</small>
+                {% endif %}
+                {% if form.titulo.errors %}
+                    <div class="error-message">{{ form.titulo.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Subtítulo -->
+            <div class="form-group">
+                <label for="{{ form.subtitulo.id_for_label }}">
+                    {{ form.subtitulo.label }}
+                </label>
+                {{ form.subtitulo }}
+                {% if form.subtitulo.help_text %}
+                    <small class="help-text">{{ form.subtitulo.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Categoría -->
+            <div class="form-group">
+                <label for="{{ form.categoria.id_for_label }}">
+                    {{ form.categoria.label }} <span class="required">*</span>
+                </label>
+                {{ form.categoria }}
+                {% if form.categoria.help_text %}
+                    <small class="help-text">{{ form.categoria.help_text }}</small>
+                {% endif %}
+                {% if form.categoria.errors %}
+                    <div class="error-message">{{ form.categoria.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Resumen -->
+            <div class="form-group">
+                <label for="{{ form.resumen.id_for_label }}">
+                    {{ form.resumen.label }}
+                </label>
+                {{ form.resumen }}
+                {% if form.resumen.help_text %}
+                    <small class="help-text">{{ form.resumen.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Contenido -->
+            <div class="form-group">
+                <label for="{{ form.contenido.id_for_label }}">
+                    {{ form.contenido.label }} <span class="required">*</span>
+                </label>
+                {{ form.contenido }}
+                {% if form.contenido.help_text %}
+                    <small class="help-text">{{ form.contenido.help_text }}</small>
+                {% endif %}
+                {% if form.contenido.errors %}
+                    <div class="error-message">{{ form.contenido.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Imagen Principal -->
+            <div class="form-group">
+                <label for="{{ form.imagen_principal.id_for_label }}">
+                    {{ form.imagen_principal.label }} <span class="required">*</span>
+                </label>
+                {{ form.imagen_principal }}
+                {% if form.imagen_principal.help_text %}
+                    <small class="help-text">{{ form.imagen_principal.help_text }}</small>
+                {% endif %}
+                {% if form.imagen_principal.errors %}
+                    <div class="error-message">{{ form.imagen_principal.errors.0 }}</div>
+                {% endif %}
+                
+                {% if noticia and noticia.imagen_principal %}
+                    <div style="margin-top: 10px;">
+                        <p><strong>Imagen actual:</strong></p>
+                        <img src="{{ noticia.imagen_principal.url }}" alt="Imagen actual" class="current-image">
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Pie de Imagen -->
+            <div class="form-group">
+                <label for="{{ form.pie_imagen.id_for_label }}">
+                    {{ form.pie_imagen.label }}
+                </label>
+                {{ form.pie_imagen }}
+                {% if form.pie_imagen.help_text %}
+                    <small class="help-text">{{ form.pie_imagen.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Fecha de Publicación -->
+            <div class="form-group">
+                <label for="{{ form.fecha_publicacion.id_for_label }}">
+                    {{ form.fecha_publicacion.label }}
+                </label>
+                {{ form.fecha_publicacion }}
+                {% if form.fecha_publicacion.help_text %}
+                    <small class="help-text">{{ form.fecha_publicacion.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Checkboxes -->
+            <div class="form-group">
+                <div class="form-check">
+                    {{ form.publicada }}
+                    <label for="{{ form.publicada.id_for_label }}">
+                        {{ form.publicada.label }}
+                    </label>
+                </div>
+                {% if form.publicada.help_text %}
+                    <small class="help-text">{{ form.publicada.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    {{ form.destacada }}
+                    <label for="{{ form.destacada.id_for_label }}">
+                        {{ form.destacada.label }}
+                    </label>
+                </div>
+                {% if form.destacada.help_text %}
+                    <small class="help-text">{{ form.destacada.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {{ accion }} Noticia
+                </button>
+                <a href="{% url 'mis_noticias' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

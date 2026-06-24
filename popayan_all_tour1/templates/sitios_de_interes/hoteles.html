@@ -1,0 +1,728 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoteles</title>
+    <link rel="stylesheet" href="{% static 'css/sitios_de_interes/hoteles.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="shortcut icon" href="../static/img/imagen_2025-03-16_185953883-removebg-preview.png" type="image/x-icon">
+    <style>
+        /* ✅ Estilos para el badge de "Tu Establecimiento" */
+        .owner-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .owner-badge i {
+            font-size: 1rem;
+        }
+
+        /* Highlight sutil para establecimientos del empresario */
+        .hotel-layout.owner-establishment {
+            position: relative;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Efecto de scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animación al hacer scroll a un establecimiento */
+        .hotel-layout:target {
+            animation: highlight 2s ease;
+        }
+
+        @keyframes highlight {
+            0% {
+                background-color: rgba(102, 126, 234, 0.1);
+            }
+
+            50% {
+                background-color: rgba(102, 126, 234, 0.2);
+            }
+
+            100% {
+                background-color: transparent;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero-container">
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'converter' %}">Divisas</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <!-- Usuario autenticado: mostrar dropdown -->
+                    <div class="user-menu-home">
+                            <div class="profile-avatar-home" id="userIconHome" title="Menú de usuario">
+                                <img src="{{ request.user.get_imagen_perfil }}" alt="Perfil de {{ request.user.nombre_completo }}">
+                            </div>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <!-- Opciones para empresario -->
+                            <a href="{% url 'redirect_by_role' %}">
+                                <i class="fas fa-briefcase"></i> Panel Empresarial
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <!-- Opciones para administrador -->
+                            <a href="{% url 'dashboard_administrador' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% else %}
+                            <!-- Opciones para turista -->
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Usuario invitado: redirige al login -->
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+
+
+    <!-- Modal de Cerrar Sesión -->
+    <div id="logoutModalHome" class="modal-home" style="display: none;">
+        <div class="modal-content-home">
+            <span class="close-home" data-close="logout">&times;</span>
+            <h3>Cerrar Sesión</h3>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-actions-home">
+                <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-home">
+                        <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- fin nav -->
+    <!-- Hero Section -->
+    <div class="hero-container1">
+        <h1 class="hero-title">HOTELES</h1>
+
+        <div class="navigation-buttons">
+            <a href="#hoteles" class="nav-button active" onclick="setActive(this)">HOTELES</a>
+            <a href="{% url 'listar_restaurantes' %}" class="nav-button">RESTAURANTES</a>
+            <a href="{% url 'listar_museos' %}" class="nav-button" onclick="setActive(this)">MUSEOS</a>
+            <a href="{% url 'listar_iglesias' %}" class="nav-button" onclick="setActive(this)">IGLESIAS</a>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    {% if messages %}
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        {% for message in messages %}
+        <div
+            style="padding: 10px; margin: 10px 0; border-radius: 5px; {% if message.tags == 'success' %}background: #d4edda; color: #155724;{% else %}background: #f8d7da; color: #721c24;{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Inicio cards -->
+    <div class="padre">
+        {% for hotel in establecimientos %}
+        <!-- ✅ IMPORTANTE: Agregar ID único para cada establecimiento -->
+        <div class="hotel-layout {% if request.user.is_authenticated and hotel.empresario.id == request.user.id %}owner-establishment{% endif %}"
+            id="establecimiento-{{ hotel.id }}">
+
+            <!-- ✅ Badge para mostrar "Tu Establecimiento" si el usuario logueado es el dueño -->
+            {% if request.user.is_authenticated and hotel.empresario.id == request.user.id %}
+            <div class="owner-badge">
+                <i class="fas fa-crown"></i>
+                <span>Tu Establecimiento</span>
+            </div>
+            {% endif %}
+
+            <!-- Sección de Información -->
+            <div class="info-section">
+                <h1 class="hotel-title">{{ hotel.nombre }}</h1>
+
+                <p class="hotel-description">
+                    {{ hotel.descripcion }}
+                </p>
+
+                <div class="divider"></div>
+
+                <div class="details-grid">
+                    <!-- Horario -->
+                    <div class="detail-item">
+                        <h3>Horario:</h3>
+                        <div class="detail-content">
+                            <p>{{ hotel.horario_aten }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <h3>Dirección:</h3>
+                        <div class="detail-content">
+                            <p>{{ hotel.direccion }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Métodos de pago -->
+                    <div class="detail-item">
+                        <h3>Métodos de pago:</h3>
+                        <div class="payment-icons">
+                            <div class="payment-icon mastercard">$</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider" style="margin-top: 2rem;"></div>
+
+<div class="resenas-section" id="resenas-{{ hotel.id }}">
+        <h3 style="font-size: clamp(1rem, 1.8vw, 1.2rem); font-weight: 400;
+               color: rgba(255,255,255,0.9); margin-bottom: 1rem;">
+        Reseñas
+        {% if hotel.resenas_recientes %}
+            <span class="contador-resenas"
+                  style="font-size: 0.85rem; color: rgba(255,255,255,0.5); font-weight: 300;">
+                ({{ hotel.total_resenas }})
+            </span>
+        {% endif %}
+    </h3>
+
+    <!-- ── Lista de reseñas existentes ── -->
+    {% if hotel.resenas_recientes %}
+        <div class="resenas-lista" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+            {% for resena in hotel.resenas_recientes|slice:":5" %}
+            <div class="resena-item" style="
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 8px;
+                padding: 12px 16px;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center;
+                            flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="{{ resena.usuario.get_imagen_perfil }}"
+                             alt="{{ resena.usuario.nombre_completo }}"
+                             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+                                    border: 1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.9);">
+                            {{ resena.usuario.nombre_completo }}
+                        </span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <!-- Estrellas -->
+                        <div style="color: #f1c40f; font-size: 0.9rem; letter-spacing: 1px;">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= resena.calificacion %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </div>
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+                            {{ resena.fecha_creacion|date:"d M Y" }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if resena.comentario %}
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7);
+                          line-height: 1.5; margin: 0; font-style: italic;">
+                    "{{ resena.comentario }}"
+                </p>
+                {% endif %}
+
+                <!-- Botón eliminar: solo si es la reseña del usuario actual -->
+                {% if request.user.is_authenticated and resena.usuario.id == request.user.id %}
+                <button
+                    onclick="eliminarResena({{ resena.id }}, {{ hotel.id }}, this)"
+                    style="margin-top: 8px; background: none; border: 1px solid rgba(231,76,60,0.4);
+                           color: rgba(231,76,60,0.8); padding: 3px 10px; border-radius: 4px;
+                           cursor: pointer; font-size: 0.75rem; transition: all 0.2s ease;">
+                    <i class="fas fa-trash"></i> Eliminar mi reseña
+                </button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.35);
+                  margin-bottom: 16px; font-style: italic;">
+            Aún no hay reseñas. ¡Sé el primero en opinar!
+        </p>
+    {% endif %}
+
+    <!-- ── Formulario para nueva reseña ── -->
+    {% if request.user.is_authenticated %}
+        {% if hotel.id in ya_reseno_ids %}
+            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4); font-style: italic;">
+                Ya dejaste una reseña en este lugar.
+            </p>
+        {% else %}
+            <div class="form-resena" id="form-resena-{{ hotel.id }}"
+                 style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+                        border-radius: 8px; padding: 16px;">
+
+                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);
+                           margin-bottom: 10px; font-weight: 500;">
+                    Dejar una reseña:
+                </p>
+
+                <!-- Selector de estrellas -->
+                <div class="star-selector" style="display: flex; gap: 6px; margin-bottom: 10px;"
+                     data-establecimiento="{{ hotel.id }}">
+                    {% for i in "12345" %}
+                    <span class="star-btn"
+                          data-valor="{{ forloop.counter }}"
+                          onclick="seleccionarEstrella(this)"
+                          style="font-size: 1.4rem; cursor: pointer; color: rgba(255,255,255,0.3);
+                                 transition: color 0.2s ease; user-select: none;">★</span>
+                    {% endfor %}
+                </div>
+
+                <input type="hidden" class="calificacion-input" value="0">
+
+                <textarea
+                    class="comentario-input"
+                    placeholder="Escribe tu comentario (opcional)..."
+                    rows="3"
+                    style="width: 100%; background: rgba(255,255,255,0.05);
+                           border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+                           color: white; padding: 10px; font-size: 0.85rem;
+                           font-family: 'Poppins', sans-serif; resize: vertical;
+                           margin-bottom: 10px; box-sizing: border-box;">
+                </textarea>
+
+                <button
+                    onclick="enviarResena({{ hotel.id }}, this)"
+                    style="background: rgba(255,255,255,0.9); color: #000;
+                           border: none; padding: 8px 20px; border-radius: 4px;
+                           cursor: pointer; font-size: 0.85rem; font-weight: 600;
+                           transition: all 0.2s ease;">
+                    Publicar reseña
+                </button>
+
+                <span class="resena-feedback"
+                      style="font-size: 0.8rem; margin-left: 10px; color: rgba(255,255,255,0.5);">
+                </span>
+            </div>
+        {% endif %}
+    {% else %}
+        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4);">
+            <a href="{% url 'login' %}" style="color: rgba(255,255,255,0.6); text-decoration: underline;">
+                Inicia sesión
+            </a> para dejar una reseña.
+        </p>
+    {% endif %}
+
+</div>
+<!-- ══ FIN RESEÑAS ══ -->
+
+            </div>
+
+            <!-- Sección de Imágenes -->
+            <div class="images-section">
+                <div class="image-box image-medium">
+                    {% if hotel.imagen %}
+                    <img src="{{ hotel.get_imagen_url }}" alt="{{ hotel.nombre }}">
+                    {% else %}
+                    <img src="{% static 'img/default.jpg' %}" alt="Sin imagen">
+                    {% endif %}
+                </div>
+
+                <!-- Botón Saber más -->
+                <div class="btn-container">
+
+                    <!-- ══ BOTÓN FAVORITO ══ -->
+                    {% if request.user.is_authenticated %}
+                    <button
+                        class="btn-favorito-establecimiento"
+                        data-establecimiento-id="{{ hotel.id }}"
+                        data-guardado="{% if hotel.id in favoritos_ids %}true{% else %}false{% endif %}"
+                        onclick="toggleFavoritoEst(this)"
+                        style="background: {% if hotel.id in favoritos_ids %}#e74c3c{% else %}rgba(255,255,255,0.15){% endif %};
+                            color: white; border: 1px solid rgba(255,255,255,0.4);
+                            padding: 8px 16px; border-radius: 4px; cursor: pointer;
+                            font-size: 0.85rem; width: 100%; margin-bottom: 6px;
+                            transition: all 0.3s ease;">
+                        <i class="fas fa-heart"></i>
+                        {% if hotel.id in favoritos_ids %}Guardado{% else %}Guardar{% endif %}
+                    </button>
+                    {% endif %}
+
+                    <!-- El botón ya está correcto en tu código -->
+                    <a href="{% url 'registrar_visita' tipo='hotel' id=hotel.id %}" target="_blank" class="btn-ver">Ver
+                        más</a>
+                    <!-- Solo empresarios o staff -->
+                    {% if puede_gestionar and request.user.is_authenticated and hotel.empresario.id == request.user.id%}
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <a href="{% url 'editar_establecimiento' tipo=tipo id=hotel.id %}" class="btn-editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button type="button" class="btn-eliminar delete-trigger" data-id="{{ hotel.id }}"
+                            data-name="{{ hotel.nombre }}" data-tipo="{{ tipo }}"
+                            style="border: none; cursor: pointer;">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 50px; width: 100%;">
+            <h3>No hay {{ tipo }}s disponibles</h3>
+            <p>Aún no se han agregado {{ tipo }}s.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <br><br><br>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan
+                                AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/sitios_de_interes/hoteles.js' %}"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script>
+function toggleFavoritoEst(btn) {
+    const estId = btn.dataset.establecimientoId;
+    const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+
+    fetch('/api/favoritos/toggle/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ establecimiento: parseInt(estId) })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.guardado) {
+            btn.style.background = '#e74c3c';
+            btn.innerHTML = '<i class="fas fa-heart"></i> Guardado';
+        } else {
+            btn.style.background = 'rgba(255,255,255,0.15)';
+            btn.innerHTML = '<i class="fas fa-heart"></i> Guardar';
+        }
+    })
+    .catch(err => console.error('Error al cambiar favorito:', err));
+}
+</script>
+
+<script>
+// ══════════════════════════════════════════════
+// UTILIDAD: obtener CSRF token desde cookie
+// ══════════════════════════════════════════════
+function getCsrf() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+}
+
+// ══════════════════════════════════════════════
+// SELECTOR DE ESTRELLAS
+// ══════════════════════════════════════════════
+function seleccionarEstrella(starEl) {
+    const valor = parseInt(starEl.dataset.valor);
+    const contenedor = starEl.closest('.star-selector');
+    const formResena = contenedor.closest('.form-resena');
+    const hiddenInput = formResena.querySelector('.calificacion-input');
+
+    // Guardar valor
+    hiddenInput.value = valor;
+
+    // Actualizar visuales
+    const estrellas = contenedor.querySelectorAll('.star-btn');
+    estrellas.forEach((s, i) => {
+        s.style.color = i < valor ? '#f1c40f' : 'rgba(255,255,255,0.3)';
+    });
+}
+
+// ══════════════════════════════════════════════
+// CREAR RESEÑA
+// ══════════════════════════════════════════════
+function enviarResena(establecimientoId, btn) {
+    const formResena = btn.closest('.form-resena');
+    const calificacion = parseInt(formResena.querySelector('.calificacion-input').value);
+    const comentario = formResena.querySelector('.comentario-input').value.trim();
+    const feedback = formResena.querySelector('.resena-feedback');
+
+    // Validación mínima
+    if (calificacion < 1 || calificacion > 5) {
+        feedback.style.color = '#e74c3c';
+        feedback.textContent = 'Selecciona una calificación (1-5 estrellas).';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Publicando...';
+    feedback.textContent = '';
+
+    fetch('/api/resenas/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrf(),
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            establecimiento: establecimientoId,
+            calificacion: calificacion,
+            comentario: comentario || null,
+        })
+    })
+    .then(res => {
+        if (!res.ok) return res.json().then(err => { throw err; });
+        return res.json();
+    })
+    .then(data => {
+        // Ocultar formulario y mostrar mensaje de éxito
+        formResena.style.display = 'none';
+
+        // Insertar la nueva reseña al principio de la lista
+        const lista = document.querySelector(`#resenas-${establecimientoId} .resenas-lista`);
+        const noHayMsg = document.querySelector(`#resenas-${establecimientoId} p[style*="Aún no hay"]`);
+
+        // Si no había lista, crearla
+        let listaEl = lista;
+        if (!listaEl) {
+            listaEl = document.createElement('div');
+            listaEl.className = 'resenas-lista';
+            listaEl.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-bottom:20px;';
+            const seccion = document.getElementById(`resenas-${establecimientoId}`);
+            const titulo = seccion.querySelector('h3');
+            titulo.insertAdjacentElement('afterend', listaEl);
+            if (noHayMsg) noHayMsg.remove();
+        }
+
+        // Construir HTML de la nueva reseña
+        const estrellas = '★'.repeat(calificacion) + '☆'.repeat(5 - calificacion);
+        const comentarioHtml = comentario
+            ? `<p style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.5;margin:6px 0 0;font-style:italic;">"${comentario}"</p>`
+            : '';
+
+        const nuevaResena = document.createElement('div');
+        nuevaResena.className = 'resena-item';
+        nuevaResena.style.cssText = `
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:8px;padding:12px 16px;`;
+        nuevaResena.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+                <span style="font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.9);">
+                    Tú
+                </span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="color:#f1c40f;font-size:0.9rem;letter-spacing:1px;">${estrellas}</span>
+                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Ahora</span>
+                </div>
+            </div>
+            ${comentarioHtml}
+            <button onclick="eliminarResena(${data.id}, ${establecimientoId}, this)"
+                style="margin-top:8px;background:none;border:1px solid rgba(231,76,60,0.4);
+                       color:rgba(231,76,60,0.8);padding:3px 10px;border-radius:4px;
+                       cursor:pointer;font-size:0.75rem;transition:all 0.2s ease;">
+                <i class="fas fa-trash"></i> Eliminar mi reseña
+            </button>`;
+
+        listaEl.insertBefore(nuevaResena, listaEl.firstChild);
+
+        // Marcar visualmente que ya se reseñó
+        const seccion = document.getElementById(`resenas-${establecimientoId}`);
+        const p = document.createElement('p');
+        p.style.cssText = 'font-size:0.8rem;color:rgba(255,255,255,0.4);font-style:italic;';
+        p.textContent = 'Ya dejaste una reseña en este lugar.';
+        seccion.appendChild(p);
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.textContent = 'Publicar reseña';
+
+        // Mostrar error del servidor si viene en el body
+        const msg = err?.non_field_errors?.[0]
+            || err?.calificacion?.[0]
+            || err?.establecimiento?.[0]
+            || 'Error al publicar. Intenta de nuevo.';
+
+        feedback.style.color = '#e74c3c';
+        feedback.textContent = msg;
+    });
+}
+
+// ══════════════════════════════════════════════
+// ELIMINAR RESEÑA
+// ══════════════════════════════════════════════
+function eliminarResena(resenaId, establecimientoId, btn) {
+    if (!confirm('¿Eliminar tu reseña?')) return;
+
+    fetch(`/api/resenas/${resenaId}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCsrf() },
+        credentials: 'same-origin',
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Error al eliminar');
+
+        // Quitar la card de la reseña del DOM
+        const resenaItem = btn.closest('.resena-item');
+        resenaItem.remove();
+
+        // Mostrar de nuevo el formulario de reseña
+        const formResena = document.getElementById(`form-resena-${establecimientoId}`);
+        if (formResena) {
+            formResena.style.display = 'block';
+            // Limpiar campos
+            formResena.querySelector('.calificacion-input').value = '0';
+            formResena.querySelector('.comentario-input').value = '';
+            formResena.querySelectorAll('.star-btn').forEach(s => {
+                s.style.color = 'rgba(255,255,255,0.3)';
+            });
+            const btnPublicar = formResena.querySelector('button');
+            btnPublicar.disabled = false;
+            btnPublicar.textContent = 'Publicar reseña';
+        }
+
+        // Quitar el mensaje de "ya reseñaste"
+        const seccion = document.getElementById(`resenas-${establecimientoId}`);
+        const yaReseno = seccion?.querySelector('p[style*="font-style:italic"]');
+        if (yaReseno) yaReseno.remove();
+    })
+    .catch(() => {
+        alert('No se pudo eliminar la reseña. Intenta de nuevo.');
+    });
+}
+</script>
+
+
+</body>
+
+
+</html>

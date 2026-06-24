@@ -1,0 +1,903 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Divisas · Popayán All Tour</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/home/imagen_2025-03-16_185953883-removebg-preview.png' %}" type="image/x-icon">
+
+    <style>
+        /* ============================================
+           HERO CONVERTIDOR — sección superior
+        ============================================ */
+        .converter-hero {
+            position: relative;
+            height: 340px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .converter-hero-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url("{% static 'img/home/1home.webp' %}");
+            background-size: cover;
+            background-position: center 40%;
+            z-index: 0;
+        }
+
+        .converter-hero-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.35) 0%,
+                rgba(0,0,0,0.65) 100%
+            );
+        }
+
+        .converter-hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 50px 40px;
+            color: #fff;
+        }
+
+        .converter-hero-content .breadcrumb {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .converter-hero-content .breadcrumb a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .converter-hero-content .breadcrumb a:hover { color: #fff; }
+
+        .converter-hero-content h1 {
+            font-size: 52px;
+            font-weight: 400;
+            line-height: 1.05;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .converter-hero-content p.sub {
+            margin: 8px 0 0;
+            font-size: 15px;
+            color: rgba(255,255,255,0.65);
+        }
+
+        /* ============================================
+           SECCIÓN PRINCIPAL DEL CONVERTIDOR
+        ============================================ */
+        .converter-section {
+            background-color: #f9f9f9;
+            padding: 70px 5%;
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ---- Tarjeta convertidor ---- */
+        .converter-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.10);
+            padding: 40px;
+            width: 100%;
+            max-width: 520px;
+            flex-shrink: 0;
+        }
+
+        .converter-card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 6px;
+        }
+
+        .converter-card .card-subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.75); }
+        }
+
+        /* Labels */
+        .converter-card label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 7px;
+        }
+
+        /* Amount input */
+        .amount-input-wrap {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .amount-input-wrap input[type="number"] {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #111;
+            background: #fafafa;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .amount-input-wrap input[type="number"]::-webkit-inner-spin-button,
+        .amount-input-wrap input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .amount-input-wrap input[type="number"]:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+            background: #fff;
+        }
+
+        .amount-input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        /* Currency selectors row */
+        .currency-row {
+            display: grid;
+            grid-template-columns: 1fr 44px 1fr;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 28px;
+        }
+
+        /* Custom select wrapper */
+        .select-wrap {
+            position: relative;
+        }
+
+        .select-wrap select {
+            width: 100%;
+            padding: 12px 36px 12px 48px;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #111;
+            background: #fafafa;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .select-wrap select:focus {
+            border-color: #111;
+            background: #fff;
+        }
+
+        /* Flag shown next to select */
+        .select-flag {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #aaa;
+            font-size: 11px;
+        }
+
+        /* Swap button */
+        .swap-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1.5px solid #e5e5e5;
+            background: #fff;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s, border-color 0.2s, transform 0.3s;
+            align-self: end;
+            flex-shrink: 0;
+        }
+
+        .swap-btn:hover {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+            transform: rotate(180deg);
+        }
+
+        /* Convert button */
+        .btn-convertir {
+            width: 100%;
+            padding: 15px;
+            background: #111;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.2s, transform 0.15s;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-convertir:hover   { background: #333; }
+        .btn-convertir:active  { transform: scale(0.985); }
+        .btn-convertir:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Result box */
+        .result-box {
+            margin-top: 24px;
+            background: #f0fdf4;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 22px 24px;
+            display: none;
+            animation: fadeSlideUp 0.35s ease;
+        }
+
+        .result-box.show { display: block; }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-from {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .result-amount {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.1;
+        }
+
+        .result-currency {
+            font-size: 14px;
+            color: #16a34a;
+            margin-top: 4px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .result-rate {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #d1fae5;
+            padding-top: 10px;
+        }
+
+        /* Error box */
+        .error-box {
+            margin-top: 20px;
+            background: #fff1f1;
+            border: 1.5px solid #fca5a5;
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #b91c1c;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-box.show { display: flex; }
+
+        /* ---- Panel de info lateral ---- */
+        .info-panel {
+            flex: 1;
+            min-width: 260px;
+            max-width: 340px;
+        }
+
+        .info-panel h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .info-panel h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: #000;
+        }
+
+        .tip-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .tip-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .tip-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        .tip-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Popular pairs quick-links */
+        .quick-pairs {
+            margin-top: 30px;
+        }
+
+        .quick-pairs h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 12px;
+        }
+
+        .pair-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pair-chip {
+            padding: 7px 14px;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s, color 0.18s;
+            white-space: nowrap;
+        }
+
+        .pair-chip:hover {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 900px) {
+            .converter-hero-content { padding: 0 20px 32px; }
+            .converter-hero-content h1 { font-size: 36px; }
+            .converter-section { padding: 48px 4%; gap: 32px; }
+            .converter-card { padding: 28px 22px; }
+            .info-panel { max-width: 100%; }
+        }
+
+        @media (max-width: 600px) {
+            .converter-hero { height: 260px; }
+            .converter-hero-content h1 { font-size: 28px; }
+            .currency-row { grid-template-columns: 1fr 40px 1fr; gap: 8px; }
+            .result-amount { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===================== HERO con Navbar (idéntico al home) ===================== -->
+    <div class="converter-hero">
+        <div class="converter-hero-bg"></div>
+
+        <!-- NAVBAR — mismas clases y estructura que home -->
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'converter' %}">Divisas</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <div class="user-menu-home">
+                        <div class="profile-avatar-home" id="userIconHome" title="Menú de usuario">
+                            <img src="{{ request.user.get_imagen_perfil }}"
+                                 alt="Perfil de {{ request.user.nombre_completo }}">
+                        </div>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <a href="{% url 'redirect_by_role' %}"><i class="fas fa-briefcase"></i> Panel Empresarial</a>
+                            <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                            <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <a href="{% url 'dashboard_administrador' %}"><i class="fas fa-tachometer-alt"></i> Dashboard Admin</a>
+                            <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                            <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            {% else %}
+                            <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                            <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
+            </div>
+        </nav>
+
+        <!-- Modal cerrar sesión — idéntico al home -->
+        <div id="logoutModalHome" class="modal-home" style="display:none;">
+            <div class="modal-content-home">
+                <span class="close-home" data-close="logout">&times;</span>
+                <h3>Cerrar Sesión</h3>
+                <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                <div class="modal-actions-home">
+                    <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete-home">
+                            <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Título del hero -->
+        <div class="converter-hero-content">
+            <p class="breadcrumb">
+                <a href="{% url 'home' %}">Inicio</a>
+                <span style="margin: 0 6px; color:rgba(255,255,255,0.35);">›</span>
+                Conversor de Divisas
+            </p>
+            <h1>Conversor<br>de Divisas</h1>
+            <p class="sub">Tasas en tiempo real · Frankfurter API</p>
+        </div>
+    </div>
+
+    <!-- ===================== SECCIÓN CONVERTIDOR ===================== -->
+    <section class="converter-section">
+
+        <!-- Tarjeta principal del convertidor -->
+        <div class="converter-card">
+            <h2>Convertir moneda</h2>
+            <p class="card-subtitle">
+                <span class="live-dot"></span>
+                Tasas actualizadas en tiempo real
+            </p>
+
+            <!-- Monto -->
+            <label for="amount">Monto a convertir</label>
+            <div class="amount-input-wrap">
+                <i class="fas fa-coins amount-input-icon"></i>
+                <input type="number" id="amount" placeholder="100" step="0.01" min="0.01">
+            </div>
+
+            <!-- De / swap / A -->
+            <div class="currency-row">
+                <!-- Moneda origen -->
+                <div>
+                    <label>De</label>
+                    <div class="select-wrap">
+                        <span class="select-flag" id="flag-from">🇺🇸</span>
+                        <select id="from_currency" onchange="updateFlag('from_currency','flag-from')">
+                            <option value="usd" data-flag="🇺🇸">USD — Dólar estadounidense</option>
+                            <option value="eur" data-flag="🇪🇺">EUR — Euro</option>
+                            <option value="cop" data-flag="🇨🇴">COP — Peso colombiano</option>
+                            <option value="gbp" data-flag="🇬🇧">GBP — Libra esterlina</option>
+                            <option value="jpy" data-flag="🇯🇵">JPY — Yen japonés</option>
+                            <option value="brl" data-flag="🇧🇷">BRL — Real brasileño</option>
+                            <option value="mxn" data-flag="🇲🇽">MXN — Peso mexicano</option>
+                            <option value="ars" data-flag="🇦🇷">ARS — Peso argentino</option>
+                            <option value="clp" data-flag="🇨🇱">CLP — Peso chileno</option>
+                            <option value="pen" data-flag="🇵🇪">PEN — Sol peruano</option>
+                            <option value="cad" data-flag="🇨🇦">CAD — Dólar canadiense</option>
+                            <option value="aud" data-flag="🇦🇺">AUD — Dólar australiano</option>
+                            <option value="chf" data-flag="🇨🇭">CHF — Franco suizo</option>
+                            <option value="cny" data-flag="🇨🇳">CNY — Yuan chino</option>
+                            <option value="krw" data-flag="🇰🇷">KRW — Won surcoreano</option>
+                            <option value="inr" data-flag="🇮🇳">INR — Rupia india</option>
+                            <option value="rub" data-flag="🇷🇺">RUB — Rublo ruso</option>
+                            <option value="try" data-flag="🇹🇷">TRY — Lira turca</option>
+                            <option value="sek" data-flag="🇸🇪">SEK — Corona sueca</option>
+                            <option value="nok" data-flag="🇳🇴">NOK — Corona noruega</option>
+                            {% for code, name in currencies.items %}
+                            {% if code not in "usd,eur,cop,gbp,jpy,brl,mxn,ars,clp,pen,cad,aud,chf,cny,krw,inr,rub,try,sek,nok" %}
+                            <option value="{{ code }}">{{ code|upper }} — {{ name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Botón swap -->
+                <button class="swap-btn" onclick="swapCurrencies()" title="Intercambiar monedas">
+                    <i class="fas fa-arrow-right-arrow-left"></i>
+                </button>
+
+                <!-- Moneda destino -->
+                <div>
+                    <label>A</label>
+                    <div class="select-wrap">
+                        <span class="select-flag" id="flag-to">🇨🇴</span>
+                        <select id="to_currency" onchange="updateFlag('to_currency','flag-to')">
+                            <option value="cop" data-flag="🇨🇴" selected>COP — Peso colombiano</option>
+                            <option value="usd" data-flag="🇺🇸">USD — Dólar estadounidense</option>
+                            <option value="eur" data-flag="🇪🇺">EUR — Euro</option>
+                            <option value="gbp" data-flag="🇬🇧">GBP — Libra esterlina</option>
+                            <option value="jpy" data-flag="🇯🇵">JPY — Yen japonés</option>
+                            <option value="brl" data-flag="🇧🇷">BRL — Real brasileño</option>
+                            <option value="mxn" data-flag="🇲🇽">MXN — Peso mexicano</option>
+                            <option value="ars" data-flag="🇦🇷">ARS — Peso argentino</option>
+                            <option value="clp" data-flag="🇨🇱">CLP — Peso chileno</option>
+                            <option value="pen" data-flag="🇵🇪">PEN — Sol peruano</option>
+                            <option value="cad" data-flag="🇨🇦">CAD — Dólar canadiense</option>
+                            <option value="aud" data-flag="🇦🇺">AUD — Dólar australiano</option>
+                            <option value="chf" data-flag="🇨🇭">CHF — Franco suizo</option>
+                            <option value="cny" data-flag="🇨🇳">CNY — Yuan chino</option>
+                            <option value="krw" data-flag="🇰🇷">KRW — Won surcoreano</option>
+                            <option value="inr" data-flag="🇮🇳">INR — Rupia india</option>
+                            <option value="rub" data-flag="🇷🇺">RUB — Rublo ruso</option>
+                            <option value="try" data-flag="🇹🇷">TRY — Lira turca</option>
+                            <option value="sek" data-flag="🇸🇪">SEK — Corona sueca</option>
+                            <option value="nok" data-flag="🇳🇴">NOK — Corona noruega</option>
+                            {% for code, name in currencies.items %}
+                            {% if code not in "usd,eur,cop,gbp,jpy,brl,mxn,ars,clp,pen,cad,aud,chf,cny,krw,inr,rub,try,sek,nok" %}
+                            <option value="{{ code }}">{{ code|upper }} — {{ name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón convertir -->
+            <button class="btn-convertir" id="btn" onclick="convertir()">
+                <i class="fas fa-rotate"></i>
+                Convertir
+            </button>
+
+            <!-- Resultado (mismos ids que el original — no se rompe el JS) -->
+            <div class="result-box" id="result">
+                <p class="result-from" id="res-from"></p>
+                <p class="result-amount" id="res-to"></p>
+                <p class="result-currency" id="res-code">
+                    <i class="fas fa-circle-check"></i>
+                </p>
+                <p class="result-rate" id="res-rate"></p>
+            </div>
+
+            <!-- Error (mismo id que el original) -->
+            <div class="error-box" id="error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span id="error-text"></span>
+            </div>
+        </div>
+
+        <!-- Panel lateral informativo -->
+        <div class="info-panel">
+            <h3>Consejos para viajeros</h3>
+
+            <div class="tip-card">
+                <span class="tip-icon">💡</span>
+                <div>
+                    <h4>Cambia en entidades oficiales</h4>
+                    <p>Evita casas de cambio informales. Los bancos y casas de cambio autorizadas ofrecen las mejores tasas en Colombia.</p>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <span class="tip-icon">📱</span>
+                <div>
+                    <h4>Pesos colombianos siempre</h4>
+                    <p>En Popayán y el Cauca conviene llevar pesos. Muchos comercios pequeños no aceptan tarjetas extranjeras.</p>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <span class="tip-icon">🏧</span>
+                <div>
+                    <h4>Cajeros automáticos</h4>
+                    <p>Retira en Bancolombia o Davivienda para reducir comisiones. Límite habitual: $1.000.000 COP por transacción.</p>
+                </div>
+            </div>
+
+            <!-- Pares populares -->
+            <div class="quick-pairs">
+                <h4>Conversiones populares</h4>
+                <div class="pair-chips">
+                    <span class="pair-chip" onclick="setQuickPair('usd','cop')">🇺🇸 USD → 🇨🇴 COP</span>
+                    <span class="pair-chip" onclick="setQuickPair('eur','cop')">🇪🇺 EUR → 🇨🇴 COP</span>
+                    <span class="pair-chip" onclick="setQuickPair('gbp','cop')">🇬🇧 GBP → 🇨🇴 COP</span>
+                    <span class="pair-chip" onclick="setQuickPair('cop','usd')">🇨🇴 COP → 🇺🇸 USD</span>
+                    <span class="pair-chip" onclick="setQuickPair('cop','eur')">🇨🇴 COP → 🇪🇺 EUR</span>
+                    <span class="pair-chip" onclick="setQuickPair('brl','cop')">🇧🇷 BRL → 🇨🇴 COP</span>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ===================== FOOTER — idéntico al home ===================== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>{% trans "Acerca de" %}</h3>
+                    <ul>
+                        <li><a href="#">{% trans "¿Quiénes somos?" %}</a></li>
+                        <li><a href="{% url 'terminos' %}">{% trans "Términos y condiciones" %}</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>{% trans "Contacto" %}</h3>
+                    <ul>
+                        <li>{% trans "Correo" %}:<br>popayanalltour</li>
+                        <li>{% trans "Línea gratuita" %}:<br>312 231 1230</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>{% trans "Redes Sociales" %}</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a></li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/profile.php?id=61578069024241">Popayan AllTour</a></li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | {% trans "Todos los derechos reservados" %}</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <!-- Reutiliza home.js para navbar, hamburguesa, dropdown, modal logout -->
+    <script src="{% static 'js/home.js' %}"></script>
+
+    <script>
+        /* ============================================================
+           CSRF token — igual que el template original
+        ============================================================ */
+        const csrfToken = "{{ csrf_token }}";
+
+        /* ============================================================
+           FLAGS MAP — emoji por código de moneda
+        ============================================================ */
+        const FLAGS = {
+            usd:'🇺🇸', eur:'🇪🇺', cop:'🇨🇴', gbp:'🇬🇧', jpy:'🇯🇵',
+            brl:'🇧🇷', mxn:'🇲🇽', ars:'🇦🇷', clp:'🇨🇱', pen:'🇵🇪',
+            cad:'🇨🇦', aud:'🇦🇺', chf:'🇨🇭', cny:'🇨🇳', krw:'🇰🇷',
+            inr:'🇮🇳', rub:'🇷🇺', try:'🇹🇷', sek:'🇸🇪', nok:'🇳🇴',
+            dkk:'🇩🇰', pln:'🇵🇱', czk:'🇨🇿', huf:'🇭🇺', ron:'🇷🇴',
+            bgn:'🇧🇬', hrk:'🇭🇷', idr:'🇮🇩', myr:'🇲🇾', php:'🇵🇭',
+            sgd:'🇸🇬', thb:'🇹🇭', vnd:'🇻🇳', hkd:'🇭🇰', twd:'🇹🇼',
+            nzd:'🇳🇿', zar:'🇿🇦', ngn:'🇳🇬', egp:'🇪🇬', aed:'🇦🇪',
+            sar:'🇸🇦', ils:'🇮🇱', pkr:'🇵🇰', bdt:'🇧🇩',
+        };
+
+        /* Actualiza la bandera junto al select */
+        function updateFlag(selectId, flagId) {
+            const val = document.getElementById(selectId).value.toLowerCase();
+            document.getElementById(flagId).textContent = FLAGS[val] || '🏳';
+        }
+
+        /* Intercambia monedas */
+        function swapCurrencies() {
+            const fromSel = document.getElementById('from_currency');
+            const toSel   = document.getElementById('to_currency');
+            const tmp = fromSel.value;
+            fromSel.value = toSel.value;
+            toSel.value   = tmp;
+            updateFlag('from_currency', 'flag-from');
+            updateFlag('to_currency',   'flag-to');
+            // Limpiar resultado anterior al intercambiar
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('error').classList.remove('show');
+        }
+
+        /* Rellena un par rápido desde los chips */
+        function setQuickPair(from, to) {
+            const fromSel = document.getElementById('from_currency');
+            const toSel   = document.getElementById('to_currency');
+            fromSel.value = from;
+            toSel.value   = to;
+            updateFlag('from_currency', 'flag-from');
+            updateFlag('to_currency',   'flag-to');
+            if (!document.getElementById('amount').value) {
+                document.getElementById('amount').value = 1;
+            }
+            convertir();
+        }
+
+        /* ============================================================
+           FUNCIÓN PRINCIPAL DE CONVERSIÓN
+           — misma lógica que el template original, sin cambios
+        ============================================================ */
+        async function convertir() {
+            const amount  = parseFloat(document.getElementById('amount').value);
+            const from    = document.getElementById('from_currency').value.toLowerCase();
+            const to      = document.getElementById('to_currency').value.toLowerCase();
+            const btn     = document.getElementById('btn');
+            const resultDiv = document.getElementById('result');
+            const errorDiv  = document.getElementById('error');
+
+            if (!amount || amount <= 0) {
+                document.getElementById('error-text').textContent = 'Ingresa un monto válido.';
+                errorDiv.classList.add('show');
+                resultDiv.classList.remove('show');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Convirtiendo...';
+            errorDiv.classList.remove('show');
+            resultDiv.classList.remove('show');
+
+            const APIS = [
+                `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`,
+                `https://currency-api.pages.dev/v1/currencies/${from}.json`,
+            ];
+
+            try {
+                let data = null;
+                for (const url of APIS) {
+                    try {
+                        const res = await fetch(url);
+                        if (res.ok) { data = await res.json(); break; }
+                    } catch (_) { continue; }
+                }
+
+                if (!data || !data[from] || data[from][to] === undefined) {
+                    throw new Error('Par de monedas no disponible.');
+                }
+
+                const rate      = data[from][to];
+                const converted = (amount * rate).toLocaleString('es-CO', { maximumFractionDigits: 2 });
+                const fromFlag  = FLAGS[from] || '';
+                const toFlag    = FLAGS[to]   || '';
+
+                document.getElementById('res-from').textContent =
+                    `${fromFlag} ${amount} ${from.toUpperCase()}  =`;
+                document.getElementById('res-to').textContent = converted;
+                document.getElementById('res-code').innerHTML =
+                    `<i class="fas fa-circle-check"></i> ${toFlag} ${to.toUpperCase()}`;
+                document.getElementById('res-rate').textContent =
+                    `1 ${from.toUpperCase()} = ${rate.toFixed(4)} ${to.toUpperCase()}`;
+
+                resultDiv.classList.add('show');
+
+            } catch (e) {
+                document.getElementById('error-text').textContent =
+                    e.message || 'Error de conexión con la API de divisas.';
+                errorDiv.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-rotate"></i> Convertir';
+            }
+        }
+
+        /* Permitir convertir con Enter */
+        document.getElementById('amount').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') convertir();
+        });
+    </script>
+
+</body>
+</html>

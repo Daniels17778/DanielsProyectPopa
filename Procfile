@@ -1,0 +1,1 @@
+web: python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn popayan_all_tour.wsgi --log-file -

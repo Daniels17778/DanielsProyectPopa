@@ -1,0 +1,13 @@
+[phases.setup]
+aptPkgs = [
+  "libcairo2-dev",
+  "pkg-config",
+  "python3-dev",
+  "libgdk-pixbuf2.0-dev",
+  "libpango1.0-dev",
+  "libffi-dev",
+  "libjpeg-dev",
+  "libxcb1-dev",
+  "libxcb-render0-dev",
+  "libxcb-shape0-dev"
+]

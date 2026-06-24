@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Reactivación</title>
+    <link rel="stylesheet" href="{% static 'css/vistasEmpresario/vistaEmpresario.css' %}">
+</head>
+<body>
+    <div class="confirm-container">
+        <div class="confirm-card">
+            <i class="fas fa-check-circle confirm-icon success"></i>
+            <h2>Confirmar Reactivación</h2>
+            <p>¿Estás seguro de que deseas reactivar <strong>{{ objeto.nombre }}</strong>?</p>
+            <p class="text-muted">El establecimiento volverá a aparecer en las listas públicas.</p>
+            
+            <div class="confirm-actions">
+                <a href="{% url 'redirect_by_role' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i> Sí, Reactivar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

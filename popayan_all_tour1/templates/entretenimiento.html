@@ -1,0 +1,216 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/entretenimiento.css'%}">
+            <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="shortcut icon" href="../static/img/entretenimiento/logo.png" type="image/x-icon">
+    <title>PopayanAllTour</title>
+    <!-- Booststrap -->
+
+
+
+</head>
+
+<body>
+
+    <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'converter' %}">Divisas</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <!-- Usuario autenticado: mostrar dropdown -->
+                    <div class="user-menu-home">
+                            <div class="profile-avatar-home" id="userIconHome" title="Menú de usuario">
+                                <img src="{{ request.user.get_imagen_perfil }}" alt="Perfil de {{ request.user.nombre_completo }}">
+                            </div>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <!-- Opciones para empresario -->
+                            <a href="{% url 'redirect_by_role' %}">
+                                <i class="fas fa-briefcase"></i> Panel Empresarial
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <!-- Opciones para administrador -->
+                            <a href="{% url 'dashboard_administrador' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% else %}
+                            <!-- Opciones para turista -->
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Usuario invitado: redirige al login -->
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+
+    <!-- Modal de Cerrar Sesión -->
+    <div id="logoutModalHome" class="modal-home" style="display: none;">
+        <div class="modal-content-home">
+            <span class="close-home" data-close="logout">&times;</span>
+            <h3>Cerrar Sesión</h3>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-actions-home">
+                <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-home">
+                        <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="location-content">
+        <img src="{% static 'img/entretenimiento/pixelcut-export (2) 1.jpg' %}" alt="Popayán Landscape"
+            class="header-image">
+
+
+        <div class="location-text">
+            <h1>CATÁLOGO DE JUEGOS</h1>
+            <div class="header-line"></div>
+            <p>¿Exploraste Popayán y aún te queda energía? ¡hora de jugar!<br>
+                Aquí la diversión no solo está en sus calles, también está en nuestra <br>
+                sección de entretenimiento. Tenemos tres juegos listos para desafiar tu<br>
+                habilidad y hacerte pasar un rato increíble. ¿Podrás superar los retos?<br>
+                <br>¡Demuéstralo y conviértete en un campeón payanés!
+            </p>
+        </div>
+        <div class="Down">
+            <a><ion-icon name="chevron-down-outline"></ion-icon></a>
+        </div>
+    </div>
+
+
+
+    <section class="card-container">
+        <!-- Cada card -->
+        <div class="cards">
+            <img src="{% static 'img/entretenimiento/image 288.png' %}" alt="Dunkebono">
+            <h3>Dunkebono</h3>
+            <hr>
+            <p>Tu misión es lanzar pandebonos desde un cañón y encestarlos en una taza de café caliente. Inspirado en
+                una costumbre payanesa, este juego pone a prueba tu puntería.</p>
+            <button onclick="window.location.href='{% url 'menu' %}'">JUGAR</button>
+        </div>
+        <div class="cards">
+            <img src="{% static 'img/entretenimiento/flux1.png' %}" alt="PoPares">
+            <h3>Popares</h3>
+            <hr>
+            <p>Cada imagen revela pedazos de tradición que desafían tu mente y tu memoria visual en una carrera contra
+                el tiempo y los descuidos del recuerdo.</p>
+            <button id="popares" onclick="window.location.href='{% url 'popares' %}'">JUGAR</button>
+        </div>
+        <div class="cards">
+            <img src="{% static 'img/entretenimiento/gol.png' %}" alt="SiroGoal">
+            <h3>Cirogoal</h3>
+            <hr>
+            <p>Adéntrate en el humilde estadio de la ciudad blanca, el estadio “Ciro López”, para usar tu habilidad para
+                saltar, cabecear y anotar golazos en este divertido mini juego de fútbol.</p>
+            <button id="popares" onclick="window.location.href='{% url 'CiroGoal' %}'">JUGAR</button>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan
+                                AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+    <script src="{% static 'js/entretenimiento.js' %}"></script>
+
+</body>
+
+</html>

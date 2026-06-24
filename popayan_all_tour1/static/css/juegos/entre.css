@@ -1,0 +1,396 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #000000;
+  overflow-x: hidden;
+}
+/* ENTRETENIMIENTO */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 20px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(172, 170, 170, 0.795);
+  transition: top 0.3s ease;
+  z-index: 1000;
+}
+
+.logo-nav img {
+  height: 70px;
+  width: auto;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.nav-menu li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-menu li a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #ffffff;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.nav-menu li a:hover {
+  color: #ffffff;
+}
+
+.nav-menu li a:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-icon i {
+  font-size: 24px;
+  color: white;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.hamburger {
+  display: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: white;
+}
+
+
+.container-fluid {
+  width: 50px;
+  height: 550px;
+  background-color: rgb(0, 0, 0);
+  color: black;
+  position: relative;
+}
+
+.row {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 20%;
+  left: 0%;
+  margin: 30px 30px 30px 30px;
+}
+
+.fondo1 {
+  background-image: url("//popayan_all_tour/popayan_all_tour1/static/img/entretenimiento/fondo_footer.png");
+}
+
+.row .text {
+  margin-top: 10%;
+  text-align: center;
+}
+
+.text hr {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* ENTRETENIMIENTO FASE1 */
+
+.hero-container .row {
+  position: relative;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 15%;
+  left: 8%;
+  margin: 30px 30px 30px 30px;
+}
+
+.fondo2 {
+  background-color: black;
+  color: white;
+}
+
+.row .text1 {
+  text-align: center;
+  top: 10px;
+  margin: 10px 5px 10px 5px;
+}
+
+.text1 hr {
+  width: 45%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row .text2 {
+  text-align: center;
+  color: black;
+}
+
+.card-text {
+  font-size: 12px;
+}
+
+/* footer */
+
+.footer {
+  background-color: #0a0a0a;
+  background-image: url("//popayan_all_tour/popayan_all_tour1/static/img/entretenimiento/fondo_footer.png");
+  background-repeat: no-repeat;
+  background-position: center 100px;
+  background-size: 85%;
+  color: white;
+  padding: 30px 0 20px; /* mas espacio arriba menos espacio abajo */
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.955);
+  /* oscurecer si se necesita */
+  z-index: -1;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 40px;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-grid {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.footer-grid div {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 20px;
+}
+
+.footer-grid h3 {
+  color: white;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.footer-grid ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-grid ul li {
+  color: #ccc;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.footer-grid ul li a {
+  text-decoration: none;
+  color: #ccc;
+}
+
+.footer-grid ul li a:hover {
+  font-weight: bold;
+}
+
+.social-icons i {
+  margin-right: 10px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.footer-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section ul li {
+  margin-bottom: 8px;
+}
+
+.footer-section ul li a {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.3s ease;
+  transform: scaleX(0);
+}
+
+.footer-section ul li a:hover {
+  font-weight: bold;
+  color: white;
+}
+.footer-section ul li a:hover::after {
+  transform: scaleX(1);
+}
+
+.logo-section {
+  text-align: center;
+  margin: 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.linea-horizontal {
+  position: absolute;
+  height: 5px;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+  top: 50%;
+}
+
+.logo-footer {
+  width: 160px;
+  height: 160px;
+  background: rgb(0, 0, 0);
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 4px 15px rgb(0, 0, 0);
+}
+
+.logo-footer img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  border-radius: 100%;
+}
+
+.linea-horizontal {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background-color: #ffffff; /* blanco con transparencia */
+  z-index: -1;
+}
+
+.contact-info {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.contact-info h3 {
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.contact-item {
+  margin-bottom: 15px;
+}
+
+.contact-item strong {
+  color: #ffffff;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.contact-item span {
+  color: #cccccc;
+  font-size: 14px;
+}
+
+.social-icons li a:hover {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.social-icons li i a {
+  transition: color 0.3s ease;
+}
+
+.social-icons li a:hover {
+  font-weight: bold;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #cccccc;
+  margin-top: 10px;
+  padding-top: 10px;
+  font-size: 15px;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}

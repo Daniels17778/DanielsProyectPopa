@@ -1,0 +1,177 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Pandebono al Café</title>
+    <link rel="stylesheet" href="{% static 'css/juegos/juegos.css' %}">
+    <link rel="shortcut icon" href="../static/img/home/imagen_2025-03-16_185953883-removebg-preview.png"
+        type="image/x-icon">
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="hero-container">
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'converter' %}">Divisas</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <div class="user-menu-home">
+                        <i class="fas fa-user nav-icon" id="userIconHome" title="Menú de usuario"></i>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <a href="{% url 'redirect_by_role' %}"><i class="fas fa-briefcase"></i> Panel Empresarial</a>
+                            <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                            <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <a href="{% url 'dashboard_administrador' %}"><i class="fas fa-tachometer-alt"></i> Dashboard Admin</a>
+                            <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                            <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            {% else %}
+                            <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                            <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Modal de Cerrar Sesión -->
+    <div id="logoutModalHome" class="modal-home" style="display: none;">
+        <div class="modal-content-home">
+            <span class="close-home" data-close="logout">&times;</span>
+            <h3>Cerrar Sesión</h3>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-actions-home">
+                <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-home">
+                        <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         CONTENEDOR DEL JUEGO
+    ══════════════════════════════════════ -->
+    <div id="gameContainer">
+        <div class="canvas-wrapper">
+
+            <!-- Botón volver al menú -->
+            <button id="menuButton" aria-label="Volver al menú principal">Volver al Menú</button>
+
+            <!-- Canvas principal -->
+            <canvas id="gameCanvas" width="1362" height="720"></canvas>
+
+            <!-- HUD: Puntuación -->
+            <div id="scoreDisplay">Puntuación: 0</div>
+
+            <!-- HUD: Nivel -->
+            <div id="levelDisplay">Nivel: 1</div>
+
+            <!-- ── [NUEVO] Botón limpiar pandebonos ── -->
+            <button id="cleanupButton" aria-label="Limpiar pandebonos del suelo" title="Las palomas vendrán a limpiar los pandebonos del suelo">
+                <!-- El contenido se genera dinámicamente desde JS -->
+            </button>
+
+            <!-- ── [NUEVO] Overlay de animación de palomas ── -->
+            <div id="pigeonOverlay" aria-hidden="true"></div>
+
+            <!-- ── [NUEVO] Flash de limpieza ── -->
+            <div id="cleanFlash" aria-hidden="true"></div>
+
+        </div>
+    </div>
+
+    <!-- Notificación flotante -->
+    <div id="notification" role="alert" aria-live="polite"></div>
+
+    <!-- ══════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function startGame() {
+            window.location.href = "{% url 'juegaso' %}";
+        }
+
+        // Navbar scroll effect (mejorado)
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 10);
+        }, { passive: true });
+    </script>
+
+    <script src="{% static 'js/juego/juego.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesion</title>
+    <link rel="stylesheet" href="{% static 'css/login/login.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="{% static 'img/registro/logo.png' %}" type="image/x-icon">
+    <script src="{% static 'js/login/login.js' %}" defer></script>
+</head>
+<body>
+    
+    <div class="container">
+    <div class="login-box">
+                                <!-- esto -->
+        <img src="{% static 'img/registro/{A64E7BBC-BFDF-4F9A-9F8C-2F315ABBB51E}.png' %}" class="logo" alt="Logo">
+
+        <h2>Inicio de sesión</h2>
+
+        <div class="form-section">
+
+            <div class="left-form">
+                <form method="POST"  action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <label>Correo electrónico</label>
+                    <input type="text" name="email" required>
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <label>Contraseña</label>
+                    <div class="password-box">
+                        <input type="password" id="password" name="password" required>
+                        <span class="see-password"><i class="bi bi-eye-slash"></i></span>
+                    </div>
+
+                    <a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+                    <button type="submit" id="loginBtn">Entrar</button>
+                    <a href="{% url 'home' %}">Continuar como invitado</a>
+                    <a href="{% url 'registro' %}">Registrarse</a>
+                    
+                </form>
+            </div>
+
+            <div class="divider">
+                <div class="line"></div>
+                <span>Iniciar con</span>
+            </div>
+
+            <div class="right-social">
+                <div class="social-login">
+                    <button class="google-btn"><i class="bi bi-google"></i> <a href="{% url 'social:begin' 'google-oauth2' %}">
+                                Iniciar sesión con Google
+                    </a></button>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+    <a href="{% url 'terminos' %}" class="terminos">Términos y condiciones</a>
+</div>
+
+
+</body>
+</html>

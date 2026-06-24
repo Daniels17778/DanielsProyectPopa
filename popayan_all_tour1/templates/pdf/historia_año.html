@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm;
+        }
+        
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* ===== PORTADA ===== */
+        .portada {
+            text-align: center;
+            padding-top: 120px;
+            margin-bottom: 60px;
+        }
+        
+        .portada-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            display: block;
+        }
+        
+        .portada h1 {
+            font-size: 64px;
+            color: #8B4513;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .portada h2 {
+            font-size: 24px;
+            color: #666;
+            margin: 15px 0;
+        }
+        
+        /* ===== CONTENIDO ===== */
+        .contenido-titulo {
+            font-size: 20px;
+            color: #8B4513;
+            border-bottom: 3px solid #8B4513;
+            padding-bottom: 8px;
+            margin: 25px 0 15px 0;
+        }
+        
+        .contenido-texto {
+            text-align: justify;
+            font-size: 11px;
+            margin-bottom: 12px;
+            line-height: 1.8;
+        }
+        
+        /* ===== IMÁGENES ===== */
+        .imagenes-container {
+            margin: 25px 0;
+            page-break-inside: avoid;
+        }
+        
+        .imagenes-dos-columnas {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .imagenes-dos-columnas table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .imagenes-dos-columnas td {
+            width: 48%;
+            padding: 5px;
+            text-align: center;
+        }
+        
+        .imagen-historica {
+            max-width: 100%;
+            max-height: 280px;
+            border: 2px solid #8B4513;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .imagen-historica-full {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border: 2px solid #8B4513;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        /* ===== PERSONAJES ===== */
+        .personajes-section {
+            margin: 30px 0;
+        }
+        
+        .personajes-titulo {
+            color: #8B4513;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #8B4513;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .personaje {
+            background: #f9f9f9;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #8B4513;
+            page-break-inside: avoid;
+        }
+        
+        .personaje h3 {
+            color: #8B4513;
+            font-size: 14px;
+            margin: 0 0 3px 0;
+            font-weight: bold;
+        }
+        
+        .personaje .fecha {
+            color: #666;
+            font-style: italic;
+            font-size: 11px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        .personaje p {
+            margin: 0;
+            text-align: justify;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+        
+        /* ===== DATOS CURIOSOS ===== */
+        .datos-curiosos {
+            background: #fff8dc;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 8px;
+            border: 2px solid #daa520;
+            page-break-inside: avoid;
+        }
+        
+        .datos-curiosos h3 {
+            color: #8B4513;
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        
+        .dato-item {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            font-size: 10px;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .dato-item:before {
+            content: "★";
+            position: absolute;
+            left: 0;
+            color: #8B4513;
+            font-size: 12px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+            margin-top: 40px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <!-- PORTADA -->
+    <div class="portada">
+        <img src="file://{{ STATIC_ROOT }}/img/home/logo.png" alt="Logo Popayán" class="portada-logo">
+        <h1>{{ datos.ano }}</h1>
+        <h2>{{ datos.titulo }}</h2>
+    </div>
+
+    <!-- IMÁGENES HISTÓRICAS -->
+    {% if datos.imagenes %}
+        <div class="imagenes-container">
+            {% if datos.imagenes.left and datos.imagenes.right %}
+                <!-- Dos imágenes lado a lado -->
+                <div class="imagenes-dos-columnas">
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="file://{{ STATIC_ROOT }}/{{ datos.imagenes.left }}" 
+                                     alt="Imagen histórica" class="imagen-historica">
+                            </td>
+                            <td>
+                                <img src="file://{{ STATIC_ROOT }}/{{ datos.imagenes.right }}" 
+                                     alt="Imagen histórica" class="imagen-historica">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            {% elif datos.imagenes.left %}
+                <!-- Solo imagen izquierda -->
+                <img src="file://{{ STATIC_ROOT }}/{{ datos.imagenes.left }}" 
+                     alt="Imagen histórica" class="imagen-historica-full">
+            {% elif datos.imagenes.right %}
+                <!-- Solo imagen derecha -->
+                <img src="file://{{ STATIC_ROOT }}/{{ datos.imagenes.right }}" 
+                     alt="Imagen histórica" class="imagen-historica-full">
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- CONTENIDO DE TEXTO -->
+    {% for parrafo in datos.contenido %}
+    <p class="contenido-texto">{{ parrafo }}</p>
+    {% endfor %}
+    
+    <!-- PERSONAJES DESTACADOS -->
+    {% if datos.personajes %}
+    <div class="personajes-section">
+        <div class="personajes-titulo">Personajes Destacados</div>
+        
+        {% for personaje in datos.personajes %}
+        <div class="personaje">
+            <h3>{{ personaje.nombre }}</h3>
+            <span class="fecha">{{ personaje.fecha }}</span>
+            <p>{{ personaje.descripcion }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- DATOS CURIOSOS -->
+    {% if datos.datos_curiosos %}
+    <div class="datos-curiosos">
+        <h3>Datos Curiosos</h3>
+        {% for dato_curioso in datos.datos_curiosos %}
+        <div class="dato-item">{{ dato_curioso }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- FOOTER -->
+    <div class="footer">
+        © Popayán All Tour - Historia de Popayán - Año {{ datos.ano }}
+    </div>
+</body>
+</html>

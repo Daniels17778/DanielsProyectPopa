@@ -1,0 +1,323 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia</title>
+    <link rel="stylesheet" href="{% static 'css/historia.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="shortcut icon" href="../static/img/imagen_2025-03-16_185953883-removebg-preview.png" type="image/x-icon">
+</head>
+
+<body>
+    <div class="hero-container">
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'converter' %}">Divisas</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <!-- Usuario autenticado: mostrar dropdown -->
+                    <div class="user-menu-home">
+                        <div class="profile-avatar-home" id="userIconHome" title="Menú de usuario">
+                            <img src="{{ request.user.get_imagen_perfil }}"
+                                alt="Perfil de {{ request.user.nombre_completo }}">
+                        </div>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <!-- Opciones para empresario -->
+                            <a href="{% url 'redirect_by_role' %}">
+                                <i class="fas fa-briefcase"></i> Panel Empresarial
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <!-- Opciones para administrador -->
+                            <a href="{% url 'dashboard_administrador' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% else %}
+                            <!-- Opciones para turista -->
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Usuario invitado: redirige al login -->
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Modal de Cerrar Sesión -->
+    <div id="logoutModalHome" class="modal-home" style="display: none;">
+        <div class="modal-content-home">
+            <span class="close-home" data-close="logout">&times;</span>
+            <h3>Cerrar Sesión</h3>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-actions-home">
+                <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-home">
+                        <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div> <!-- fin nav -->
+
+
+
+    {% block fecha %}
+    <!-- ==================  HISTORIA  ================== -->
+    <section id="historia" class="historia-section">
+        <h2 class="historia-subtitulo">ANTECEDENTES DESDE:</h2>
+
+        <!-- Año gigante -->
+        <div class="historia-ano">{{ datos.ano }}</div>
+
+        <!-- Imágenes superpuestas -->
+        <img src="{% static datos.imagenes.left %}" alt="Imagen histórica 1" class="hist-img img-izquierda">
+
+        <img src="{% static datos.imagenes.right %}" alt="Imagen histórica 2" class="hist-img img-derecha">
+
+        <!-- Línea de tiempo -->
+        <div class="timeline">
+            <ul>
+                <li>
+                    <span class="dot"></span>
+                    <span class="year active">1537</span>
+                </li>
+                <li>
+                    <span class="dot-va"></span>
+                    <span class="dot-va2"></span>
+                    <span class="year_a">1601</span>
+                </li>
+                <li>
+                    <span class="dot-va"></span>
+                    <span class="dot-va2"></span>
+                    <span class="year_a">1701</span>
+                </li>
+                <li>
+                    <span class="dot-va"></span>
+                    <span class="dot-va2"></span>
+                    <span class="year_a">1801</span>
+                </li>
+                <li>
+                    <span class="dot-va"></span>
+                    <span class="dot-va2"></span>
+                    <span class="year_a">1831</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+    {% endblock %}
+
+    <!-- ============ contenido =========== -->
+
+    <section class="historia-detalle">
+        {% block flecha %}
+
+        <div class="historia-flechas">
+            <button class="flecha" onclick="window.history.back();">⬅</button>
+            <button class="flecha" onclick="window.location.href='{% url 'historia_1601' %}'">➡</button>
+        </div>
+        {% endblock %}
+
+        <div class="historia-bg"></div>
+        <div class="historia-contenido">
+            <h2>{{ datos.titulo }}</h2>
+            {% for parrafo in datos.contenido %}
+            <p> {{parrafo}} </p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- ============= Personajas Destacados ========== -->
+    {% block personajes %}
+    <section class="personajes-section">
+        <h2 class="titulo-personajes">
+            <span></span>
+            Personajes Destacados
+            <span></span>
+        </h2>
+
+        <!-- se utiliza un for para recorrer el diccionario  -->
+
+        {% for p in datos.personajes %}
+        <div class="personaje-card {% cycle 'derecha' 'izquierda' %}">
+            <div class="personaje-imagen">
+                <img class="img-fondo{{ forloop.counter }}" src="{% static p.img_fondo %}" alt="Fondo">
+                <!-- Se utiliza forloop.counter para que agregue un numero por cada iteracion  -->
+                <img class="img-sobre{{forloop.counter}}" src="{% static p.img_sobre %}" alt="{{ p.nombre }}">
+            </div>
+            <div class="personaje-info">
+                <span class="personaje-fecha"> {{p.fecha}} </span>
+                <h3> {{p.nombre}} </h3>
+                <p>{{ p.descripcion }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endblock %}
+
+    <!-- ================= Datos Curiosos ============= -->
+
+    {% block datos-curiosos %}
+    <section class="datos-curiosos">
+        <h2 class="datos-titulo"><span></span> Datos curiosos <span></span></h2>
+        <div class="datos-grid">
+
+            {% for dato in datos.datos_curiosos %}
+            <div class="dato-card">
+                <p>{{ dato }}</p>
+                <img src="{% static 'img-historia/datos.png' %}" alt="Decoración" class="decoracion-card">
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endblock %}
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan
+                                AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+    <!-- Fin footer -->
+
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script>
+        const track = document.querySelector('.carousel-track');
+        const slides = document.querySelectorAll('.carousel-slide');
+        const nextBtn = document.querySelector('.carousel-btn.next');
+        const prevBtn = document.querySelector('.carousel-btn.prev');
+        const dotsContainer = document.querySelector('.carousel-dots');
+
+        let currentIndex = 0;
+
+        function updateSlide() {
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            updateDots();
+        }
+
+        function updateDots() {
+            dotsContainer.innerHTML = '';
+            slides.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.className = index === currentIndex ? 'active' : '';
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateSlide();
+                });
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % slides.length;
+            updateSlide();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            updateSlide();
+        });
+
+        // Init
+        updateSlide();
+    </script>
+
+    <script src="{% static 'js/historia.js' %}"></script>
+
+</body>
+
+</html>

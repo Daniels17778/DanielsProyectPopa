@@ -1,0 +1,635 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Editor de Usuario - Popayán Tour</title>
+    <link rel="stylesheet" href="{% static 'css/perfilUser.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/home/imagen_2025-03-16_185953883-removebg-preview.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="{% url 'home' %}" class="logo-nav">
+            <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+        </a>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="{% url 'home' %}">Inicio</a></li>
+            <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+            <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+            <li><a href="{% url 'converter' %}">Divisas</a></li>
+            <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+            <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div class="nav-icons">
+                <a href="{% url 'perfilUser' %}" class="nav-icon profile-icon">
+                    <img src="{{ usuario.get_imagen_perfil }}" alt="Perfil de {{ usuario.nombre_completo }}"  id="navbarAvatar">
+                </a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+            <!-- Botón Volver -->
+        <a href="javascript:history.back();" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            <span>Volver</span>
+        </a>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container">
+        <!-- MENSAJES DE FEEDBACK -->
+        {% if messages %}
+        <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+            <div style=" border-radius: 4px; margin-bottom: 10px; 
+                    background-color: {% if message.tags == 'success' %}#28a745{% elif message.tags == 'error' %}#dc3545{% else %}#ffc107{% endif %}; 
+                    color: white;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+            
+        <!-- SECCIÓN: EDITAR USUARIO -->
+        <div class="form-section">
+            <div class="section-header">
+                <h2 class="section-title">Editar usuario</h2>
+                <button type="button" class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </button>
+            </div>
+
+
+            <div class="divider"></div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <input type="hidden" name="avatar_predeterminado" id="avatarSeleccionado">
+
+                <div class="form-grid-compact">
+                    <!-- COLUMNA 1 -->
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="id_email">Correo electrónico</label>
+                            <input type="email" name="email" id="id_email" value="{{ usuario.email }}" required>
+                            {% if form.email.errors %}
+                            <span class="error-text">{{ form.email.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_nueva_password">Contraseña</label>
+                            <input type="password" name="nueva_password" id="id_nueva_password" placeholder="Dejar en blanco para mantener">
+                            {% if form.nueva_password.errors %}
+                            <span class="error-text">{{ form.nueva_password.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_nombre_completo">Nombre completo</label>
+                            <input type="text" name="nombre_completo" id="id_nombre_completo" value="{{ usuario.nombre_completo }}" required>
+                            {% if form.nombre_completo.errors %}
+                            <span class="error-text">{{ form.nombre_completo.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_telefono">Teléfono</label>
+                            <input type="tel" name="telefono" id="id_telefono" value="{{ usuario.telefono }}" required>
+                            {% if form.telefono.errors %}
+                            <span class="error-text">{{ form.telefono.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        
+                       <div class="form-group">
+                            <label for="id_identificacion">Identificación</label>
+                            <input type="text" name="identificacion" id="id_identificacion" value="{{ usuario.identificacion }}" required>
+                            {% if form.identificacion.errors %}
+                            <span class="error-text">{{ form.identificacion.errors.0 }}</span>
+                            {% endif %}
+                        </div> 
+                    
+                    </div>
+
+                    <!-- COLUMNA 2 -->
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="id_fecha_nacimiento">Fecha de nacimiento</label>
+                            <input type="date" name="fecha_nacimiento" id="id_fecha_nacimiento" value="{{ usuario.fecha_nacimiento|date:'Y-m-d' }}" required>
+                            {% if form.fecha_nacimiento.errors %}
+                            <span class="error-text">{{ form.fecha_nacimiento.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_direccion">Dirección</label>
+                            <input type="text" name="direccion" id="id_direccion" value="{{ usuario.direccion }}" required>
+                            {% if form.direccion.errors %}
+                            <span class="error-text">{{ form.direccion.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_profesion">Profesión</label>
+                            <input type="text" name="profesion" id="id_profesion" value="{{ usuario.profesion|default:'' }}">
+                            {% if form.profesion.errors %}
+                            <span class="error-text">{{ form.profesion.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_rol">Rol</label>
+                            <select name="rol" id="id_rol" onchange="toggleTipoEstablecimiento()" {% if not user.is_staff %}disabled{% endif %}>
+                                {% for rol in form.fields.rol.queryset %}
+                                <option value="{{ rol.id }}" {% if usuario.rol.id == rol.id %}selected{% endif %}>
+                                    {{ rol.rol }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            {% if not user.is_staff %}
+                            <input type="hidden" name="rol" value="{{ usuario.rol.id }}">
+                            {% endif %}
+                            {% if form.rol.errors %}
+                            <span class="error-text">{{ form.rol.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group" id="tipoEstablecimientoGroup" style="{% if usuario.rol.rol|lower != 'empresario' %}display: none;{% endif %}">
+                            <label for="id_tipo_establecimiento">Tipo establecimiento</label>
+                            <select name="tipo_establecimiento" id="id_tipo_establecimiento" {% if not user.is_staff %}disabled{% endif %}>
+                                <option value="">---------</option>
+                                {% for tipo in form.fields.tipo_establecimiento.queryset %}
+                                <option value="{{ tipo.id }}" {% if usuario.tipo_establecimiento and usuario.tipo_establecimiento.id == tipo.id %}selected{% endif %}>
+                                    {{ tipo.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            {% if not user.is_staff %}
+                            <input type="hidden" name="tipo_establecimiento" value="{{ usuario.tipo_establecimiento.id|default:'' }}">
+                            {% endif %}
+                            {% if form.tipo_establecimiento.errors %}
+                            <span class="error-text">{{ form.tipo_establecimiento.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="profile-image-section avatar-box avatar-right">
+                        <label class="avatar-title">Imagen de perfil</label>
+
+                        <div class="avatar-preview">
+                            <img src="{{ usuario.get_imagen_perfil }}" alt="Avatar" id="profilePreview">
+                        </div>
+
+                        <button type="button" class="avatar-btn" id="openAvatarModal">
+                            Elegir avatar
+                        </button>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="save-btn">Aplicar cambios</button>
+            </form>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+     SECCIÓN: MIS RESEÑAS
+     ══════════════════════════════════════════════════ -->
+<div class="form-section">
+    <h2 class="section-title">Mis reseñas</h2>
+    <div class="divider"></div>
+
+    {% if resenas %}
+        <div class="historial-lista">
+            {% for resena in resenas %}
+            <div class="historial-card">
+                <div class="historial-card-header">
+                    <span class="historial-nombre">{{ resena.establecimiento.nombre }}</span>
+                    <span class="historial-tipo-badge">{{ resena.establecimiento.tipo.nombre }}</span>
+                </div>
+
+                <div class="historial-estrellas">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= resena.calificacion %}
+                            <span class="estrella activa">★</span>
+                        {% else %}
+                            <span class="estrella">★</span>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="historial-fecha">{{ resena.fecha_creacion|date:"d M Y" }}</span>
+                </div>
+
+                {% if resena.comentario %}
+                <p class="historial-comentario">"{{ resena.comentario }}"</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="historial-vacio">Aún no has dejado ninguna reseña.</p>
+    {% endif %}
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     SECCIÓN: MIS FAVORITOS
+     ══════════════════════════════════════════════════ -->
+<div class="form-section">
+    <h2 class="section-title">Mis favoritos</h2>
+    <div class="divider"></div>
+
+    {% if favoritos %}
+        <div class="historial-lista favoritos-grid">
+            {% for fav in favoritos %}
+            <div class="historial-card favorito-card">
+
+                {% if fav.establecimiento %}
+                    {% if fav.establecimiento.get_imagen_url %}
+                    <div class="favorito-img">
+                        <img src="{{ fav.establecimiento.get_imagen_url }}"
+                             alt="{{ fav.establecimiento.nombre }}">
+                    </div>
+                    {% endif %}
+                    <div class="favorito-info">
+                        <span class="historial-tipo-badge">
+                            {{ fav.establecimiento.tipo.nombre }}
+                        </span>
+                        <p class="historial-nombre">{{ fav.establecimiento.nombre }}</p>
+                        <span class="historial-fecha">
+                            Guardado el {{ fav.fecha_guardado|date:"d M Y" }}
+                        </span>
+                    </div>
+
+                {% elif fav.noticia %}
+                    {% if fav.noticia.imagen_principal %}
+                    <div class="favorito-img">
+                        <img src="{{ fav.noticia.imagen_principal.url }}"
+                             alt="{{ fav.noticia.titulo }}">
+                    </div>
+                    {% endif %}
+                    <div class="favorito-info">
+                        <span class="historial-tipo-badge noticia-badge">Noticia</span>
+                        <p class="historial-nombre">{{ fav.noticia.titulo }}</p>
+                        <span class="historial-fecha">
+                            Guardado el {{ fav.fecha_guardado|date:"d M Y" }}
+                        </span>
+                    </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="historial-vacio">Aún no tienes elementos guardados en favoritos.</p>
+    {% endif %}
+</div>
+
+        <!-- SECCIÓN: ELIMINAR USUARIO -->
+        <div class="form-section">
+            <h2 class="section-title">Eliminar usuario</h2>
+            <div class="divider"></div>
+            <div class="delete-section">
+                <div class="delete-warning">
+                    ¿Estás seguro de que deseas eliminar este perfil de usuario? Esta acción es permanente y no se podrá deshacer. Todos los datos asociados al usuario serán eliminados de forma definitiva.
+                </div>
+                <button type="button" class="delete-btn" id="deleteAccountBtn">
+                    Eliminar cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Logout -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeLogoutModal">&times;</span>
+            <h3>¿Cerrar Sesión?</h3>
+            <p>¿Estás seguro de que quieres cerrar tu sesión?</p>
+            <div class="modal-actions">
+                <button id="cancelLogout" class="btn btn-secondary">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-delete">Sí, salir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Eliminación de Cuenta -->
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content danger-modal">
+            <span class="close" id="closeDeleteModal">&times;</span>
+            <h3 style="color: #fcff36bf;">⚠️ ELIMINAR CUENTA PERMANENTEMENTE</h3>
+            <p>¿Estás seguro de que deseas eliminar tu cuenta de forma permanente?</p>
+            <div class="warning-box">
+                <p><strong>¡ADVERTENCIA!</strong> Esta acción NO se puede deshacer.</p>
+                <p>Todos tus datos serán eliminados completamente de la base de datos.</p>
+            </div>
+            <div class="form-group" style="margin: 20px 0;">
+                <label for="confirmDeleteText" style="color: #ffffff; font-size: 14px; margin-bottom: 10px; display: block;">
+                    Para confirmar, escribe: <strong style="color: #dc2336;">ELIMINAR</strong>
+                </label>
+                <input type="text" id="confirmDeleteText" placeholder="Escribe ELIMINAR"
+                    style="width: 100%; padding: 12px; border: 2px solid #ffffff; background: rgba(20, 20, 20, 0.8); color: white; border-radius: 8px; font-size: 14px;">
+                <span id="deleteError" style="color: #dc3545; font-size: 12px; display: none; margin-top: 5px;">
+                    Debes escribir exactamente "ELIMINAR" para continuar
+                </span>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger-permanent" disabled>
+                    <i class="fas fa-trash-alt"></i> Sí, Eliminar Permanentemente
+                </button>
+            </div>
+            <form id="deleteAccountForm" method="post" action="" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL SELECCIONAR AVATAR -->
+    <div id="avatarModal" class="modal">
+        <div class="modal-content avatar-modal-content">
+            <span class="close" id="closeAvatarModal">&times;</span>
+            <h3 style="margin-bottom: 20px;">Selecciona tu avatar</h3>
+            <div class="avatar-grid-modal">
+                {% for avatar in avatares %}
+                <label class="avatar-option-modal">
+                    <input type="radio" name="avatar_predeterminado" value="{{ avatar.id }}" {% if usuario.avatar_predeterminado == avatar.id %}checked{% endif %} style="display:none;" >    
+                    <div class="avatar-card-modal">
+                        <img src="{{ avatar.url }}" alt="{{ avatar.nombre }}">
+                        <span>{{ avatar.nombre }}</span>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+            <div style="text-align:right;">
+                <button type="button" class="btn btn-secondary" id="closeAvatarModalBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="#">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/profile.php?id=61578069024241">Popayan AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+<script>
+    // ==================== MODAL DE AVATAR ====================
+    document.addEventListener('DOMContentLoaded', function () {
+        const openAvatarModal = document.getElementById('openAvatarModal');
+        const avatarModal = document.getElementById('avatarModal');
+        const closeAvatarModal = document.getElementById('closeAvatarModal');
+        const closeAvatarModalBtn = document.getElementById('closeAvatarModalBtn');
+
+        if (openAvatarModal) {
+            openAvatarModal.addEventListener('click', function () {
+                avatarModal.style.display = 'block';
+            });
+        }
+
+        if (closeAvatarModal) {
+            closeAvatarModal.addEventListener('click', function () {
+                avatarModal.style.display = 'none';
+            });
+        }
+
+        if (closeAvatarModalBtn) {
+            closeAvatarModalBtn.addEventListener('click', function () {
+                avatarModal.style.display = 'none';
+            });
+        }
+
+        window.addEventListener('click', function (event) {
+            if (event.target === avatarModal) {
+                avatarModal.style.display = 'none';
+            }
+        });
+
+        // Preview de avatar seleccionado
+        const avatarHiddenInput = document.getElementById('avatarSeleccionado');
+        const avatarInputs = document.querySelectorAll('input[name="avatar_predeterminado"]');
+        const profilePreview = document.getElementById('profilePreview');
+
+        avatarInputs.forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.checked) {
+                    const imgSrc = this.parentElement.querySelector('img').src;
+                    if (profilePreview) {
+                        profilePreview.src = imgSrc;
+                         avatarHiddenInput.value = this.value;
+                    }
+                }
+            });
+        });
+    });
+</script>
+    <!-- JavaScript -->
+    <script src="{% static 'js/perfilUser.js' %}"></script>
+    <script>
+        // ==================== MODAL DE LOGOUT ====================
+        document.addEventListener('DOMContentLoaded', function () {
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutModal = document.getElementById('logoutModal');
+            const closeLogoutModal = document.getElementById('closeLogoutModal');
+            const cancelLogout = document.getElementById('cancelLogout');
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function () {
+                    logoutModal.style.display = 'block';
+                });
+            }
+
+            if (closeLogoutModal) {
+                closeLogoutModal.addEventListener('click', function () {
+                    logoutModal.style.display = 'none';
+                });
+            }
+
+            if (cancelLogout) {
+                cancelLogout.addEventListener('click', function () {
+                    logoutModal.style.display = 'none';
+                });
+            }
+
+            window.addEventListener('click', function (event) {
+                if (event.target === logoutModal) {
+                    logoutModal.style.display = 'none';
+                }
+                if (event.target === deleteAccountModal) {
+                    deleteAccountModal.style.display = 'none';
+                    resetDeleteModal();
+                }
+            });
+
+            // ==================== MODAL DE ELIMINACIÓN DE CUENTA ====================
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+            const deleteAccountModal = document.getElementById('deleteAccountModal');
+            const closeDeleteModal = document.getElementById('closeDeleteModal');
+            const cancelDelete = document.getElementById('cancelDelete');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            const confirmDeleteText = document.getElementById('confirmDeleteText');
+            const deleteError = document.getElementById('deleteError');
+            const deleteAccountForm = document.getElementById('deleteAccountForm');
+
+            if (deleteAccountBtn) {
+                deleteAccountBtn.addEventListener('click', function () {
+                    deleteAccountModal.style.display = 'block';
+                    resetDeleteModal();
+                });
+            }
+
+            if (closeDeleteModal) {
+                closeDeleteModal.addEventListener('click', function () {
+                    deleteAccountModal.style.display = 'none';
+                    resetDeleteModal();
+                });
+            }
+
+            if (cancelDelete) {
+                cancelDelete.addEventListener('click', function () {
+                    deleteAccountModal.style.display = 'none';
+                    resetDeleteModal();
+                });
+            }
+
+            if (confirmDeleteText) {
+                confirmDeleteText.addEventListener('input', function () {
+                    const text = this.value;
+                    if (text === 'ELIMINAR') {
+                        confirmDeleteBtn.disabled = false;
+                        deleteError.style.display = 'none';
+                        this.style.borderColor = '#28a745';
+                    } else {
+                        confirmDeleteBtn.disabled = true;
+                        this.style.borderColor = '#dc3545';
+                    }
+                });
+            }
+
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.addEventListener('click', function () {
+                    const text = confirmDeleteText.value;
+
+                    if (text === 'ELIMINAR') {
+                        deleteAccountForm.submit();
+                    } else {
+                        deleteError.style.display = 'block';
+                        confirmDeleteText.style.borderColor = '#dc3545';
+                        confirmDeleteText.focus();
+
+                        confirmDeleteText.style.animation = 'shake 0.5s';
+                        setTimeout(() => {
+                            confirmDeleteText.style.animation = '';
+                        }, 500);
+                    }
+                });
+            }
+
+            function resetDeleteModal() {
+                if (confirmDeleteText) {
+                    confirmDeleteText.value = '';
+                    confirmDeleteText.style.borderColor = '#dc3545';
+                }
+                if (deleteError) {
+                    deleteError.style.display = 'none';
+                }
+                if (confirmDeleteBtn) {
+                    confirmDeleteBtn.disabled = true;
+                }
+            }
+        });
+    </script>
+
+    <!-- MODAL SELECCIONAR AVATAR -->
+<div id="avatarModal" class="modal">
+  <div class="modal-content avatar-modal-content">
+    <span class="close" id="closeAvatarModal">&times;</span>
+
+    <h3 style="margin-bottom: 20px;">Selecciona tu avatar</h3>
+
+    <div class="avatar-grid-modal">
+      {% for avatar in avatares %}
+      <label class="avatar-option-modal">
+        <input type="radio"
+               name="avatar_predeterminado"
+               value="{{ avatar.id }}"
+               style="display:none;">
+
+        <div class="avatar-card-modal">
+          <img src="{{ avatar.url }}" alt="{{ avatar.nombre }}">
+          <span>{{ avatar.nombre }}</span>
+        </div>
+      </label>
+      {% endfor %}
+    </div>
+
+    <div style="text-align:right;">
+      <button type="button" class="btn btn-secondary" id="closeAvatarModalBtn">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>

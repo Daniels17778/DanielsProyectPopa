@@ -1,0 +1,16 @@
+{ 
+    
+    "bota_diablito": [
+        
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   7, 7  ,  12, 8  ,  16, 11  ,  17, 17  ,  1, 17  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   1, 17  ,  1, 4  ,  7, 7  ]
+        }
+    ]
+}

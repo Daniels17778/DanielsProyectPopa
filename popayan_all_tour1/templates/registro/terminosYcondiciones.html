@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones - Popayán All Tour</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0 1rem 0;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 1rem;
+            left: -2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 1.6rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 1.5rem 2rem;
+            border: 1px solid transparent;
+        }
+
+        .back-button:hover {
+            color: #000;
+            border-color: #e5e5e5;
+            background: #fafafa;
+        }
+
+        .back-arrow {
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover .back-arrow {
+            transform: translateX(-5px);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: #000;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: #000;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .content-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            padding: 4rem;
+            margin-bottom: 2rem;
+            position: relative;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 200;
+            color: #000;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .update-date {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+            font-weight: 300;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 2rem;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 3rem;
+            text-align: justify;
+            line-height: 1.8;
+            padding: 2rem;
+            background: #fafafa;
+            border-left: 3px solid #000;
+            font-weight: 300;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+            border-bottom: 1px solid #f5f5f5;
+            padding-bottom: 2rem;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+        .section:nth-child(5) { animation-delay: 0.4s; }
+        .section:nth-child(6) { animation-delay: 0.5s; }
+        .section:nth-child(7) { animation-delay: 0.6s; }
+        .section:nth-child(8) { animation-delay: 0.7s; }
+        .section:nth-child(9) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #000;
+            color: #fff;
+            font-weight: 300;
+            border-radius: 0;
+            margin-right: 1.5rem;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #000;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.5px;
+        }
+
+        .section-content {
+            color: #444;
+            line-height: 1.8;
+            margin-left: 56px;
+            text-align: justify;
+            font-weight: 300;
+            font-size: 1rem;
+        }
+
+        .section-content ul {
+            margin: 1.5rem 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .section-content li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .section-content li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: 400;
+        }
+
+        .brand-name {
+            font-weight: 500;
+            color: #000;
+            position: relative;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 3rem 0;
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 300;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .footer-divider {
+            width: 40px;
+            height: 1px;
+            background: #ccc;
+            margin: 0 auto 1.5rem;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: #000;
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .content-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .section-content {
+                margin-left: 0;
+            }
+
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .section-number {
+                margin-right: 0;
+            }
+
+            .intro-text {
+                padding: 1.5rem;
+            }
+
+            .back-button {
+                position: static;
+                margin-bottom: 1.5rem;
+                justify-content: center;
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Hover Effects */
+        .section {
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            background: #fafafa;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+        }
+
+        .section-number:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+
+        .brand-name:hover {
+            background: #000;
+            color: #fff;
+            padding: 0 4px;
+            transition: all 0.3s ease;
+        }
+
+        /* Typography enhancements */
+        .section-title {
+            font-variant: small-caps;
+        }
+
+        .main-title {
+            font-variant: small-caps;
+        }
+
+        /* Subtle animations */
+        .header {
+            animation: slideDown 1s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Focus states for accessibility */
+        .section-number:focus {
+            outline: 2px solid #000;
+            outline-offset: 2px;
+        }
+
+        /* Print styles */
+        @media print {
+            .scroll-indicator {
+                display: none;
+            }
+            
+            .section:hover {
+                background: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .section-number:hover {
+                background: #000;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    
+    <div class="container">
+        <div class="header">
+            <a href="#" class="back-button" onclick="history.back(); return false;">
+                <span class="back-arrow">←</span>
+                <span>Volver</span>
+            </a>
+        </div>
+
+        <div class="content-card">
+            <h1 class="main-title">Términos y Condiciones</h1>
+            <div class="update-date">Última actualización: 14 de julio de 2025</div>
+            
+            <div class="intro-text">
+                Bienvenido a <span class="brand-name">Popayán All Tour</span>. Al acceder y utilizar este sitio web, aceptas cumplir con los siguientes términos y condiciones. Si no estás de acuerdo con alguna parte de estos términos, por favor no utilices nuestro sitio.
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">1</span>
+                    Aceptación de los términos
+                </h2>
+                <div class="section-content">
+                    El uso de este sitio web implica la aceptación plena de los términos y condiciones aquí descritos. Estos pueden ser actualizados en cualquier momento sin previo aviso.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">2</span>
+                    Uso del sitio
+                </h2>
+                <div class="section-content">
+                    El contenido de este sitio es únicamente para uso informativo y turístico. No está permitido:
+                    <ul>
+                        <li>Usar el sitio con fines ilícitos o no autorizados.</li>
+                        <li>Reproducir, copiar o distribuir el contenido sin autorización escrita.</li>
+                        <li>Interferir con la seguridad del sitio o su funcionamiento.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">3</span>
+                    Propiedad intelectual
+                </h2>
+                <div class="section-content">
+                    Todos los contenidos (imágenes, textos, logotipos, diseños, etc.) son propiedad de <span class="brand-name">Popayán All Tour</span> o de sus respectivos autores, y están protegidos por leyes de derechos de autor.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">4</span>
+                    Enlaces a sitios externos
+                </h2>
+                <div class="section-content">
+                    Este sitio puede contener enlaces a sitios web de terceros. No tenemos control sobre esos sitios y no asumimos responsabilidad por sus contenidos o políticas.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">5</span>
+                    Limitación de responsabilidad
+                </h2>
+                <div class="section-content">
+                    <span class="brand-name">Popayán All Tour</span> no será responsable por daños directos, indirectos, incidentales o consecuentes derivados del uso o la imposibilidad de uso de este sitio.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">6</span>
+                    Política de privacidad
+                </h2>
+                <div class="section-content">
+                    El uso de este sitio también está sujeto a nuestra Política de Privacidad, donde se describe cómo recopilamos, usamos y protegemos tu información personal.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">7</span>
+                    Jurisdicción
+                </h2>
+                <div class="section-content">
+                    Estos términos se rigen por las leyes de Colombia. Cualquier disputa será resuelta en los tribunales competentes de la ciudad de Popayán.
+                </div>
+            </div>
+        </div>
+        <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">8</span>
+                    Jurisdicción
+                </h2>
+                <div class="section-content">
+                    Estos términos se rigen por las leyes de Colombia. Cualquier disputa será resuelta en los tribunales competentes de la ciudad de Popayán.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">9</span>
+                    Marco Legal Aplicable
+                </h2>
+                <div class="section-content">
+                    Estos términos y condiciones se fundamentan y cumplen con las siguientes disposiciones legales colombianas:
+                    <ul>
+                        <li><strong>Ley 1581 de 2012:</strong> Protección de Datos Personales. Regula el tratamiento de datos personales y garantiza los derechos de los titulares a conocer, actualizar y rectificar su información.</li>
+                        <li><strong>Ley 23 de 1982:</strong> Sobre Derechos de Autor. Protege las obras literarias, científicas y artísticas, así como los derechos morales y patrimoniales de los autores.</li>
+                        <li><strong>Ley 527 de 1999:</strong> Comercio Electrónico. Define y reglamenta el uso de mensajes de datos, comercio electrónico y firmas digitales en Colombia.</li>
+                        <li><strong>Ley 1480 de 2011:</strong> Estatuto del Consumidor. Protege los derechos de los consumidores y establece las obligaciones de productores y proveedores en las relaciones de consumo.</li>
+                        <li><strong>Constitución Política de Colombia - Artículo 15:</strong> Garantiza el derecho fundamental a la intimidad personal, al buen nombre y a la protección de datos personales.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footer-divider"></div>
+            <p>© 2025 Popayán All Tour. Todos los derechos reservados.</p>
+        </div>
+    </div>
+
+    <script>
+        // Scroll indicator
+        window.addEventListener('scroll', function() {
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            const scrolled = (window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.width = scrolled + '%';
+        });
+
+        // Smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add subtle parallax effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+            header.style.transform = `translateY(${rate}px)`;
+        });
+    </script>
+</body>
+</html>

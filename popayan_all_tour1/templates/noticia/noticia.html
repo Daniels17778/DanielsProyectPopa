@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/noticia.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+
+    <title>Noticias y Eventos - Popayán</title>
+    <link rel="shortcut icon" href="{% static 'img/imagen_2025-03-16_185953883-removebg-preview.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    
+</head>
+
+<body>
+
+    <div class="hero-container">
+
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="{% url 'home' %}">Inicio</a></li>
+                <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+                <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+                <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+                <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="nav-icons">
+                    {% if request.user.is_authenticated %}
+                    <!-- Usuario autenticado: mostrar dropdown -->
+                    <div class="user-menu-home">
+                            <div class="profile-avatar-home" id="userIconHome" title="Menú de usuario">
+                                <img src="{{ request.user.get_imagen_perfil }}" alt="Perfil de {{ request.user.nombre_completo }}">
+                            </div>
+                        <div class="dropdown-home" id="dropdownMenuHome">
+                            {% if request.user.rol.rol.lower == 'empresario' %}
+                            <!-- Opciones para empresario -->
+                            <a href="{% url 'redirect_by_role' %}">
+                                <i class="fas fa-briefcase"></i> Panel Empresarial
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% elif request.user.rol.rol.lower == 'administrador' %}
+                            <!-- Opciones para administrador -->
+                            <a href="{% url 'dashboard_administrador' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                            </a>
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% else %}
+                            <!-- Opciones para turista -->
+                            <a href="{% url 'perfilUser' %}">
+                                <i class="fas fa-user-edit"></i> Editar Perfil
+                            </a>
+                            <a href="#" id="logoutBtnHome">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Usuario invitado: redirige al login -->
+                    <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+
+    <!-- Modal de Cerrar Sesión -->
+    <div id="logoutModalHome" class="modal-home" style="display: none;">
+        <div class="modal-content-home">
+            <span class="close-home" data-close="logout">&times;</span>
+            <h3>Cerrar Sesión</h3>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-actions-home">
+                <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-home">
+                        <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- fin nav -->
+
+    <div class="container">
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <header class="header">
+                <h1><i>NOTICIAS Y EVENTOS</i></h1>
+            </header>
+
+            <!-- Filtros -->
+            <div class="filtros-container">
+                <form method="get" class="filtros-grid">
+                    <div class="filter-group">
+                        <label for="categoria">Categoría</label>
+                        <select name="categoria" id="categoria">
+                            <option value="">Todas las categorías</option>
+                            {% for cat in categorias %}
+                                <option value="{{ cat.id }}" {% if request.GET.categoria == cat.id|stringformat:'s' %}selected{% endif %}>
+                                    {{ cat.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="orden">Ordenar por</label>
+                        <select name="orden" id="orden">
+                            <option value="-fecha_publicacion" {% if request.GET.orden == '-fecha_publicacion' or not request.GET.orden %}selected{% endif %}>Más recientes</option>
+                            <option value="fecha_publicacion" {% if request.GET.orden == 'fecha_publicacion' %}selected{% endif %}>Más antiguas</option>
+                            <option value="-visitas_totales" {% if request.GET.orden == '-visitas_totales' %}selected{% endif %}>Más vistas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-filtrar">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+<!-- Lista de Noticias en formato artículo -->
+            {% if noticias %}
+                {% for noticia in noticias %}
+                <article class="main-article">
+                    <a href="{% url 'detalle_noticia' noticia.slug %}" style="text-decoration: none; color: inherit;">
+                        {% if noticia.destacada %}
+                            <div class="destacada-badge">
+                                <i class="fas fa-star"></i> Destacada
+                            </div>
+                        {% endif %}
+
+                        <h2 class="article-title">{{ noticia.titulo }}</h2>
+                        
+                        {% if noticia.resumen %}
+                            <p class="article-subtitle">{{ noticia.resumen }}</p>
+                        {% endif %}
+
+                        <div class="article-meta">
+                            <span><strong>Categoría:</strong> {{ noticia.categoria.nombre }}</span>
+                            <span>{{ noticia.fecha_publicacion|date:"F d, Y" }} a las {{ noticia.fecha_publicacion|date:"g:i a" }}</span>
+                        </div>
+
+                        {% if noticia.imagen_principal %}
+                            <div class="main-image">
+                                <img src="{{ noticia.imagen_principal.url }}" alt="{{ noticia.titulo }}" id="noti1">
+                            </div>
+                        {% else %}
+                            <div class="main-image">
+                                <img src="{% static 'img/congresoG1.png' %}" alt="Imagen por defecto" id="noti1">
+                            </div>
+                        {% endif %}
+
+                        <p class="subtitle-image">{{ noticia.imagen_descripcion|default:"" }}</p>
+
+                        <div class="article-content">
+                            {% if noticia.resumen %}
+                                <p>{{ noticia.contenido|truncatewords:80|striptags }}</p>
+                            {% else %}
+                                <p>{{ noticia.contenido|truncatewords:100|striptags }}</p>
+                            {% endif %}
+                            
+                            <p style="margin-top: 20px;">
+                                <strong style="color: #000; cursor: pointer;">→ Leer más</strong>
+                            </p>
+                        </div>
+                    </a>
+                </article>
+
+                {% if not forloop.last %}
+                    <hr style="border: none; border-top: 2px solid #e0e0e0; margin: 40px 0;">
+                {% endif %}
+                {% endfor %}
+
+                <!-- Paginación -->
+                {% if page_obj.has_other_pages %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">
+                            &laquo; Primera
+                        </a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">
+                            Anterior
+                        </a>
+                    {% endif %}
+
+                    <span class="current">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">
+                            Siguiente
+                        </a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">
+                            Última &raquo;
+                        </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            {% else %}
+                <!-- Estado vacío -->
+                <div class="empty-state">
+                    <i class="fas fa-newspaper"></i>
+                    <h2>No hay noticias publicadas</h2>
+                    <p style="color: #666;">Aún no se han publicado noticias. Vuelve pronto para ver las últimas actualizaciones.</p>
+                    
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.rol.rol.lower == 'empresario' or request.user.rol.rol.lower == 'administrador' %}
+                            <a href="{% url 'crear_noticia' %}" style="display: inline-block; margin-top: 20px; background: #000; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: 600;">
+                                <i class="fas fa-plus"></i> Crear Primera Noticia
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </main>
+
+        <!-- Sidebar con efecto parallax -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Sección 1: Lo más popular -->
+            <div class="sidebar-section sidebar-parallax">
+                <div class="sidebar-header">
+                    <h2>Lo más popular</h2>
+                </div>
+
+                <div class="popular-news">
+                    {% if noticias_populares %}
+                        {% for popular in noticias_populares %}
+                        <div class="news-item">
+                            <a href="{% url 'detalle_noticia' popular.slug %}" style="text-decoration: none; color: inherit;">
+                                <div class="news-title">{{ popular.titulo|truncatewords:10 }}</div>
+                                <div class="news-date">{{ popular.fecha_publicacion|date:"d \d\e F, Y" }}</div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="news-item">
+                            <div class="news-title">No hay noticias populares aún</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+            <!-- Widget del clima -->
+            <div class="weather-widget" id="weather">
+                <p>Cargando clima...</p>
+            </div>
+        </aside>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan
+                                AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+    <script src="{% static 'js/noticia.js' %}"></script>
+
+        <!-- Script para efecto parallax -->
+    <script>
+        // Efecto parallax en el sidebar
+        window.addEventListener('scroll', function() {
+            const sidebar = document.getElementById('sidebar');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * 0.3;
+            
+            if (window.innerWidth > 768) {
+                sidebar.style.transform = `translateY(${rate}px)`;
+            }
+        });
+    </script>
+</body>
+
+</html>

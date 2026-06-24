@@ -1,0 +1,828 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créditos - DunkeBono</title>
+    <link rel="icon" href="{% static 'assets/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: #87CEEB;
+        }
+
+        /* ===================== NAVBAR ===================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .navbar.scrolled {
+            background-color: #000000d8;
+        }
+
+        .logo-nav img {
+            height: 70px;
+            width: auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-menu li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu li a::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            height: 2px;
+            width: 100%;
+            background-color: #ffffff;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .nav-menu li a:hover::after { transform: scaleX(1); }
+
+        .nav-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-icon i { font-size: 24px; color: white; }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 28px;
+            color: white;
+            z-index: 1100;
+        }
+
+        /* ===================== MAIN CONTENT ===================== */
+         
+        .credits-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            padding-top: 130px;
+            background-image: url('../../static/img/juego/fondo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+
+        .credits-wrapper {
+            position: relative;
+            max-width: 750px;
+            width: 75%;
+            background-image: url(../../img/fondo_menu.png);
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            padding: 50px 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* Overlay sutil para mejorar legibilidad */
+        .credits-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .credits-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Título */
+        .credits-game-title {
+            font-size: 2rem;
+            color: #ecca5a;
+            text-shadow: 8px 5px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 800;
+            margin-bottom: 6px;
+            animation: titleFloat 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleFloat {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-6px); }
+        }
+
+        .credits-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 300;
+            margin-bottom: 40px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Separador decorativo */
+        .divider {
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f3b135, transparent);
+            border-radius: 2px;
+            margin: 0 auto 40px;
+        }
+
+        /* Secciones de créditos */
+        .credits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .credit-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(243, 177, 53, 0.3);
+            border-radius: 12px;
+            padding: 24px 20px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s ease forwards;
+        }
+
+        .credit-card:nth-child(1) { animation-delay: 0.2s; }
+        .credit-card:nth-child(2) { animation-delay: 0.35s; }
+        .credit-card:nth-child(3) { animation-delay: 0.5s; }
+        .credit-card:nth-child(4) { animation-delay: 0.65s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .credit-card:hover {
+            background: rgba(243, 177, 53, 0.15);
+            border-color: rgba(243, 177, 53, 0.7);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(243, 177, 53, 0.2);
+        }
+
+        .credit-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .credit-role {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #f3b135;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .credit-name {
+            font-size: 1.05rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Tarjeta ancha (full width) */
+        .credit-card.wide {
+            grid-column: 1 / -1;
+            animation-delay: 0.8s;
+        }
+
+        /* Agradecimientos */
+        .thanks-block {
+            width: 90%;
+            background: linear-gradient(135deg, rgba(243, 177, 53, 0.2) 0%, rgba(236, 202, 90, 0.1) 100%);
+            border: 1px solid rgba(243, 177, 53, 0.5);
+            border-radius: 12px;
+            padding: 20px 18px;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeUp 0.6s ease 1s forwards;
+        }
+
+        .thanks-block .thanks-emoji {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 10px;
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .thanks-block h3 {
+            font-size: 1.3rem;
+            color: #ecca5a;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .thanks-block p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Botón volver */
+        .btn-back {
+            background-color: #f3b135;
+            color: #fff;
+            border: 2px solid #f3b135;
+            text-shadow: 2px 2px 4px #000000;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeUp 0.6s ease 1.2s forwards;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-back:hover {
+            background-color: #ffffff;
+            color: #f3b135;
+            border-color: #ffffff;
+            text-shadow: 2px 2px 4px #fdfdfd;
+            transform: scale(1.06) translateY(-2px);
+            box-shadow: 0 5px 20px rgba(243, 177, 53, 0.4);
+        }
+
+        /* ===================== USER MENU (igual que menu.html) ===================== */
+        .user-menu-home { position: relative; }
+
+        /* ===================== MODAL LOGOUT ===================== */
+        #logoutModalHome {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-content-home {
+            background: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .close-home {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-home:hover { color: #000; }
+
+        .modal-content-home h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+            clear: both;
+            padding-top: 10px;
+        }
+
+        .modal-content-home p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .modal-actions-home {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-secondary-home {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-secondary-home:hover { background-color: #5a6268; }
+
+        .btn-delete-home {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-delete-home:hover { background-color: #c82333; }
+
+        /* ===================== FOOTER ===================== */
+        .footer {
+            background-color: #0a0a0a;
+            background-image: url("../img/home/fondo_footer.png");
+            background-repeat: no-repeat;
+            background-position: center 100px;
+            background-size: 85%;
+            color: white;
+            padding: 50px 0 20px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0,0,0,0.95);
+            z-index: -1;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .linea-horizontal {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255,255,255,0.3);
+            z-index: 0;
+        }
+
+        .logo-footer {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-footer img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 40px;
+            padding: 0 20px;
+        }
+
+        .footer-section { text-align: center; }
+
+        .footer-section h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid white;
+            display: inline-block;
+            padding-bottom: 8px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section ul li {
+            color: #ccc;
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .footer-section ul li a {
+            text-decoration: none;
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover { color: white; }
+
+        .social-icons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-icons li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .social-icons i { color: #fff; font-size: 18px; width: 20px; text-align: center; }
+
+        .footer-bottom {
+            text-align: center;
+            color: #ccc;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px;
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 900px) {
+            .navbar { padding: 15px 25px; }
+            .logo-nav img { height: 60px; }
+            .hamburger { display: block; }
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: rgba(0,0,0,0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 100px 30px 30px;
+                gap: 20px;
+                transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                overflow-y: auto;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            }
+            .nav-menu.active { right: 0; }
+            .nav-menu li a { font-size: 18px; padding: 12px 0; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .nav-menu li a::after { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .credits-container { padding-top: 110px; }
+            .credits-wrapper { width: 92%; padding: 40px 25px; }
+            .credits-game-title { font-size: 2.2rem; }
+            .credits-grid { grid-template-columns: 1fr; }
+            .credit-card.wide { grid-column: 1; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+            .footer-section:last-child { grid-column: 1 / -1; }
+            .logo-footer { width: 120px; height: 120px; }
+        }
+
+        @media (max-width: 480px) {
+            .credits-game-title { font-size: 1.8rem; }
+            .credits-wrapper { padding: 30px 18px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-section:last-child { grid-column: 1; }
+            .logo-footer { width: 100px; height: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===================== NAVBAR ===================== -->
+    <nav class="navbar" id="navbar">
+        <a href="{% url 'home' %}" class="logo-nav">
+            <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+        </a>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="{% url 'home' %}">Inicio</a></li>
+            <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+            <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+            <li><a href="{% url 'converter' %}">Divisas</a></li>
+            <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+            <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div class="nav-icons">
+                {% if request.user.is_authenticated %}
+                <div class="user-menu-home">
+                    <i class="fas fa-user nav-icon" id="userIconHome" title="Menú de usuario"></i>
+                    <div class="dropdown-home" id="dropdownMenuHome">
+                        {% if request.user.rol.rol.lower == 'empresario' %}
+                        <a href="{% url 'redirect_by_role' %}"><i class="fas fa-briefcase"></i> Panel Empresarial</a>
+                        <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                        <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                        {% elif request.user.rol.rol.lower == 'administrador' %}
+                        <a href="{% url 'dashboard_administrador' %}"><i class="fas fa-tachometer-alt"></i> Dashboard Admin</a>
+                        <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                        <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                        {% else %}
+                        <a href="{% url 'perfilUser' %}"><i class="fas fa-user-edit"></i> Editar Perfil</a>
+                        <a href="#" id="logoutBtnHome"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                    <i class="fas fa-user"></i>
+                </a>
+                {% endif %}
+            </div>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal Cerrar Sesión -->
+    <div id="logoutModalHome" style="display:none;">
+        <div class="modal-content-home">
+            <span class="close-home" data-close="logout">&times;</span>
+            <h3>Cerrar Sesión</h3>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-actions-home">
+                <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-home">
+                        <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== CONTENIDO CRÉDITOS ===================== -->
+    <div class="credits-container">
+        <div class="credits-wrapper">
+            <div class="credits-inner">
+
+                <h1 class="credits-game-title">DunkeBono 🫓☕</h1>
+                <p class="credits-subtitle">Un proyecto creado con amor y paciencia</p>
+                <div class="divider"></div>
+
+                <div class="credits-grid">
+
+                    <div class="credit-card">
+                        <span class="credit-icon">🎮</span>
+                        <div class="credit-role">Creador del Juego</div>
+                        <div class="credit-name">Patojos Development</div>
+                    </div>
+
+                    <div class="credit-card">
+                        <span class="credit-icon">💻</span>
+                        <div class="credit-role">Programación</div>
+                        <div class="credit-name">Patojos Development</div>
+                    </div>
+
+                    <div class="credit-card">
+                        <span class="credit-icon">🎯</span>
+                        <div class="credit-role">Diseño de Juego</div>
+                        <div class="credit-name">Patojos Development</div>
+                    </div>
+
+                    <div class="credit-card">
+                        <span class="credit-icon">🎨</span>
+                        <div class="credit-role">Arte y Gráficos</div>
+                        <div class="credit-name">Patojos Development</div>
+                    </div>
+
+                </div>
+
+                <div class="thanks-block">
+                    <span class="thanks-emoji">⭐</span>
+                    <h3>¡Gracias por Jugar!</h3>
+                    <p>Este juego fue desarrollado con dedicación y cariño. Espero que disfrutes la experiencia tanto como yo disfrutamos creándola.</p>
+                </div>
+
+                <button class="btn-back" onclick="goBack()">← Volver al Menú</button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br>312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li>
+                            <i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li>
+                            <i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/profile.php?id=61578069024241">Popayan AllTour</a>
+                        </li>
+                        <li>
+                            <i class="fab fa-youtube"></i> @popayanAlltour5002
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function goBack() {
+            window.location.href = "{% url 'menu' %}";
+        }
+
+        // Hamburger menu
+        document.getElementById('hamburger').addEventListener('click', function() {
+            document.getElementById('nav-menu').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('nav-menu').classList.remove('active');
+                document.getElementById('hamburger').classList.remove('active');
+            });
+        });
+
+        // Navbar scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Menú desplegable de usuario
+        const userIconHome = document.getElementById("userIconHome");
+        const dropdownMenuHome = document.getElementById("dropdownMenuHome");
+        const logoutModalHome = document.getElementById("logoutModalHome");
+        const logoutBtnHome = document.getElementById("logoutBtnHome");
+        const cancelLogoutHome = document.getElementById("cancelLogoutHome");
+        const closeHome = document.querySelector(".close-home");
+
+        if (userIconHome && dropdownMenuHome) {
+            userIconHome.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownMenuHome.classList.toggle("open");
+            });
+
+            document.addEventListener("click", function(e) {
+                if (!dropdownMenuHome.contains(e.target) && !userIconHome.contains(e.target)) {
+                    dropdownMenuHome.classList.remove("open");
+                }
+            });
+
+            dropdownMenuHome.addEventListener("click", function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        if (logoutBtnHome && logoutModalHome) {
+            logoutBtnHome.addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (dropdownMenuHome) dropdownMenuHome.classList.remove("open");
+                logoutModalHome.style.display = "block";
+            });
+        }
+
+        if (cancelLogoutHome && logoutModalHome) {
+            cancelLogoutHome.addEventListener("click", function(e) {
+                e.preventDefault();
+                logoutModalHome.style.display = "none";
+            });
+        }
+
+        if (closeHome && logoutModalHome) {
+            closeHome.addEventListener("click", function(e) {
+                e.preventDefault();
+                logoutModalHome.style.display = "none";
+            });
+        }
+
+        if (logoutModalHome) {
+            window.addEventListener("click", function(event) {
+                if (event.target === logoutModalHome) {
+                    logoutModalHome.style.display = "none";
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

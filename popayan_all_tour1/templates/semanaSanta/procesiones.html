@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesiones - Popayán All Tour</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="{% static 'css/semanaSanta/procesiones.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+</head>
+
+<body>
+    <!--nav-->
+    <nav class="navbar" id="navbar">
+        <a href="{% url 'home' %}" class="logo-nav">
+            <img src="{% static 'img/img_se/logo.png' %}" alt="Popayán Tour Logo">
+        </a>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="{% url 'home' %}">Inicio</a></li>
+            <li><a href="{% url 'semanaSanta' %}">Semana santa</a></li>
+            <li><a href="{% url 'listar_hoteles' %}">Sitios de interés</a></li>
+            <li><a href="{% url 'historia_1537' %}">Historia</a></li>
+            <li><a href="{% url 'entretenimiento' %}">Entretenimiento</a></li>
+        </ul>
+        <div class="nav-actions">
+            <div class="nav-icons">
+                {% if request.user.is_authenticated %}
+                <!-- Usuario autenticado: mostrar dropdown -->
+                <div class="user-menu-home">
+                    <i class="fas fa-user nav-icon" id="userIconHome" title="Menú de usuario"></i>
+                    <div class="dropdown-home" id="dropdownMenuHome">
+                        {% if request.user.rol.rol.lower == 'empresario' %}
+                        <!-- Opciones para empresario -->
+                        <a href="{% url 'redirect_by_role' %}">
+                            <i class="fas fa-briefcase"></i> Panel Empresarial
+                        </a>
+                        <a href="{% url 'perfilUser' %}">
+                            <i class="fas fa-user-edit"></i> Editar Perfil
+                        </a>
+                        <a href="#" id="logoutBtnHome">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                        {% elif request.user.rol.rol.lower == 'administrador' %}
+                        <!-- Opciones para administrador -->
+                        <a href="{% url 'dashboard_administrador' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                        </a>
+                        <a href="{% url 'perfilUser' %}">
+                            <i class="fas fa-user-edit"></i> Editar Perfil
+                        </a>
+                        <a href="#" id="logoutBtnHome">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                        {% else %}
+                        <!-- Opciones para turista -->
+                        <a href="{% url 'perfilUser' %}">
+                            <i class="fas fa-user-edit"></i> Editar Perfil
+                        </a>
+                        <a href="#" id="logoutBtnHome">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <!-- Usuario invitado: redirige al login -->
+                <a href="{% url 'login' %}" class="nav-icon" title="Iniciar sesión">
+                    <i class="fas fa-user"></i>
+                </a>
+                {% endif %}
+            </div>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== MODALES ==================== -->
+        <!-- Modal de Cerrar Sesión -->
+        <div id="logoutModalHome" class="modal-home" style="display: none;">
+            <div class="modal-content-home">
+                <span class="close-home" data-close="logout">&times;</span>
+                <h3>Cerrar Sesión</h3>
+                <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                <div class="modal-actions-home">
+                    <button id="cancelLogoutHome" class="btn-secondary-home">Cancelar</button>
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete-home">
+                            <i class="fas fa-sign-out-alt"></i> Sí, Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    <!-- cuerpo -->
+    <section class="header">
+        <div class="container">
+            <div class="header-content">
+                <h2 class="day-title">Procesiones</h2>
+                <div class="dis">
+                    <p class="header-subtitle">
+                        Descubre la grandeza de la Semana Santa payanesa, una tradición única que combina fe, historia y
+                        cultura. Vive cada día de esta celebración sagrada conociendo en detalle los pasos que
+                        procesionan, sus significados y la riqueza artística que encierran.
+                    </p>
+                    <img src="{% static 'img/img_se/quince.jpeg' %}" alt="Semana Santa" class="img-p" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <nav class="days-nav">
+            <a href="#lunes" class="day-tab active" onclick="showDay('lunes', this)">Lunes Santo</a>
+            <a href="#martes" class="day-tab" onclick="showDay('martes', this)">Martes Santo</a>
+            <a href="#miercoles" class="day-tab" onclick="showDay('miercoles', this)">Miércoles Santo</a>
+            <a href="#jueves" class="day-tab" onclick="showDay('jueves', this)">Jueves Santo</a>
+            <a href="#viernes" class="day-tab" onclick="showDay('viernes', this)">Viernes Santo</a>
+            <a href="#sabado" class="day-tab" onclick="showDay('sabado', this)">Sábado Santo</a>
+            <a href="#domingo" class="day-tab" onclick="showDay('domingo', this)">Domingo de Ramos</a>
+        </nav>
+    </div>
+
+    <main class="main-content">
+        <div class="container">
+
+            {% for dia, data in procesiones.items %}
+            <section id="{{ dia }}" class="day-section {% if forloop.first %}active{% endif %}">
+
+                <div class="day-header">
+                    <h2 class="day-title">{{ data.titulo }}</h2>
+                    <p class="day-subtitle">{{ data.subtitulo }}</p>
+                    <div class="day-meta">
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                            </svg>
+                            {{ data.horario }}
+                        </div>
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                            </svg>
+                            {{ data.num_pasos }}
+                        </div>
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                            </svg>
+                            {{ data.cargueros_totales }} Cargueros
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-description">
+                    <h3 class="section-title">Sobre esta Procesión</h3>
+                    <p>{{ data.descripcion_1 }}</p>
+                    <p>{{ data.descripcion_2 }}</p>
+                    <p>{{ data.descripcion_3 }}</p>
+                </div>
+
+                <!--  PASOS  -->
+                <div class="pasos-container">
+                    <h3 class="section-title">Pasos Procesionales del {{ data.titulo }}</h3>
+                    <div class="pasos-grid">
+
+                        {% for paso in data.pasos %}
+                        <div class="paso-card">
+                            <div class="paso-header">
+                                <img src="{% static paso.imagen %}" alt="{{ paso.titulo }}" class="paso-image"
+                                    loading="lazy">
+                                <div class="paso-number">{{ paso.numero }}</div>
+                            </div>
+                            <div class="paso-content">
+                                <h4 class="paso-title">{{ paso.titulo }}</h4>
+                                <p class="paso-description">{{ paso.descripcion }}</p>
+                                <div class="paso-details">
+
+                                    <div class="paso-detail">
+                                        <span class="paso-detail-label">Cargueros:</span>
+                                        <span class="paso-detail-value">{{ paso.cargueros }}</span>
+                                    </div>
+                                    <div class="paso-detail">
+                                        <span class="paso-detail-label">Peso:</span>
+                                        <span class="paso-detail-value">{{ paso.peso }}</span>
+                                    </div>
+                                    <div class="paso-detail">
+                                        <span class="paso-detail-label">Material:</span>
+                                        <span class="paso-detail-value">{{ paso.material }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+                <!-- Mapa -->
+                {% if dia != 'domingo' and dia != 'lunes' %}
+                <div class="mapa-section">
+                    <div class="mapa-header">
+                        <div class="mapa-info">
+                            <h3>Recorrido del {{ data.titulo }}</h3>
+                            <p>Información del recorrido tradicional de esta procesión...</p>
+                        </div>
+                        <div class="mapa-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">{{ data.kilometros }}</span>
+                                <span class="stat-label">Kilómetros</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ data.horas }}</span>
+                                <span class="stat-label">Horas</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ data.calles }}</span>
+                                <span class="stat-label">Calles</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mapa-container">
+                        <div class="mapa-placeholder">
+                            {{ data.mapa_iframe|safe }}
+                            <p>Mapa del Recorrido - {{ data.titulo }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Puntos de Interés -->
+                    <div class="puntos-interes">
+                        {% for punto in data.puntos_interes %}
+                        <div class="punto-card">
+                            <div class="punto-title">{{ punto.titulo }}</div>
+                            <div class="punto-time">{{ punto.hora }}</div>
+                            <div class="punto-description">{{ punto.descripcion }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+
+            <!-- Logo primero -->
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <!-- Contenido del footer -->
+            <div class="footer-grid">
+
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61578069024241&mibextid=wwXIfr&mibextid=wwXIfr">Popayan
+                                AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Derechos -->
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="{% static 'js/semanaSanta/procesiones.js' %}"></script>
+        <script src="{% static 'js/user_menu.js' %}"></script>
+
+</body>
+
+</html>

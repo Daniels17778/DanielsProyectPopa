@@ -1,0 +1,279 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo_pagina }} - Popayán Tour</title>
+    <link rel="stylesheet" href="{% static 'css/noticia.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <style>
+        .form-container {
+            max-width: 700px;
+            margin: 8em auto 3em;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .form-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group label .required {
+            color: #dc3545;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="color"] {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #000;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .color-preview {
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 6em 1em 2em;
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="hero-container">
+        <nav class="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+        </nav>
+    </div>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h1><i class="fas fa-folder"></i> {{ titulo_pagina }}</h1>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Por favor corrige los siguientes errores:</strong>
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" id="categoriaForm">
+            {% csrf_token %}
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label for="{{ form.nombre.id_for_label }}">
+                    {{ form.nombre.label }} <span class="required">*</span>
+                </label>
+                {{ form.nombre }}
+                {% if form.nombre.help_text %}
+                    <small class="help-text">{{ form.nombre.help_text }}</small>
+                {% endif %}
+                {% if form.nombre.errors %}
+                    <div class="error-message">{{ form.nombre.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+                <label for="{{ form.descripcion.id_for_label }}">
+                    {{ form.descripcion.label }}
+                </label>
+                {{ form.descripcion }}
+                {% if form.descripcion.help_text %}
+                    <small class="help-text">{{ form.descripcion.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Color -->
+            <div class="form-group">
+                <label for="{{ form.color.id_for_label }}">
+                    {{ form.color.label }} <span class="required">*</span>
+                </label>
+                {{ form.color }}
+                {% if form.color.help_text %}
+                    <small class="help-text">{{ form.color.help_text }}</small>
+                {% endif %}
+                <div class="color-preview" id="colorPreview" style="background-color: {{ form.color.value|default:'#000000' }};">
+                    Vista previa del color
+                </div>
+            </div>
+
+            <!-- Activo -->
+            <div class="form-group">
+                <div class="form-check">
+                    {{ form.activo }}
+                    <label for="{{ form.activo.id_for_label }}">
+                        {{ form.activo.label }}
+                    </label>
+                </div>
+                {% if form.activo.help_text %}
+                    <small class="help-text">{{ form.activo.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Categoría
+                </button>
+                <a href="{% url 'lista_categorias' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Preview del color en tiempo real
+        const colorInput = document.getElementById('{{ form.color.id_for_label }}');
+        const colorPreview = document.getElementById('colorPreview');
+        
+        if (colorInput) {
+            colorInput.addEventListener('input', function() {
+                colorPreview.style.backgroundColor = this.value;
+            });
+        }
+    </script>
+</body>
+</html>

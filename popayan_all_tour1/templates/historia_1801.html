@@ -1,0 +1,83 @@
+{% extends 'historia.html' %}
+{% load static %}
+
+{% block fecha %}
+<!-- ==================  HISTORIA  ================== -->
+<section id="historia" class="historia-section">
+    <h2 class="historia-subtitulo">ANTECEDENTES DESDE:</h2>
+
+    <!-- Año gigante -->
+    <div class="historia-ano">{{ datos.ano }}</div>
+
+    <!-- Imágenes superpuestas -->
+    <img src="{% static datos.imagenes.left %}" alt="Imagen histórica 1" class="hist-img img-izquierda_1801">
+
+    <img src="{% static datos.imagenes.right %}" alt="Imagen histórica 2" class="hist-img img-derecha_1801">
+
+    <!-- Línea de tiempo -->
+    <div class="timeline">
+        <ul>
+            <li>
+                <span class="dot-va"></span>
+                <span class="dot-va2"></span>
+                <span class="year_a">1537</span>
+            </li>
+            <li>
+                <span class="dot-va"></span>
+                <span class="dot-va2"></span>
+                <span class="year_a">1601</span>
+            </li>
+            <li>
+                <span class="dot-va"></span>
+                <span class="dot-va2"></span>
+                <span class="year_a">1701</span>
+            </li>
+            <li>
+                <span class="dot"></span>
+                <span class="year active">1801</span>
+            </li>
+            <li>
+                <span class="dot-va"></span>
+                <span class="dot-va2"></span>
+                <span class="year_a">1831</span>
+            </li>
+        </ul>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block personajes %}
+<section class="personajes-section">
+    <h2 class="titulo-personajes">
+        <span></span>
+        Personajes Destacados
+        <span></span>
+    </h2>
+
+    <!-- se utiliza un for para recorrer el diccionario  -->
+
+
+    {% for p in datos.personajes %}
+    <div class="personaje-card {% cycle 'derecha' 'izquierda' %}">
+        <div class="personaje-imagen">
+            <img class="img-fondo2{{ forloop.counter }}" src="{% static p.img_fondo %}" alt="Fondo">
+            <!-- Se utiliza forloop.counter para que agregue un numero por cada iteracion  -->
+            <img class="img-sobre2{{forloop.counter}}" src="{% static p.img_sobre %}" alt="{{ p.nombre }}">
+        </div>
+        <div class="personaje-info">
+            <span class="personaje-fecha"> {{p.fecha}} </span>
+            <h3> {{p.nombre}} </h3>
+            <p>{{ p.descripcion }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}
+
+{% block flecha %}
+        <div class="historia-flechas">
+            <button class="flecha" onclick="window.history.back();">⬅</button>
+            <button class="flecha" onclick="window.location.href='{% url 'historia_1831' %}'">➡</button>
+        </div>
+{% endblock %}

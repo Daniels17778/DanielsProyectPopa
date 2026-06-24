@@ -1,0 +1,2926 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador · Popayán All Tour</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css" crossorigin="anonymous" />
+    <style>
+        /* ═══════════════════════════════════════
+           VARIABLES & RESET
+        ═══════════════════════════════════════ */
+        :root {
+            --bg:         #07090f;
+            --surf:       #0e1117;
+            --surf2:      #141720;
+            --surf3:      #1a1f2e;
+            --brd:        #1e2436;
+            --brd2:       #252d42;
+            --gold:       #f5a623;
+            --gold-dim:   rgba(245,166,35,.12);
+            --red:        #e05b4b;
+            --red-dim:    rgba(224,91,75,.12);
+            --teal:       #38d9c0;
+            --teal-dim:   rgba(56,217,192,.12);
+            --purp:       #8b7cf6;
+            --purp-dim:   rgba(139,124,246,.12);
+            --blue:       #4f8ef7;
+            --blue-dim:   rgba(79,142,247,.12);
+            --ok:         #34d399;
+            --ok-dim:     rgba(52,211,153,.12);
+            --warn:       #fbbf24;
+            --warn-dim:   rgba(251,191,36,.12);
+            --bad:        #f87171;
+            --bad-dim:    rgba(248,113,113,.12);
+            --txt:        #e8ecf5;
+            --txt2:       #9ba3c0;
+            --txt3:       #5a6180;
+            --sw:         260px;
+            --r:          14px;
+            --r-sm:       9px;
+            --trans:      .18s cubic-bezier(.4,0,.2,1);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--txt); display: flex; min-height: 100vh; line-height: 1.5; }
+        a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; cursor: pointer; }
+        input, select, textarea { font-family: inherit; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--brd2); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--txt3); }
+
+        /* ═══════════════════════════════════════ SIDEBAR ═══ */
+        .sidebar { width: var(--sw); background: var(--surf); border-right: 1px solid var(--brd); position: fixed; inset: 0 auto 0 0; z-index: 300; display: flex; flex-direction: column; transition: transform var(--trans); overflow: hidden; }
+        .brand { padding: 20px 18px 16px; border-bottom: 1px solid var(--brd); flex-shrink: 0; display: flex; align-items: center; gap: 11px; }
+        .brand-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--gold), var(--red)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .brand-text { flex: 1; min-width: 0; }
+        .brand-name { font-size: 13.5px; font-weight: 800; color: var(--txt); letter-spacing: -.2px; }
+        .brand-role { font-size: 10.5px; color: var(--gold); font-weight: 600; margin-top: 1px; }
+        .sb-search { padding: 12px 14px; border-bottom: 1px solid var(--brd); flex-shrink: 0; }
+        .sb-search-inner { background: var(--surf2); border: 1px solid var(--brd2); border-radius: 9px; display: flex; align-items: center; gap: 8px; padding: 7px 11px; }
+        .sb-search-inner i { color: var(--txt3); font-size: 12px; }
+        .sb-search-inner input { background: none; border: none; outline: none; color: var(--txt); font-size: 12.5px; flex: 1; }
+        .sb-search-inner input::placeholder { color: var(--txt3); }
+        .nav-scroll { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .nav-section { padding: 16px 18px 6px; }
+        .nav-section-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--txt3); }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; margin: 1px 6px; border-radius: var(--r-sm); color: var(--txt2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--trans); position: relative; }
+        .nav-item:hover { color: var(--txt); background: var(--surf2); }
+        .nav-item.act { color: var(--txt); background: var(--surf3); }
+        .nav-item .ni-ico { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; transition: all var(--trans); }
+        .nav-item:hover .ni-ico, .nav-item.act .ni-ico { transform: scale(1.08); }
+        .nav-item .ni-lbl { flex: 1; }
+        .c-ov .ni-ico { background: var(--gold-dim); color: var(--gold); }
+        .c-ov.act { border-left: 2px solid var(--gold); margin-left: 4px; padding-left: 12px; }
+        .grp-hd { display: flex; align-items: center; gap: 10px; padding: 8px 14px; margin: 1px 6px; border-radius: var(--r-sm); cursor: pointer; transition: all var(--trans); }
+        .grp-hd:hover { background: var(--surf2); }
+        .grp-hd .ni-ico { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .grp-hd .ni-lbl { flex: 1; font-size: 13px; font-weight: 600; color: var(--txt2); transition: color var(--trans); }
+        .grp-hd:hover .ni-lbl { color: var(--txt); }
+        .grp.open .ni-lbl { color: var(--txt); }
+        .grp-chv { color: var(--txt3); font-size: 10px; transition: transform var(--trans); }
+        .grp.open .grp-chv { transform: rotate(180deg); }
+        .grp-body { max-height: 0; overflow: hidden; transition: max-height .3s cubic-bezier(.4,0,.2,1); }
+        .grp.open .grp-body { max-height: 600px; }
+        .sub-item { display: flex; align-items: center; gap: 9px; padding: 7px 14px 7px 48px; margin: 0 6px; border-radius: var(--r-sm); color: var(--txt3); font-size: 12.5px; cursor: pointer; transition: all var(--trans); }
+        .sub-item i { width: 14px; text-align: center; font-size: 11px; }
+        .sub-item:hover { color: var(--txt); background: var(--surf2); }
+        .sub-item.act { color: var(--txt); background: var(--surf3); font-weight: 500; }
+        .sb-foot { padding: 12px 14px; border-top: 1px solid var(--brd); flex-shrink: 0; }
+        .u-card { background: var(--surf2); border: 1px solid var(--brd2); border-radius: 11px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+        .u-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--red)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff; flex-shrink: 0; overflow: hidden; }
+        .u-av img { width: 100%; height: 100%; object-fit: cover; }
+        .u-meta { flex: 1; min-width: 0; }
+        .u-meta strong { font-size: 12.5px; font-weight: 700; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .u-meta span { font-size: 10.5px; color: var(--gold); }
+        .u-actions { display: flex; gap: 4px; }
+        .u-btn { width: 28px; height: 28px; border-radius: 7px; background: var(--surf3); border: 1px solid var(--brd2); color: var(--txt3); font-size: 12px; display: flex; align-items: center; justify-content: center; transition: all var(--trans); }
+        .u-btn:hover { color: var(--bad); border-color: var(--bad); background: var(--bad-dim); }
+
+        /* ═══════════════════════════════════════ MAIN ═══ */
+        .main { margin-left: var(--sw); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+        .topbar { position: sticky; top: 0; z-index: 200; background: rgba(14,17,23,.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--brd); height: 56px; padding: 0 24px; display: flex; align-items: center; gap: 12px; }
+        .hamburger { display: none; background: none; border: none; color: var(--txt); font-size: 18px; }
+        .tb-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--txt3); }
+        .tb-breadcrumb .sep { font-size: 11px; }
+        .tb-breadcrumb .cur { color: var(--txt); font-weight: 600; }
+        .tb-spacer { flex: 1; }
+        .tb-actions { display: flex; align-items: center; gap: 8px; }
+        .tb-btn { height: 32px; padding: 0 13px; border-radius: 8px; background: var(--surf2); border: 1px solid var(--brd2); color: var(--txt2); font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: all var(--trans); }
+        .tb-btn:hover { color: var(--txt); background: var(--surf3); }
+        .tb-btn-pr { background: var(--gold); border-color: var(--gold); color: #000; font-weight: 700; }
+        .tb-btn-pr:hover { filter: brightness(1.1); }
+        .tb-notif { width: 32px; height: 32px; border-radius: 8px; background: var(--surf2); border: 1px solid var(--brd2); color: var(--txt2); font-size: 13px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: all var(--trans); }
+        .tb-notif:hover { color: var(--txt); }
+        .tb-notif-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 2px solid var(--surf); position: absolute; top: 4px; right: 4px; }
+        .content { padding: 24px; flex: 1; max-width: 1400px; width: 100%; }
+        .panel { display: none; animation: fadeUp .2s ease both; }
+        .panel.act { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        .pg-hd { margin-bottom: 22px; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+        .pg-hd-left h2 { font-size: 22px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 3px; }
+        .pg-hd-left p { color: var(--txt3); font-size: 13px; }
+
+        /* Alerts */
+        .msgs { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .alert { padding: 11px 14px; border-radius: var(--r-sm); font-size: 12.5px; display: flex; align-items: center; gap: 9px; animation: fadeUp .2s ease both; }
+        .alert-close { margin-left: auto; background: none; border: none; color: inherit; opacity: .5; font-size: 13px; cursor: pointer; padding: 0; }
+        .alert-close:hover { opacity: 1; }
+        .a-ok  { background: var(--ok-dim);  border: 1px solid rgba(52,211,153,.2);  color: var(--ok); }
+        .a-bad { background: var(--bad-dim); border: 1px solid rgba(248,113,113,.2); color: var(--bad); }
+        .a-warn{ background: var(--warn-dim);border: 1px solid rgba(251,191,36,.2);  color: var(--warn); }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+        .stat-card { background: var(--surf); border: 1px solid var(--brd); border-radius: var(--r); padding: 20px; position: relative; overflow: hidden; transition: transform var(--trans), border-color var(--trans); cursor: default; }
+        .stat-card:hover { transform: translateY(-2px); border-color: var(--brd2); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+        .stat-card.c-gold::before { background: linear-gradient(90deg, var(--gold), transparent); }
+        .stat-card.c-teal::before { background: linear-gradient(90deg, var(--teal), transparent); }
+        .stat-card.c-red::before  { background: linear-gradient(90deg, var(--red), transparent); }
+        .stat-card.c-purp::before { background: linear-gradient(90deg, var(--purp), transparent); }
+        .stat-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+        .stat-ico { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .c-gold .stat-ico { background: var(--gold-dim); color: var(--gold); }
+        .c-teal .stat-ico { background: var(--teal-dim); color: var(--teal); }
+        .c-red  .stat-ico { background: var(--red-dim);  color: var(--red); }
+        .c-purp .stat-ico { background: var(--purp-dim); color: var(--purp); }
+        .stat-trend { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; display: flex; align-items: center; gap: 3px; }
+        .stat-trend.up   { background: var(--ok-dim);  color: var(--ok); }
+        .stat-trend.neu  { background: var(--surf2);   color: var(--txt3); }
+        .stat-val { font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-bottom: 3px; }
+        .stat-lbl { font-size: 12px; color: var(--txt3); font-weight: 500; }
+        .stat-sub { font-size: 11px; color: var(--txt3); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--brd); }
+
+        /* Mini stats */
+        .mini-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .mini-card { background: var(--surf); border: 1px solid var(--brd); border-radius: 11px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; transition: transform var(--trans); }
+        .mini-card:hover { transform: translateY(-1px); }
+        .mini-ico { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .mini-val { font-size: 20px; font-weight: 800; line-height: 1; }
+        .mini-lbl { font-size: 11px; color: var(--txt3); margin-top: 2px; font-weight: 500; }
+
+        /* Charts */
+        .charts-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .chart-card { background: var(--surf); border: 1px solid var(--brd); border-radius: var(--r); padding: 20px; }
+        .chart-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .chart-hd h4 { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+        .chart-body { position: relative; height: 210px; }
+        .chart-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+        .cl-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--txt3); }
+        .cl-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .chart-tabs { display: flex; gap: 3px; }
+        .ct-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: none; border: none; color: var(--txt3); cursor: pointer; transition: all var(--trans); }
+        .ct-btn.act { background: var(--surf3); color: var(--txt); }
+
+        /* Bottom grid */
+        .bottom-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+        .card { background: var(--surf); border: 1px solid var(--brd); border-radius: var(--r); overflow: hidden; }
+        .card-hd { padding: 16px 18px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .card-hd h3 { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+        .card-body { padding: 6px 0; }
+        .card-ft { padding: 12px 18px; border-top: 1px solid var(--brd); }
+
+        /* Table */
+        .tw { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { text-align: left; font-size: 10.5px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--txt3); padding: 10px 16px; border-bottom: 1px solid var(--brd); white-space: nowrap; }
+        tbody tr { transition: background var(--trans); }
+        tbody tr:hover { background: rgba(255,255,255,.02); }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody td { padding: 11px 16px; font-size: 12.5px; border-bottom: 1px solid rgba(30,36,54,.5); vertical-align: middle; }
+        /* Fila eliminada — efecto visual */
+        tbody tr.removing { opacity: 0; transform: translateX(20px); transition: opacity .3s ease, transform .3s ease; }
+
+        /* Tags */
+        .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+        .t-ok   { background: var(--ok-dim);   color: var(--ok); }
+        .t-bad  { background: var(--bad-dim);  color: var(--bad); }
+        .t-warn { background: var(--warn-dim); color: var(--warn); }
+        .t-teal { background: var(--teal-dim); color: var(--teal); }
+        .t-purp { background: var(--purp-dim); color: var(--purp); }
+        .t-red  { background: var(--red-dim);  color: var(--red); }
+        .t-gold { background: var(--gold-dim); color: var(--gold); }
+
+        /* Btns */
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: var(--r-sm); font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; border: none; transition: all var(--trans); white-space: nowrap; }
+        .btn-sm { padding: 5px 11px; font-size: 11.5px; border-radius: 7px; gap: 5px; }
+        .btn-pr  { background: var(--gold); color: #000; }
+        .btn-pr:hover { filter: brightness(1.1); }
+        .btn-gh  { background: var(--surf2); color: var(--txt2); border: 1px solid var(--brd2); }
+        .btn-gh:hover { background: var(--surf3); color: var(--txt); }
+        .btn-ok  { background: var(--ok-dim);   color: var(--ok);   border: 1px solid rgba(52,211,153,.2); }
+        .btn-ok:hover  { background: rgba(52,211,153,.2); }
+        .btn-bd  { background: var(--bad-dim);  color: var(--bad);  border: 1px solid rgba(248,113,113,.2); }
+        .btn-bd:hover  { background: rgba(248,113,113,.2); }
+        .btn-tl  { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(56,217,192,.2); }
+        .btn-tl:hover  { background: rgba(56,217,192,.2); }
+        .btn-purp{ background: var(--purp-dim); color: var(--purp); border: 1px solid rgba(139,124,246,.2); }
+        .btn-purp:hover { background: rgba(139,124,246,.2); }
+        .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 7px; }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+        /* Forms */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-grid.g1 { grid-template-columns: 1fr; }
+        .fg { display: flex; flex-direction: column; gap: 5px; }
+        .fg.full { grid-column: 1/-1; }
+        .fg label { font-size: 11px; font-weight: 700; color: var(--txt3); text-transform: uppercase; letter-spacing: .5px; }
+        .fg input, .fg select, .fg textarea { background: var(--surf2); border: 1.5px solid var(--brd2); border-radius: 9px; padding: 9px 12px; color: var(--txt); font-size: 13px; outline: none; transition: border-color var(--trans); width: 100%; }
+        .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--gold); }
+        .fg textarea { resize: vertical; min-height: 90px; }
+        .fg select option { background: var(--surf2); }
+        .fg input[type="file"] { padding: 7px 12px; cursor: pointer; }
+        .fg input[type="color"] { height: 40px; cursor: pointer; padding: 3px; }
+        .form-foot { display: flex; gap: 9px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--brd); }
+
+        /* Toggle */
+        .tg-row { display: flex; align-items: center; gap: 9px; }
+        .tg-row span { font-size: 12.5px; }
+        label.tg { position: relative; width: 38px; height: 21px; cursor: pointer; }
+        .tg input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .tg-sl { position: absolute; inset: 0; background: var(--brd2); border-radius: 99px; transition: .22s; }
+        .tg-sl::before { content: ''; position: absolute; width: 15px; height: 15px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .22s; }
+        .tg input:checked + .tg-sl { background: var(--ok); }
+        .tg input:checked + .tg-sl::before { transform: translateX(17px); }
+
+        /* Avatar / User row */
+        .av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--purp), var(--teal)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; color: #fff; flex-shrink: 0; }
+        .user-row { display: flex; align-items: center; gap: 9px; }
+        .user-info strong { font-size: 12.5px; font-weight: 600; display: block; }
+        .user-info small { font-size: 11px; color: var(--txt3); }
+        .acts { display: flex; gap: 5px; }
+
+        /* Progress */
+        .prog-list { display: flex; flex-direction: column; gap: 13px; padding: 16px 18px; }
+        .prog-item {}
+        .prog-meta { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .prog-lbl { font-size: 12.5px; font-weight: 500; }
+        .prog-val { font-size: 11.5px; color: var(--txt3); }
+        .prog-bar { height: 4px; background: var(--brd); border-radius: 99px; overflow: hidden; }
+        .prog-fill { height: 100%; border-radius: 99px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+
+        /* News */
+        .news-item { display: flex; align-items: flex-start; gap: 11px; padding: 12px 18px; border-bottom: 1px solid rgba(30,36,54,.5); transition: background var(--trans); }
+        .news-item:hover { background: rgba(255,255,255,.018); }
+        .news-item:last-child { border-bottom: none; }
+        .news-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+        .news-body { flex: 1; min-width: 0; }
+        .news-ttl { font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .news-meta { font-size: 11px; color: var(--txt3); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .news-right { flex-shrink: 0; }
+
+        /* Empty */
+        .empty-state { text-align: center; padding: 48px 20px; color: var(--txt3); }
+        .empty-state i { font-size: 40px; opacity: .12; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 13px; }
+
+        /* Quick actions */
+        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .qa-btn { background: var(--surf); border: 1.5px solid var(--brd); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; cursor: pointer; transition: all var(--trans); }
+        .qa-btn:hover { border-color: var(--brd2); background: var(--surf2); transform: translateY(-2px); }
+        .qa-btn .qa-ico { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .qa-btn .qa-lbl { font-size: 12.5px; font-weight: 600; }
+        .qa-btn .qa-sub { font-size: 11px; color: var(--txt3); }
+
+        /* Two-col */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .search-input { background: var(--surf2); border: 1.5px solid var(--brd2); border-radius: 9px; padding: 7px 12px; color: var(--txt); font-size: 12.5px; outline: none; transition: border-color var(--trans); width: 200px; }
+        .search-input:focus { border-color: var(--gold); }
+        .search-input::placeholder { color: var(--txt3); }
+        .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+        .status-ok   { background: var(--ok); }
+        .status-bad  { background: var(--bad); }
+
+        /* Download cards */
+        .dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .dl-card { background: var(--surf); border: 1.5px solid var(--brd); border-radius: var(--r); padding: 22px 18px; display: flex; flex-direction: column; gap: 12px; transition: all var(--trans); }
+        .dl-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.4); }
+        .dl-ico { font-size: 32px; }
+        .dl-ttl { font-size: 14px; font-weight: 700; }
+        .dl-dsc { font-size: 12px; color: var(--txt3); line-height: 1.55; flex: 1; }
+
+        /* ═══ MODAL ═══ */
+        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.7); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: var(--surf); border: 1px solid var(--brd2); border-radius: 18px; padding: 28px; width: 100%; max-width: 500px; margin: 16px; box-shadow: 0 30px 80px rgba(0,0,0,.6); animation: fadeUp .2s ease both; }
+        .modal-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; gap: 12px; }
+        .modal-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; }
+        .modal-sub { font-size: 12px; color: var(--txt3); margin-top: 3px; }
+        .modal-x { width: 32px; height: 32px; border-radius: 9px; background: var(--surf2); border: 1px solid var(--brd2); color: var(--txt3); font-size: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--trans); }
+        .modal-x:hover { color: var(--bad); border-color: var(--bad); }
+        .modal-user-info { background: var(--surf2); border: 1px solid var(--brd2); border-radius: 11px; padding: 12px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 11px; }
+        .modal-av { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--purp), var(--teal)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0; }
+        .modal-fields { display: flex; flex-direction: column; gap: 16px; }
+        .modal-field label { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--txt3); margin-bottom: 6px; }
+        .modal-select, .modal-input { background: var(--surf2); border: 1.5px solid var(--brd2); border-radius: 9px; padding: 10px 13px; color: var(--txt); font-family: inherit; font-size: 13px; outline: none; width: 100%; transition: border-color var(--trans); }
+        .modal-select:focus, .modal-input:focus { border-color: var(--purp); }
+        .modal-hint { font-size: 11px; color: var(--txt3); margin-top: 5px; }
+        .modal-status { background: var(--surf2); border: 1px solid var(--brd2); border-radius: 11px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .modal-status-info strong { font-size: 13px; font-weight: 600; display: block; }
+        .modal-status-info span { font-size: 11.5px; color: var(--txt3); }
+        .modal-ft { display: flex; gap: 9px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--brd); }
+
+        /* ═══ CONFIRM MODAL ═══ */
+        .confirm-modal { max-width: 380px; }
+        .confirm-ico { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+        .confirm-ico.danger { background: var(--bad-dim); color: var(--bad); }
+        .confirm-ico.warn   { background: var(--warn-dim); color: var(--warn); }
+        .confirm-title { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+        .confirm-msg { font-size: 13px; color: var(--txt3); line-height: 1.55; margin-bottom: 22px; }
+
+        /* Toast */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9998; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background: var(--surf2); border: 1px solid var(--brd2); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; min-width: 240px; max-width: 340px; box-shadow: 0 8px 30px rgba(0,0,0,.5); animation: slideUp .25s ease both; pointer-events: all; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        @keyframes slideOut { to { opacity: 0; transform: translateY(10px); } }
+        .toast-ico { font-size: 16px; flex-shrink: 0; }
+        .toast-msg { flex: 1; font-weight: 500; }
+        .toast.t-ok   { border-left: 3px solid var(--ok);   }
+        .toast.t-bad  { border-left: 3px solid var(--bad);  }
+        .toast.t-warn { border-left: 3px solid var(--warn); }
+
+        /* Notif panel */
+        .notif-panel { position: absolute; top: 56px; right: 0; width: 320px; background: var(--surf); border: 1px solid var(--brd2); border-radius: var(--r); box-shadow: 0 20px 50px rgba(0,0,0,.5); z-index: 500; display: none; }
+        .notif-panel.open { display: block; animation: fadeUp .15s ease both; }
+        .notif-hd { padding: 14px 16px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; justify-content: space-between; }
+        .notif-hd h4 { font-size: 13.5px; font-weight: 700; }
+        .notif-mark { font-size: 11px; color: var(--gold); background: none; border: none; cursor: pointer; padding: 0; }
+        .notif-item { padding: 12px 16px; border-bottom: 1px solid rgba(30,36,54,.5); display: flex; gap: 10px; transition: background var(--trans); }
+        .notif-item:hover { background: var(--surf2); }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+        .notif-body { flex: 1; min-width: 0; }
+        .notif-msg  { font-size: 12px; font-weight: 500; }
+        .notif-time { font-size: 10.5px; color: var(--txt3); margin-top: 2px; }
+        .notif-unread { background: rgba(245,166,35,.04); border-left: 2px solid var(--gold); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-row { grid-template-columns: 1fr; }
+            .bottom-grid { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: none; }
+            .main { margin-left: 0; }
+            .hamburger { display: flex; align-items: center; }
+            .two-col { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .mini-grid { grid-template-columns: repeat(2, 1fr); }
+            .content { padding: 14px; }
+            .quick-actions { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 540px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .mini-grid  { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ─── Spinner dentro de botón ─── */
+        .btn-loading { position: relative; pointer-events: none; }
+        .btn-loading::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: inherit; display: flex; align-items: center; justify-content: center; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin { animation: spin .6s linear infinite; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<!-- OVERLAY MOBILE -->
+<div id="sb-overlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:299;backdrop-filter:blur(3px);"></div>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside class="sidebar" id="sidebar">
+    <div class="brand">
+        <div class="brand-logo">🏛</div>
+        <div class="brand-text">
+            <div class="brand-name">Popayán All Tour</div>
+            <div class="brand-role">Panel Administrador</div>
+        </div>
+    </div>
+    <div class="sb-search">
+        <div class="sb-search-inner">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Buscar sección…" id="sb-search-in" oninput="searchNav(this.value)">
+        </div>
+    </div>
+    <nav class="nav-scroll" id="nav-scroll">
+        <div class="nav-section"><span class="nav-section-label">Principal</span></div>
+        <div class="nav-item c-ov act" data-panel="overview" onclick="showPanel('overview',this)">
+            <div class="ni-ico"><i class="fas fa-chart-pie"></i></div>
+            <span class="ni-lbl">Resumen General</span>
+        </div>
+        <div class="nav-section"><span class="nav-section-label">Contenido</span></div>
+        <div class="grp" id="grp-news">
+            <div class="grp-hd" onclick="toggleGrp('grp-news')">
+                <div class="ni-ico" style="background:var(--red-dim);color:var(--red);"><i class="fas fa-newspaper"></i></div>
+                <span class="ni-lbl">Noticias</span>
+                <i class="fas fa-chevron-down grp-chv"></i>
+            </div>
+            <div class="grp-body">
+                <div class="sub-item" data-panel="crear-noticia" onclick="showPanel('crear-noticia',this)"><i class="fas fa-pen-nib"></i> Crear Noticia</div>
+                <div class="sub-item" data-panel="lista-noticias" onclick="showPanel('lista-noticias',this)"><i class="fas fa-list-ul"></i> Todas las Noticias</div>
+                <div class="sub-item" data-panel="crear-cat" onclick="showPanel('crear-cat',this)"><i class="fas fa-plus-circle"></i> Crear Categoría</div>
+                <div class="sub-item" data-panel="lista-cat" onclick="showPanel('lista-cat',this)"><i class="fas fa-tags"></i> Ver Categorías</div>
+            </div>
+        </div>
+        <div class="grp" id="grp-site">
+            <div class="grp-hd" onclick="toggleGrp('grp-site')">
+                <div class="ni-ico" style="background:var(--teal-dim);color:var(--teal);"><i class="fas fa-map-location-dot"></i></div>
+                <span class="ni-lbl">Sitios Turísticos</span>
+                <i class="fas fa-chevron-down grp-chv"></i>
+            </div>
+            <div class="grp-body">
+                <div class="sub-item" data-panel="agregar-sitio" onclick="showPanel('agregar-sitio',this)"><i class="fas fa-plus"></i> Agregar Sitio</div>
+                <div class="sub-item" data-panel="lista-sitios" onclick="showPanel('lista-sitios',this)">
+                    <i class="fas fa-store"></i> Todos los Sitios
+                    <span class="tag t-teal" style="margin-left:auto;font-size:10px;padding:1px 7px;">{{ total_establecimientos|default:"0" }}</span>
+                </div>
+                <div class="sub-item" data-panel="crear-tipo" onclick="showPanel('crear-tipo',this)"><i class="fas fa-layer-group"></i> Crear Tipo</div>
+                <div class="sub-item" data-panel="lista-tipos" onclick="showPanel('lista-tipos',this)"><i class="fas fa-list"></i> Ver Tipos</div>
+                <div class="sub-item" data-panel="lista-resenas" onclick="showPanel('lista-resenas',this)">
+                    <i class="fas fa-star"></i> Ver Reseñas
+                     <span class="tag t-warn" style="margin-left:auto;font-size:10px;padding:1px 7px;" id="sb-count-resenas">...</span>
+                </div>
+            </div>
+        </div>
+        <div class="nav-section"><span class="nav-section-label">Administración</span></div>
+        <div class="grp" id="grp-usr">
+            <div class="grp-hd" onclick="toggleGrp('grp-usr')">
+                <div class="ni-ico" style="background:var(--purp-dim);color:var(--purp);"><i class="fas fa-users-gear"></i></div>
+                <span class="ni-lbl">Usuarios & Roles</span>
+                <i class="fas fa-chevron-down grp-chv"></i>
+            </div>
+            <div class="grp-body">
+                <div class="sub-item" data-panel="lista-usuarios" onclick="showPanel('lista-usuarios',this)">
+                    <i class="fas fa-users"></i> Todos los Usuarios
+                    <span class="tag t-purp" style="margin-left:auto;font-size:10px;padding:1px 7px;" id="sb-count-usuarios">{{ usuarios_registrados|default:"0" }}</span>
+                </div>
+                <div class="sub-item" data-panel="crear-rol" onclick="showPanel('crear-rol',this)"><i class="fas fa-user-tag"></i> Crear Rol</div>
+                <div class="sub-item" data-panel="lista-roles" onclick="showPanel('lista-roles',this)"><i class="fas fa-list"></i> Ver Roles</div>
+            </div>
+        </div>
+        <div class="grp" id="grp-docs">
+            <div class="grp-hd" onclick="toggleGrp('grp-docs')">
+                <div class="ni-ico" style="background:var(--gold-dim);color:var(--gold);"><i class="fas fa-file-arrow-down"></i></div>
+                <span class="ni-lbl">Documentos</span>
+                <i class="fas fa-chevron-down grp-chv"></i>
+            </div>
+            <div class="grp-body">
+                <div class="sub-item" data-panel="docs" onclick="showPanel('docs',this)"><i class="fas fa-folder-open"></i> Ver Todos</div>
+                <a class="sub-item" href="{% url 'exportar_admin_pdf' %}"><i class="fas fa-file-pdf" style="color:var(--bad);"></i> PDF Admin</a>
+                <a class="sub-item" href="{% url 'exportar_admin_excel' %}"><i class="fas fa-file-excel" style="color:var(--ok);"></i> Excel Admin</a>
+                <a class="sub-item" href="{% url 'pdf_historia_completa' %}"><i class="fas fa-scroll" style="color:var(--gold);"></i> Historia PDF</a>
+            </div>
+        </div>
+    </nav>
+    <div class="sb-foot">
+        <div class="u-card">
+            <div class="u-av">
+                {% if usuario.get_imagen_perfil %}<img src="{{ usuario.get_imagen_perfil }}" alt="">
+                {% else %}{{ usuario.nombre_completo|first|upper }}{% endif %}
+            </div>
+            <div class="u-meta">
+                <strong>{{ usuario.nombre_completo|truncatechars:22 }}</strong>
+                <span>Administrador</span>
+            </div>
+            <div class="u-actions">
+                <a class="u-btn" href="{% url 'perfilUser' %}" title="Mi perfil"><i class="fas fa-user"></i></a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="u-btn" title="Cerrar sesión"><i class="fas fa-right-from-bracket"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<main class="main">
+    <header class="topbar" style="position:relative;">
+        <button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <div class="tb-breadcrumb">
+            <span>Admin</span>
+            <span class="sep"><i class="fas fa-chevron-right" style="font-size:9px;"></i></span>
+            <span class="cur" id="tb-panel-name">Resumen General</span>
+        </div>
+        <div class="tb-spacer"></div>
+        <div class="tb-actions">
+            <span style="font-size:11.5px;color:var(--txt3);" id="tb-date"></span>
+            <div class="tb-notif" onclick="toggleNotif()" id="tb-notif">
+                <i class="fas fa-bell"></i>
+                <div class="tb-notif-dot" id="notif-dot"></div>
+            </div>
+
+            <!-- Botón Telegram — pegar antes del <a class="tb-btn tb-btn-pr" href="{% url 'home' %}"> -->
+<div style="position:relative;" id="tg-wrap">
+    <button class="tb-btn" id="btn-telegram" onclick="toggleTgPanel()"
+        style="background:#0088cc;border-color:#0088cc;color:#fff;font-weight:700;gap:7px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+        </svg>
+        Telegram
+    </button>
+
+    <!-- Panel flotante -->
+    <div id="tg-panel" style="
+        display:none;
+        position:absolute;
+        top:calc(100% + 10px);
+        right:0;
+        width:260px;
+        background:var(--surf);
+        border:1px solid var(--brd2);
+        border-radius:16px;
+        box-shadow:0 20px 50px rgba(0,0,0,.6);
+        z-index:999;
+        overflow:hidden;
+        animation:fadeUp .18s ease both;
+    ">
+        <!-- Header -->
+        <div style="background:#0088cc;padding:16px;text-align:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white" style="margin-bottom:6px;display:block;margin-inline:auto;">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+            <div style="color:#fff;font-weight:800;font-size:14px;">Popayán All Tour Bot</div>
+            <div style="color:rgba(255,255,255,.75);font-size:11px;margin-top:2px;">@PopayanAllTour_Bot</div>
+        </div>
+
+        <!-- QR -->
+        <div style="padding:16px;text-align:center;">
+            <p style="font-size:11.5px;color:var(--txt3);margin-bottom:12px;">
+                Escanea el código o haz clic para abrir el bot
+            </p>
+            <!-- QR generado con api.qrserver.com — sin dependencias externas -->
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://t.me/PopayanAllTour_Bot&color=0088cc&bgcolor=ffffff&margin=8"
+                alt="QR Telegram Bot"
+                style="width:140px;height:140px;border-radius:12px;display:block;margin:0 auto 14px;">
+            <a href="https://t.me/PopayanAllTour_Bot" target="_blank" rel="noopener"
+                style="
+                    display:flex;align-items:center;justify-content:center;gap:8px;
+                    background:#0088cc;color:#fff;
+                    padding:10px 16px;border-radius:10px;
+                    font-size:13px;font-weight:700;text-decoration:none;
+                    transition:filter .18s;
+                "
+                onmouseover="this.style.filter='brightness(1.15)'"
+                onmouseout="this.style.filter='none'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                Abrir en Telegram
+            </a>
+        </div>
+    </div>
+</div>
+
+            <a class="tb-btn tb-btn-pr" href="{% url 'home' %}">
+                <i class="fas fa-globe" style="font-size:11px;"></i> Ver sitio
+            </a>
+        </div>
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-hd">
+                <h4>Notificaciones</h4>
+                <button class="notif-mark" onclick="markAllRead()">Marcar todo leído</button>
+            </div>
+            <div class="notif-list">
+                {% for n in noticias_recientes|slice:":3" %}
+                <div class="notif-item {% if forloop.first %}notif-unread{% endif %}">
+                    <div class="notif-ico" style="background:var(--red-dim);color:var(--red);"><i class="fas fa-newspaper"></i></div>
+                    <div class="notif-body">
+                        <div class="notif-msg">{{ n.titulo|truncatechars:40 }}</div>
+                        <div class="notif-time">{{ n.fecha_creacion|timesince }} ago</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="padding:20px;text-align:center;color:var(--txt3);font-size:12.5px;">Sin notificaciones</div>
+                {% endfor %}
+            </div>
+        </div>
+    </header>
+
+    <div class="content">
+        {% if messages %}
+        <div class="msgs" id="msgs-container">
+            {% for m in messages %}
+            <div class="alert {% if m.tags == 'error' %}a-bad{% elif m.tags == 'warning' %}a-warn{% else %}a-ok{% endif %}">
+                <i class="fas {% if m.tags == 'error' %}fa-circle-exclamation{% elif m.tags == 'warning' %}fa-triangle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                {{ m }}
+                <button class="alert-close" onclick="this.closest('.alert').remove()"><i class="fas fa-xmark"></i></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- ════ OVERVIEW ════ -->
+        <div class="panel act" id="panel-overview">
+            <div class="pg-hd">
+                <div class="pg-hd-left">
+                    <h2>Bienvenido, {{ usuario.nombre_completo|truncatechars:24 }} 👋</h2>
+                    <p>Vista general del sistema · Popayán All Tour</p>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn btn-gh btn-sm" onclick="refreshStats()"><i class="fas fa-rotate-right"></i> Actualizar</button>
+                    <button class="btn btn-pr btn-sm" onclick="showPanel('crear-noticia')"><i class="fas fa-pen-nib"></i> Nueva noticia</button>
+                </div>
+            </div>
+            <div class="quick-actions">
+                <div class="qa-btn" onclick="showPanel('crear-noticia')">
+                    <div class="qa-ico" style="background:var(--red-dim);color:var(--red);"><i class="fas fa-pen-nib"></i></div>
+                    <div class="qa-lbl">Crear Noticia</div>
+                    <div class="qa-sub">Publicar contenido</div>
+                </div>
+                <div class="qa-btn" onclick="showPanel('agregar-sitio')">
+                    <div class="qa-ico" style="background:var(--teal-dim);color:var(--teal);"><i class="fas fa-location-dot"></i></div>
+                    <div class="qa-lbl">Agregar Sitio</div>
+                    <div class="qa-sub">Nuevo establecimiento</div>
+                </div>
+                <div class="qa-btn" onclick="showPanel('lista-usuarios')">
+                    <div class="qa-ico" style="background:var(--purp-dim);color:var(--purp);"><i class="fas fa-users"></i></div>
+                    <div class="qa-lbl">Gestionar Usuarios</div>
+                    <div class="qa-sub" id="qa-count-usr">{{ usuarios_registrados|default:"0" }} registrados</div>
+                </div>
+                <div class="qa-btn" onclick="showPanel('docs')">
+                    <div class="qa-ico" style="background:var(--gold-dim);color:var(--gold);"><i class="fas fa-file-arrow-down"></i></div>
+                    <div class="qa-lbl">Exportar Datos</div>
+                    <div class="qa-sub">PDF / Excel</div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card c-gold">
+                    <div class="stat-top">
+                        <div class="stat-ico"><i class="fas fa-store"></i></div>
+                        <span class="stat-trend neu"><i class="fas fa-minus"></i> activos</span>
+                    </div>
+                    <div class="stat-val" id="sv-establecimientos">{{ total_establecimientos|default:"0" }}</div>
+                    <div class="stat-lbl">Establecimientos</div>
+                    <div class="stat-sub">Sitios turísticos registrados</div>
+                </div>
+                <div class="stat-card c-teal">
+                    <div class="stat-top">
+                        <div class="stat-ico"><i class="fas fa-users"></i></div>
+                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> activos</span>
+                    </div>
+                    <div class="stat-val" id="sv-usuarios">{{ usuarios_registrados|default:"0" }}</div>
+                    <div class="stat-lbl">Usuarios Registrados</div>
+                    <div class="stat-sub">Cuentas activas en el sistema</div>
+                </div>
+                <div class="stat-card c-red">
+                    <div class="stat-top">
+                        <div class="stat-ico"><i class="fas fa-newspaper"></i></div>
+                        <span class="stat-trend up"><i class="fas fa-arrow-up"></i> nuevas</span>
+                    </div>
+                    <div class="stat-val" id="sv-noticias">{{ noticias_recientes.count|default:"0" }}</div>
+                    <div class="stat-lbl">Noticias</div>
+                    <div class="stat-sub">Total de publicaciones</div>
+                </div>
+                <div class="stat-card c-purp">
+                    <div class="stat-top">
+                        <div class="stat-ico"><i class="fas fa-user-tag"></i></div>
+                        <span class="stat-trend neu"><i class="fas fa-minus"></i> tipos</span>
+                    </div>
+                    <div class="stat-val">{{ todos_roles.count|default:"0" }}</div>
+                    <div class="stat-lbl">Roles del Sistema</div>
+                    <div class="stat-sub">{{ todos_tipos.count|default:"0" }} tipos de sitio</div>
+                </div>
+            </div>
+            <div class="mini-grid">
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--purp-dim);color:var(--purp);"><i class="fas fa-person-walking"></i></div>
+                    <div><div class="mini-val" id="mv-turistas">{{ roles_data.turista|default:"0" }}</div><div class="mini-lbl">Turistas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--teal-dim);color:var(--teal);"><i class="fas fa-briefcase"></i></div>
+                    <div><div class="mini-val" id="mv-empresarios">{{ roles_data.empresario|default:"0" }}</div><div class="mini-lbl">Empresarios</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--ok-dim);color:var(--ok);"><i class="fas fa-circle-check"></i></div>
+                    <div><div class="mini-val" id="mv-activos">{{ usuarios_activos|default:usuarios_registrados|default:"0" }}</div><div class="mini-lbl">Cuentas Activas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--bad-dim);color:var(--bad);"><i class="fas fa-ban"></i></div>
+                    <div><div class="mini-val" id="mv-suspendidos">{{ usuarios_suspendidos|default:"0" }}</div><div class="mini-lbl">Suspendidos</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--red-dim);color:var(--red);"><i class="fas fa-rss"></i></div>
+                    <div><div class="mini-val" id="mv-publicadas">{{ noticias_publicadas|default:"0" }}</div><div class="mini-lbl">Publicadas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--warn-dim);color:var(--warn);"><i class="fas fa-pen-ruler"></i></div>
+                    <div><div class="mini-val" id="mv-borrador">{{ noticias_borrador|default:"0" }}</div><div class="mini-lbl">Borradores</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--gold-dim);color:var(--gold);"><i class="fas fa-star"></i></div>
+                    <div><div class="mini-val" id="mv-destacadas">{{ noticias_destacadas|default:"0" }}</div><div class="mini-lbl">Destacadas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--teal-dim);color:var(--teal);"><i class="fas fa-tags"></i></div>
+                    <div><div class="mini-val">{{ todas_categorias.count|default:"0" }}</div><div class="mini-lbl">Categorías</div></div>
+                </div>
+            </div>
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-hd">
+                        <h4><i class="fas fa-chart-column" style="color:var(--teal);"></i> Sitios por Tipo</h4>
+                        <div class="chart-tabs">
+                            <button class="ct-btn act" onclick="setChartType('bar',this)">Barras</button>
+                            <button class="ct-btn" onclick="setChartType('doughnut',this)">Dona</button>
+                        </div>
+                    </div>
+                    <div class="chart-body"><canvas id="chartEstab"></canvas></div>
+                    <div class="chart-legend" id="legend-estab"></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-hd">
+                        <h4><i class="fas fa-chart-pie" style="color:var(--purp);"></i> Usuarios por Rol</h4>
+                    </div>
+                    <div class="chart-body"><canvas id="chartUsers"></canvas></div>
+                    <div class="chart-legend" id="legend-users"></div>
+                </div>
+            </div>
+            <div class="bottom-grid">
+                <div>
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-hd">
+                            <h3><i class="fas fa-trophy" style="color:var(--gold);font-size:12px;"></i> Top Sitios Turísticos</h3>
+                            <button class="btn btn-gh btn-sm" onclick="showPanel('lista-sitios')">Ver todos →</button>
+                        </div>
+                        <div class="tw">
+                            <table>
+                                <thead><tr><th>#</th><th>Nombre</th><th>Tipo</th><th>Acciones</th></tr></thead>
+                                <tbody>
+                                {% for e in top_establecimientos %}
+                                <tr id="row-estab-{{ e.id }}">
+                                    <td><span style="color:var(--txt3);font-size:12px;font-weight:700;">{{ forloop.counter }}</span></td>
+                                    <td><strong>{{ e.nombre }}</strong></td>
+                                    <td><span class="tag t-teal">{{ e.tipo }}</span></td>
+                                    <td>
+                                        <div class="acts">
+                                            <button class="btn btn-bd btn-sm btn-icon"
+                                                title="Desactivar sitio"
+                                                onclick="confirmarEliminarEstab({{ e.id }}, '{{ e.nombre|escapejs }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="4"><div class="empty-state"><i class="fas fa-store"></i><p>Sin sitios aún</p></div></td></tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-hd">
+                            <h3><i class="fas fa-newspaper" style="color:var(--red);font-size:12px;"></i> Noticias Recientes</h3>
+                            <button class="btn btn-gh btn-sm" onclick="showPanel('lista-noticias')">Ver todas →</button>
+                        </div>
+                        <div class="news-list">
+                            {% for n in noticias_recientes %}
+                            <div class="news-item">
+                                <div class="news-dot" style="background:{% if n.publicada %}var(--ok){% else %}var(--warn){% endif %};"></div>
+                                <div class="news-body">
+                                    <div class="news-ttl">{{ n.titulo|truncatechars:50 }}</div>
+                                    <div class="news-meta">
+                                        {% if n.categoria %}<span class="tag t-red" style="font-size:9.5px;padding:1px 7px;">{{ n.categoria }}</span>{% endif %}
+                                        <span>{{ n.autor.nombre_completo|default:"—"|truncatechars:16 }}</span>
+                                    </div>
+                                </div>
+                                <div class="news-right">
+                                    {% if n.publicada %}<span class="tag t-ok" style="font-size:9.5px;padding:1px 7px;">Publicada</span>
+                                    {% else %}<span class="tag t-warn" style="font-size:9.5px;padding:1px 7px;">Borrador</span>{% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state"><i class="fas fa-newspaper"></i><p>Sin noticias aún</p></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                    <div class="card">
+                        <div class="card-hd"><h3><i class="fas fa-users-gear" style="color:var(--purp);font-size:12px;"></i> Distribución por Rol</h3></div>
+                        <div class="prog-list">
+                            {% for r in todos_roles %}
+                            {% with count=r.usuario_set.count total=usuarios_registrados %}
+                            <div class="prog-item">
+                                <div class="prog-meta">
+                                    <span class="prog-lbl">{{ r.rol|capfirst }}</span>
+                                    <span class="prog-val">{{ count }}</span>
+                                </div>
+                                <div class="prog-bar">
+                                    <div class="prog-fill"
+                                        style="width:{% if total and total > 0 %}{% widthratio count total 100 %}{% else %}0{% endif %}%;
+                                               background:{% cycle 'var(--purp)' 'var(--teal)' 'var(--gold)' 'var(--red)' 'var(--ok)' %};">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endwith %}
+                            {% empty %}<p style="text-align:center;color:var(--txt3);font-size:12.5px;padding:16px;">Sin roles</p>{% endfor %}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-hd">
+                            <h3><i class="fas fa-layer-group" style="color:var(--teal);font-size:12px;"></i> Tipos de Sitio</h3>
+                            <button class="btn btn-gh btn-sm" onclick="showPanel('lista-tipos')">Ver →</button>
+                        </div>
+                        <div class="tw">
+                            <table>
+                                <thead><tr><th>Tipo</th><th>Sitios</th><th>Acceso</th></tr></thead>
+                                <tbody>
+                                    {% for t in todos_tipos %}
+                                    <tr>
+                                        <td><span class="tag t-teal">{{ t.nombre }}</span></td>
+                                        <td style="color:var(--txt3);">{{ t.establecimientos.count }}</td>
+                                        <td><a href="{% url 'listar_hoteles' %}" class="btn btn-gh btn-sm" style="font-size:10.5px;padding:3px 9px;"><i class="fas fa-arrow-right"></i></a></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="3"><div class="empty-state" style="padding:20px;"><i class="fas fa-layer-group"></i><p>Sin tipos</p></div></td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-hd"><h3><i class="fas fa-bolt" style="color:var(--gold);font-size:12px;"></i> Accesos Directos</h3></div>
+                        <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                            <a href="{% url 'listar_hoteles' %}" class="btn btn-gh btn-sm" style="justify-content:center;"><i class="fas fa-hotel" style="color:var(--teal);"></i> Hoteles</a>
+                            <a href="{% url 'listar_restaurantes' %}" class="btn btn-gh btn-sm" style="justify-content:center;"><i class="fas fa-utensils" style="color:var(--warn);"></i> Restaurantes</a>
+                            <a href="{% url 'listar_museos' %}" class="btn btn-gh btn-sm" style="justify-content:center;"><i class="fas fa-landmark" style="color:var(--purp);"></i> Museos</a>
+                            <a href="{% url 'listar_iglesias' %}" class="btn btn-gh btn-sm" style="justify-content:center;"><i class="fas fa-church" style="color:var(--gold);"></i> Iglesias</a>
+                            <a href="{% url 'exportar_admin_pdf' %}" class="btn btn-gh btn-sm" style="justify-content:center;"><i class="fas fa-file-pdf" style="color:var(--bad);"></i> PDF Admin</a>
+                            <a href="{% url 'exportar_admin_excel' %}" class="btn btn-gh btn-sm" style="justify-content:center;"><i class="fas fa-file-excel" style="color:var(--ok);"></i> Excel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /OVERVIEW -->
+
+        <!-- ════ CREAR NOTICIA ════ -->
+        <div class="panel" id="panel-crear-noticia">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>✍️ Crear Nueva Noticia</h2><p>Redacta y publica contenido en el portal turístico</p></div></div>
+            <div class="card">
+                <div class="card-hd"><h3><i class="fas fa-pen-nib" style="color:var(--red);font-size:12px;"></i> Formulario de Noticia</h3></div>
+                <div style="padding:22px;">
+                    <form method="post" action="{% url 'crear_noticia' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-grid">
+                            <div class="fg"><label>Título *</label>{{ noticia_form.titulo }}</div>
+                            <div class="fg"><label>Subtítulo</label>{{ noticia_form.subtitulo }}</div>
+                            <div class="fg"><label>Categoría *</label>{{ noticia_form.categoria }}</div>
+                            <div class="fg"><label>Fecha de Publicación</label>{{ noticia_form.fecha_publicacion }}</div>
+                            <div class="fg full"><label>Resumen</label>{{ noticia_form.resumen }}</div>
+                            <div class="fg full"><label>Contenido *</label>{{ noticia_form.contenido }}</div>
+                            <div class="fg"><label>Imagen Principal *</label>{{ noticia_form.imagen_principal }}</div>
+                            <div class="fg"><label>Pie de Imagen</label>{{ noticia_form.pie_imagen }}</div>
+                            <div class="fg">
+                                <label>Publicar ahora</label>
+                                <div class="tg-row"><label class="tg">{{ noticia_form.publicada }}<span class="tg-sl"></span></label><span>Visible al guardar</span></div>
+                            </div>
+                            <div class="fg">
+                                <label>Destacada</label>
+                                <div class="tg-row"><label class="tg">{{ noticia_form.destacada }}<span class="tg-sl"></span></label><span>Mostrar en highlights</span></div>
+                            </div>
+                        </div>
+                        <div class="form-foot">
+                            <button type="reset" class="btn btn-gh">Limpiar</button>
+                            <button type="submit" class="btn" style="background:var(--red);color:#fff;"><i class="fas fa-paper-plane"></i> Publicar Noticia</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA NOTICIAS ════ -->
+        
+<!-- ════ LISTA NOTICIAS ════ -->
+        <div class="panel" id="panel-lista-noticias">
+            <div class="pg-hd">
+                <div class="pg-hd-left"><h2>📰 Todas las Noticias</h2><p>Gestión editorial del portal</p></div>
+                <a href="{% url 'mis_noticias' %}" class="btn btn-gh"><i class="fas fa-external-link"></i> Panel completo</a>
+            </div>
+            <div class="card">
+                <div class="card-hd">
+                    <h3><i class="fas fa-list" style="color:var(--red);font-size:12px;"></i> Noticias Registradas</h3>
+                    <input type="text" class="search-input" placeholder="🔍 Buscar noticia…" oninput="filterTable(this,'tbl-noticias')">
+                </div>
+                <div class="tw">
+                    <table id="tbl-noticias">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Categoría</th>
+                                <th>Autor</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for n in noticias_recientes %}
+                            <tr id="row-noticia-{{ n.slug }}" data-search="{{ n.titulo|lower }} {{ n.autor.nombre_completo|lower }}">
+                                <td><strong>{{ n.titulo|truncatechars:48 }}</strong></td>
+                                <td>
+                                    {% if n.categoria %}
+                                        <span class="tag t-red">{{ n.categoria }}</span>
+                                    {% else %}—{% endif %}
+                                </td>
+                                <td style="color:var(--txt2);">{{ n.autor.nombre_completo|default:"—"|truncatechars:18 }}</td>
+                                <td id="estado-noticia-{{ n.slug }}">
+                                    {% if n.publicada %}
+                                        <span class="tag t-ok"><span class="status-dot status-ok"></span>Publicada</span>
+                                    {% else %}
+                                        <span class="tag t-warn"><span class="status-dot"></span>Borrador/Suspendida</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="acts">
+                                        <!-- ojo al ver noticia -->
+                                        <a href="{% url 'detalle_noticia' n.slug %}"
+                                        target="_blank"
+                                        class="btn btn-tl btn-sm btn-icon"
+                                        title="Ver noticia">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <!-- Editar -->
+                                        <a href="{% url 'editar_noticia' n.slug %}"
+                                        class="btn btn-gh btn-sm btn-icon"
+                                        title="Editar">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <!-- Suspender (si está publicada) / Reactivar (si está suspendida) -->
+                                        <span id="btn-estado-noticia-{{ n.slug }}">
+                                            {% if n.publicada %}
+                                            <button class="btn btn-bd btn-sm btn-icon"
+                                                    title="Suspender noticia"
+                                                    onclick="confirmarSuspenderNoticia('{{ n.slug }}', '{{ n.titulo|escapejs }}')">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                            {% else %}
+                                            <button class="btn btn-ok btn-sm btn-icon"
+                                                    title="Reactivar noticia"
+                                                    onclick="reactivarNoticia('{{ n.slug }}', '{{ n.titulo|escapejs }}', this)">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            {% endif %}
+                                        </span>
+                                        <!-- Eliminar definitivo — solo si está suspendida -->
+                                        <span id="btn-eliminar-noticia-{{ n.slug }}">
+                                            {% if not n.publicada %}
+                                            <button class="btn btn-bd btn-sm btn-icon"
+                                                    title="Eliminar definitivamente"
+                                                    style="background:var(--bad-dim);border-color:rgba(248,113,113,.4);"
+                                                    onclick="confirmarEliminarNoticiaDefinitivo('{{ n.slug }}', '{{ n.titulo|escapejs }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5">
+                                <div class="empty-state"><i class="fas fa-newspaper"></i><p>Sin noticias aún</p></div>
+                            </td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ CREAR CATEGORÍA ════ -->
+        <div class="panel" id="panel-crear-cat">
+            <div class="pg-hd">
+                <div class="pg-hd-left">
+                    <h2>🏷️ Categorías de Noticia</h2>
+                    <p>Crea y gestiona las categorías del portal</p>
+                </div>
+            </div>
+            <div class="two-col">
+
+                <!-- Formulario crear -->
+                <div class="card">
+                    <div class="card-hd">
+                        <h3><i class="fas fa-plus" style="color:var(--red);font-size:12px;"></i> Nueva Categoría</h3>
+                    </div>
+                    <div style="padding:22px;">
+                        <div id="cat-form-msgs"></div>
+                        <div class="form-grid g1">
+                            <div class="fg">
+                                <label>Nombre *</label>
+                                <input type="text" id="cat-nombre" placeholder="Ej: Turismo Cultural">
+                            </div>
+                            <div class="fg">
+                                <label>Descripción</label>
+                                <textarea id="cat-descripcion" placeholder="Descripción opcional…" style="min-height:70px;background:var(--surf2);border:1.5px solid var(--brd2);border-radius:9px;padding:9px 12px;color:var(--txt);font-size:13px;outline:none;resize:vertical;width:100%;transition:border-color var(--trans);"></textarea>
+                            </div>
+                            <div class="fg">
+                                <label>Color</label>
+                                <div style="display:flex;gap:10px;align-items:center;">
+                                    <input type="color" id="cat-color" value="#e05b4b" style="width:50px;height:40px;border-radius:9px;border:1.5px solid var(--brd2);background:var(--surf2);cursor:pointer;padding:3px;">
+                                    <span id="cat-color-hex" style="font-size:12px;color:var(--txt3);">#e05b4b</span>
+                                </div>
+                            </div>
+                            <div class="fg">
+                                <label>Estado inicial</label>
+                                <div class="tg-row">
+                                    <label class="tg"><input type="checkbox" id="cat-activo" checked><span class="tg-sl"></span></label>
+                                    <span>Activa al crear</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-foot">
+                            <button type="button" onclick="limpiarFormCat()" class="btn btn-gh">Limpiar</button>
+                            <button type="button" onclick="crearCategoria()" class="btn" id="btn-crear-cat" style="background:var(--red);color:#fff;">
+                                <i class="fas fa-save"></i> Crear Categoría
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista en tiempo real -->
+                <div class="card">
+                    <div class="card-hd">
+                        <h3><i class="fas fa-tags" style="color:var(--red);font-size:12px;"></i> Categorías Existentes</h3>
+                        <input type="text" class="search-input" placeholder="🔍 Buscar…" oninput="filterTable(this,'tbl-cat-inline')" style="width:140px;">
+                    </div>
+                    <div class="tw">
+                        <table id="tbl-cat-inline">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Color</th>
+                                    <th>Estado</th>
+                                    <th>Noticias</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-cat-inline">
+                                {% for c in todas_categorias %}
+                                <tr id="row-cat-{{ c.id }}" data-search="{{ c.nombre|lower }}">
+                                    <td><strong id="cat-nombre-{{ c.id }}">{{ c.nombre }}</strong></td>
+                                    <td>
+                                        <span id="cat-color-dot-{{ c.id }}" style="display:inline-block;width:14px;height:14px;border-radius:4px;background:{{ c.color }};margin-right:5px;vertical-align:middle;"></span>
+                                        <span id="cat-color-val-{{ c.id }}" style="font-size:11px;color:var(--txt3);">{{ c.color }}</span>
+                                    </td>
+                                    <td id="cat-estado-{{ c.id }}">
+                                        {% if c.activo %}
+                                            <span class="tag t-ok">Activa</span>
+                                        {% else %}
+                                            <span class="tag t-bad">Inactiva</span>
+                                        {% endif %}
+                                    </td>
+                                    <td id="cat-count-{{ c.id }}">{{ c.noticias.count }}</td>
+                                    <td>
+                                        <div class="acts">
+                                            <button class="btn btn-purp btn-sm btn-icon"
+                                                title="Editar"
+                                                onclick="abrirEditarCat({{ c.id }}, '{{ c.nombre|escapejs }}', '{{ c.descripcion|default:''|escapejs }}', '{{ c.color }}')">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn {% if c.activo %}btn-bd{% else %}btn-ok{% endif %} btn-sm btn-icon"
+                                                id="btn-toggle-cat-{{ c.id }}"
+                                                title="{% if c.activo %}Suspender{% else %}Activar{% endif %}"
+                                                onclick="toggleCategoria({{ c.id }}, '{{ c.nombre|escapejs }}')">
+                                                <i class="fas {% if c.activo %}fa-ban{% else %}fa-check{% endif %}"></i>
+                                            </button>
+                                            <button class="btn btn-bd btn-sm btn-icon"
+                                                title="Eliminar definitivamente"
+                                                style="background:var(--bad-dim);border-color:rgba(248,113,113,.4);"
+                                                onclick="confirmarEliminarCategoria({{ c.id }}, '{{ c.nombre|escapejs }}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr id="row-cat-empty">
+                                    <td colspan="5">
+                                        <div class="empty-state"><i class="fas fa-tags"></i><p>Sin categorías aún</p></div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA CATEGORÍAS (ahora redirige al panel crear-cat) ════ -->
+        <div class="panel" id="panel-lista-cat">
+            <div class="pg-hd">
+                <div class="pg-hd-left">
+                    <h2>🗂️ Categorías de Noticia</h2>
+                    <p>Gestión completa de categorías</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-hd">
+                    <h3><i class="fas fa-tags" style="color:var(--red);font-size:12px;"></i> Todas las Categorías</h3>
+                    <button class="btn btn-pr btn-sm" onclick="showPanel('crear-cat')">
+                        <i class="fas fa-plus"></i> Nueva Categoría
+                    </button>
+                </div>
+                <div class="tw">
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Descripción</th><th>Color</th><th>Estado</th><th>Noticias</th><th>Acciones</th></tr></thead>
+                        <tbody id="tbody-cat-full">
+                            {% for c in todas_categorias %}
+                            <tr id="row-cat-full-{{ c.id }}" data-search="{{ c.nombre|lower }}">
+                                <td><strong>{{ c.nombre }}</strong></td>
+                                <td style="color:var(--txt3);">{{ c.descripcion|default:"—"|truncatechars:40 }}</td>
+                                <td>
+                                    <span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:{{ c.color }};margin-right:5px;vertical-align:middle;"></span>
+                                    {{ c.color }}
+                                </td>
+                                <td id="cat-full-estado-{{ c.id }}">
+                                    {% if c.activo %}<span class="tag t-ok">Activa</span>
+                                    {% else %}<span class="tag t-bad">Inactiva</span>{% endif %}
+                                </td>
+                                <td>{{ c.noticias.count }}</td>
+                                <td>
+                                    <div class="acts">
+                                        <button class="btn btn-purp btn-sm btn-icon" title="Editar"
+                                            onclick="abrirEditarCat({{ c.id }}, '{{ c.nombre|escapejs }}', '{{ c.descripcion|default:''|escapejs }}', '{{ c.color }}')">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button class="btn {% if c.activo %}btn-bd{% else %}btn-ok{% endif %} btn-sm btn-icon"
+                                            id="btn-toggle-cat-full-{{ c.id }}"
+                                            onclick="toggleCategoria({{ c.id }}, '{{ c.nombre|escapejs }}')">
+                                            <i class="fas {% if c.activo %}fa-ban{% else %}fa-check{% endif %}"></i>
+                                        </button>
+                                        <button class="btn btn-bd btn-sm btn-icon"
+                                            style="background:var(--bad-dim);border-color:rgba(248,113,113,.4);"
+                                            onclick="confirmarEliminarCategoria({{ c.id }}, '{{ c.nombre|escapejs }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6">
+                                <div class="empty-state"><i class="fas fa-tags"></i><p>Sin categorías aún</p></div>
+                            </td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ AGREGAR SITIO ════ -->
+        <div class="panel" id="panel-agregar-sitio">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>📍 Agregar Sitio Turístico</h2><p>Registra un nuevo establecimiento</p></div></div>
+            <div class="card">
+                <div class="card-hd"><h3><i class="fas fa-location-dot" style="color:var(--teal);font-size:12px;"></i> Nuevo Establecimiento</h3></div>
+                <div style="padding:22px;">
+                    <form method="post" action="{% url 'agregar_establecimiento' tipo='general' %}" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="form-grid">
+                            <div class="fg"><label>Nombre *</label>{{ estab_form.nombre }}</div>
+                            <div class="fg"><label>Tipo *</label>{{ estab_form.tipo }}</div>
+                            <div class="fg full"><label>Descripción *</label>{{ estab_form.descripcion }}</div>
+                            <div class="fg"><label>Horario</label>{{ estab_form.horario_aten }}</div>
+                            <div class="fg"><label>Dirección</label>{{ estab_form.direccion }}</div>
+                            <div class="fg"><label>Imagen</label>{{ estab_form.imagen }}</div>
+                            <div class="fg full"><label>URL de Información</label>{{ estab_form.url_mas_info }}</div>
+                        </div>
+                        <div class="form-foot">
+                            <button type="reset" class="btn btn-gh">Limpiar</button>
+                            <button type="submit" class="btn btn-tl"><i class="fas fa-location-dot"></i> Guardar Sitio</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA SITIOS ════ -->
+        <div class="panel" id="panel-lista-sitios">
+            <div class="pg-hd">
+                <div class="pg-hd-left">
+                    <h2>🗺️ Sitios Turísticos</h2>
+                    <p id="sitios-conteo" style="color:var(--txt3);font-size:13px;"></p>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:16px;">
+                <div class="card-hd" style="flex-wrap:wrap;gap:10px;">
+                    <h3><i class="fas fa-store" style="color:var(--teal);font-size:12px;"></i> Establecimientos</h3>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;">
+                        <!-- Filtro por estado -->
+                        <select id="filtro-estado-sitios" onchange="aplicarFiltrosSitios()"
+                            style="background:var(--surf2);border:1.5px solid var(--brd2);border-radius:9px;padding:6px 10px;color:var(--txt);font-size:12px;outline:none;cursor:pointer;">
+                            <option value="todos">Todos los estados</option>
+                            <option value="activos" selected>Solo activos</option>
+                            <option value="inactivos">Solo inactivos</option>
+                        </select>
+                        <!-- Filtro por tipo -->
+                        <select id="filtro-tipo-sitios" onchange="aplicarFiltrosSitios()"
+                            style="background:var(--surf2);border:1.5px solid var(--brd2);border-radius:9px;padding:6px 10px;color:var(--txt);font-size:12px;outline:none;cursor:pointer;">
+                            <option value="todos">Todos los tipos</option>
+                            {% for t in todos_tipos %}
+                            <option value="{{ t.nombre|lower }}">{{ t.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <!-- Filtro por visitas -->
+                        <select id="filtro-orden-sitios" onchange="aplicarFiltrosSitios()"
+                            style="background:var(--surf2);border:1.5px solid var(--brd2);border-radius:9px;padding:6px 10px;color:var(--txt);font-size:12px;outline:none;cursor:pointer;">
+                            <option value="nombre">Ordenar: A-Z</option>
+                            <option value="visitas">Ordenar: Más visitados</option>
+                        </select>
+                        <!-- Búsqueda -->
+                        <input type="text" id="buscar-sitio" class="search-input"
+                            placeholder="🔍 Buscar sitio…"
+                            oninput="aplicarFiltrosSitios()"
+                            style="width:180px;">
+                    </div>
+                </div>
+                <div class="tw">
+                    <table id="tbl-sitios">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Visitas</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for e in top_establecimientos %}
+                            <tr id="row-estab-list-{{ e.id }}"
+                                data-nombre="{{ e.nombre|lower }}"
+                                data-tipo="{{ e.tipo|lower }}"
+                                data-activo="{{ e.activo|yesno:'true,false' }}"
+                                data-visitas="0">
+                                <td><strong>{{ e.nombre }}</strong></td>
+                                <td><span class="tag t-teal">{{ e.tipo }}</span></td>
+                                <td style="color:var(--txt3);">
+                                    <i class="fas fa-eye" style="font-size:10px;margin-right:4px;"></i>0
+                                </td>
+                                <td id="estado-estab-{{ e.id }}">
+                                    {% if e.activo %}
+                                        <span class="tag t-ok"><span class="status-dot status-ok"></span>Activo</span>
+                                    {% else %}
+                                        <span class="tag t-bad"><span class="status-dot status-bad"></span>Inactivo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="acts" id="acciones-estab-{{ e.id }}">
+                                        {% if e.activo %}
+                                        <button class="btn btn-bd btn-sm"
+                                            onclick="confirmarEliminarEstab({{ e.id }}, '{{ e.nombre|escapejs }}')">
+                                            <i class="fas fa-ban"></i> Desactivar
+                                        </button>
+                                        {% else %}
+                                        <button class="btn btn-ok btn-sm"
+                                            onclick="reactivarEstab({{ e.id }}, '{{ e.nombre|escapejs }}', this)">
+                                            <i class="fas fa-check"></i> Reactivar
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr id="row-sitios-empty">
+                                <td colspan="5">
+                                    <div class="empty-state"><i class="fas fa-store"></i><p>Sin sitios registrados</p></div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Mensaje cuando no hay resultados con los filtros -->
+                <div id="sitios-no-resultados" style="display:none;padding:32px;text-align:center;color:var(--txt3);">
+                    <i class="fas fa-search" style="font-size:28px;opacity:.2;display:block;margin-bottom:10px;"></i>
+                    <p style="font-size:13px;">Sin resultados con los filtros aplicados</p>
+                    <button class="btn btn-gh btn-sm" style="margin-top:10px;" onclick="limpiarFiltrosSitios()">
+                        <i class="fas fa-times"></i> Limpiar filtros
+                    </button>
+                </div>
+                <div class="card-ft" style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="{% url 'listar_hoteles' %}" class="btn btn-gh btn-sm"><i class="fas fa-hotel"></i> Hoteles</a>
+                    <a href="{% url 'listar_restaurantes' %}" class="btn btn-gh btn-sm"><i class="fas fa-utensils"></i> Restaurantes</a>
+                    <a href="{% url 'listar_museos' %}" class="btn btn-gh btn-sm"><i class="fas fa-landmark"></i> Museos</a>
+                    <a href="{% url 'listar_iglesias' %}" class="btn btn-gh btn-sm"><i class="fas fa-church"></i> Iglesias</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ CREAR TIPO ════ -->
+        <div class="panel" id="panel-crear-tipo">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>🏷️ Tipos de Establecimiento</h2><p>Define categorías de sitios turísticos</p></div></div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-hd"><h3><i class="fas fa-plus" style="color:var(--teal);font-size:12px;"></i> Nuevo Tipo</h3></div>
+                    <div style="padding:22px;">
+                        <form method="post" action="{% url 'crear_tipo_establecimiento' %}">{% csrf_token %}
+                            <div class="form-grid g1">
+                                <div class="fg"><label>Nombre del Tipo *</label>{{ tipo_form.nombre }}</div>
+                            </div>
+                            <div class="form-foot"><button type="submit" class="btn btn-tl"><i class="fas fa-save"></i> Crear Tipo</button></div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-hd"><h3><i class="fas fa-layer-group" style="color:var(--teal);font-size:12px;"></i> Tipos Existentes</h3></div>
+                    <div class="tw">
+                        <table>
+                            <thead><tr><th>#</th><th>Tipo</th><th>Sitios</th></tr></thead>
+                            <tbody>
+                                {% for t in todos_tipos %}
+                                <tr><td style="color:var(--txt3);">{{ t.id }}</td><td><span class="tag t-teal">{{ t.nombre }}</span></td><td>{{ t.establecimientos.count }}</td></tr>
+                                {% empty %}<tr><td colspan="3"><div class="empty-state" style="padding:20px;"><p>Sin tipos</p></div></td></tr>{% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA TIPOS ════ -->
+        <div class="panel" id="panel-lista-tipos">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>📋 Tipos de Establecimiento</h2><p>Todas las categorías registradas</p></div></div>
+            <div class="card">
+                <div class="card-hd"><h3><i class="fas fa-layer-group" style="color:var(--teal);font-size:12px;"></i> Tipos Registrados</h3></div>
+                <div class="tw">
+                    <table>
+                        <thead><tr><th>#</th><th>Tipo</th><th>Sitios Activos</th></tr></thead>
+                        <tbody>
+                            {% for t in todos_tipos %}
+                            <tr><td style="color:var(--txt3);">{{ t.id }}</td><td><span class="tag t-teal">{{ t.nombre }}</span></td><td>{{ t.establecimientos.count }}</td></tr>
+                            {% empty %}<tr><td colspan="3"><div class="empty-state"><i class="fas fa-layer-group"></i><p>Sin tipos</p></div></td></tr>{% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA RESEÑAS ════ -->
+        <div class="panel" id="panel-lista-resenas">
+            <div class="pg-hd">
+                <div class="pg-hd-left">
+                    <h2>⭐ Reseñas de Sitios Turísticos</h2>
+                    <p id="resenas-subtitulo">Moderación de comentarios de usuarios</p>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <select id="filtro-calificacion-resenas" onchange="filtrarResenas()"
+                        style="background:var(--surf2);border:1.5px solid var(--brd2);border-radius:9px;padding:6px 10px;color:var(--txt);font-size:12px;outline:none;cursor:pointer;">
+                        <option value="todas">Todas las calificaciones</option>
+                        <option value="5">★★★★★ (5)</option>
+                        <option value="4">★★★★☆ (4)</option>
+                        <option value="3">★★★☆☆ (3)</option>
+                        <option value="2">★★☆☆☆ (2)</option>
+                        <option value="1">★☆☆☆☆ (1)</option>
+                    </select>
+                    <input type="text" id="buscar-resena" class="search-input"
+                        placeholder="🔍 Buscar usuario o sitio…"
+                        oninput="filtrarResenas()"
+                        style="width:200px;">
+                    <button class="btn btn-gh btn-sm" onclick="cargarResenas()">
+                        <i class="fas fa-rotate-right"></i> Actualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resumen rápido -->
+            <div class="mini-grid" id="resenas-stats" style="margin-bottom:16px;grid-template-columns:repeat(5,1fr);">
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--gold-dim);color:var(--gold);"><i class="fas fa-star"></i></div>
+                    <div><div class="mini-val" id="rs-total">—</div><div class="mini-lbl">Total reseñas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--ok-dim);color:var(--ok);"><i class="fas fa-star"></i></div>
+                    <div><div class="mini-val" id="rs-5">—</div><div class="mini-lbl">5 estrellas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--teal-dim);color:var(--teal);"><i class="fas fa-star-half-stroke"></i></div>
+                    <div><div class="mini-val" id="rs-4">—</div><div class="mini-lbl">4 estrellas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--warn-dim);color:var(--warn);"><i class="fas fa-star-half-stroke"></i></div>
+                    <div><div class="mini-val" id="rs-3">—</div><div class="mini-lbl">3 estrellas</div></div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-ico" style="background:var(--bad-dim);color:var(--bad);"><i class="fas fa-star"></i></div>
+                    <div><div class="mini-val" id="rs-12">—</div><div class="mini-lbl">1-2 estrellas</div></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-hd">
+                    <h3><i class="fas fa-comments" style="color:var(--gold);font-size:12px;"></i> Comentarios registrados</h3>
+                    <span id="resenas-conteo" style="font-size:11.5px;color:var(--txt3);"></span>
+                </div>
+                <div class="tw">
+                    <table id="tbl-resenas">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Sitio Turístico</th>
+                                <th>Tipo</th>
+                                <th>Calificación</th>
+                                <th>Comentario</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-resenas">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fas fa-spinner spin" style="font-size:24px;opacity:.3;display:block;margin-bottom:10px;"></i>
+                                        <p>Cargando reseñas…</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="resenas-no-resultados" style="display:none;padding:32px;text-align:center;color:var(--txt3);">
+                    <i class="fas fa-search" style="font-size:28px;opacity:.2;display:block;margin-bottom:10px;"></i>
+                    <p style="font-size:13px;">Sin resultados con los filtros aplicados</p>
+                    <button class="btn btn-gh btn-sm" style="margin-top:10px;" onclick="limpiarFiltrosResenas()">
+                        <i class="fas fa-times"></i> Limpiar filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA USUARIOS ════ -->
+        <div class="panel" id="panel-lista-usuarios">
+            <div class="pg-hd">
+                <div class="pg-hd-left"><h2>👥 Gestión de Usuarios</h2><p>Administra permisos y cuentas del sistema</p></div>
+            </div>
+            <div class="card">
+                <div class="card-hd">
+                    <h3><i class="fas fa-users" style="color:var(--purp);font-size:12px;"></i> Todos los Usuarios</h3>
+                    <input type="text" class="search-input" placeholder="🔍 Buscar usuario…" oninput="filterTable(this,'tbl-usuarios')">
+                </div>
+                <div class="tw">
+                    <table id="tbl-usuarios">
+                        <thead><tr><th>Usuario</th><th>Correo</th><th>Rol</th><th>Tipo Est.</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            {% for u in todos_usuarios %}
+                            <tr id="row-user-{{ u.id }}" data-search="{{ u.nombre_completo|lower }} {{ u.email|lower }}">
+                                <td>
+                                    <div class="user-row">
+                                        <div class="av">{{ u.nombre_completo|first|upper }}</div>
+                                        <div class="user-info">
+                                            <strong>{{ u.nombre_completo }}</strong>
+                                            <small>ID {{ u.id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="color:var(--txt3);font-size:12px;">{{ u.email }}</td>
+                                <td>
+                                    {% if u.rol.rol|lower == 'administrador' %}<span class="tag t-purp">{{ u.rol }}</span>
+                                    {% elif u.rol.rol|lower == 'empresario' %}<span class="tag t-teal">{{ u.rol }}</span>
+                                    {% else %}<span class="tag t-warn">{{ u.rol }}</span>{% endif %}
+                                </td>
+                                <td style="font-size:12px;color:var(--txt3);" id="tipo-{{ u.id }}">{{ u.tipo_establecimiento|default:"—" }}</td>
+                                <td id="estado-{{ u.id }}">
+                                    {% if u.is_active %}
+                                    <span class="tag t-ok"><span class="status-dot status-ok"></span>Activo</span>
+                                    {% else %}
+                                    <span class="tag t-bad"><span class="status-dot status-bad"></span>Suspendido</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="acts">
+                                        <!-- Editar (modal) -->
+                                        <button type="button" class="btn btn-purp btn-sm"
+                                            data-id="{{ u.id }}"
+                                            data-nombre="{{ u.nombre_completo|escapejs }}"
+                                            data-email="{{ u.email|escapejs }}"
+                                            data-rol="{{ u.rol.id|default:'' }}"
+                                            data-tipo="{{ u.tipo_establecimiento.id|default:'' }}"
+                                            data-activo="{{ u.is_active|yesno:'true,false' }}"
+                                            data-url="{% url 'ajax_editar_usuario' u.id %}"
+                                            onclick="openModal(this)">
+                                            <i class="fas fa-pen"></i> Editar
+                                        </button>
+                                        <!-- Suspender / Activar -->
+                                        {% if u.is_active %}
+                                        <button class="btn btn-bd btn-sm btn-icon" title="Suspender"
+                                            onclick="confirmarSuspender({{ u.id }}, '{{ u.nombre_completo|escapejs }}')">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                        {% else %}
+                                        <button class="btn btn-ok btn-sm btn-icon" title="Activar"
+                                            onclick="activarUsuario({{ u.id }}, this)">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        {% endif %}
+                                        <!-- Eliminar permanente -->
+                                        <button class="btn btn-bd btn-sm btn-icon" title="Eliminar permanentemente"
+                                            style="background:var(--bad-dim);border-color:rgba(248,113,113,.4);"
+                                            onclick="confirmarEliminarUsuario({{ u.id }}, '{{ u.nombre_completo|escapejs }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6"><div class="empty-state"><i class="fas fa-users"></i><p>Sin usuarios</p></div></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ CREAR ROL ════ -->
+        <div class="panel" id="panel-crear-rol">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>🎭 Crear Rol</h2><p>Define nuevos roles de acceso</p></div></div>
+            <div class="two-col">
+                <div class="card">
+                    <div class="card-hd"><h3><i class="fas fa-plus" style="color:var(--purp);font-size:12px;"></i> Nuevo Rol</h3></div>
+                    <div style="padding:22px;">
+                        <form method="post" action="{% url 'crear_rol' %}">{% csrf_token %}
+                            <div class="form-grid g1">
+                                <div class="fg"><label>Nombre del Rol *</label><input type="text" name="rol" placeholder="Ej: moderador" required></div>
+                            </div>
+                            <div class="form-foot"><button type="submit" class="btn btn-purp"><i class="fas fa-save"></i> Crear Rol</button></div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-hd"><h3><i class="fas fa-user-tag" style="color:var(--purp);font-size:12px;"></i> Roles Existentes</h3></div>
+                    <div class="tw">
+                        <table>
+                            <thead><tr><th>#</th><th>Rol</th><th>Usuarios</th></tr></thead>
+                            <tbody>
+                                {% for r in todos_roles %}
+                                <tr><td style="color:var(--txt3);">{{ r.id }}</td><td><span class="tag t-purp">{{ r.rol }}</span></td><td>{{ r.usuario_set.count }}</td></tr>
+                                {% empty %}<tr><td colspan="3"><div class="empty-state" style="padding:20px;"><p>Sin roles</p></div></td></tr>{% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ LISTA ROLES ════ -->
+        <div class="panel" id="panel-lista-roles">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>🗂️ Roles del Sistema</h2><p>Todos los roles configurados</p></div></div>
+            <div class="card">
+                <div class="card-hd"><h3><i class="fas fa-user-tag" style="color:var(--purp);font-size:12px;"></i> Roles Registrados</h3></div>
+                <div class="tw">
+                    <table>
+                        <thead><tr><th>#</th><th>Rol</th><th>Usuarios Asignados</th></tr></thead>
+                        <tbody>
+                            {% for r in todos_roles %}
+                            <tr><td style="color:var(--txt3);">{{ r.id }}</td><td><span class="tag t-purp">{{ r.rol }}</span></td><td>{{ r.usuario_set.count }}</td></tr>
+                            {% empty %}<tr><td colspan="3"><div class="empty-state"><i class="fas fa-user-tag"></i><p>Sin roles</p></div></td></tr>{% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ DOCUMENTOS ════ -->
+        <div class="panel" id="panel-docs">
+            <div class="pg-hd"><div class="pg-hd-left"><h2>📥 Exportar Documentos</h2><p>Descarga reportes y estadísticas</p></div></div>
+            <div class="dl-grid">
+                <div class="dl-card"><div class="dl-ico">📄</div><div class="dl-ttl">Reporte Admin — PDF</div><div class="dl-dsc">Estadísticas generales del sistema.</div><a href="{% url 'exportar_admin_pdf' %}" class="btn btn-bd"><i class="fas fa-file-pdf"></i> Descargar PDF</a></div>
+                <div class="dl-card"><div class="dl-ico">📊</div><div class="dl-ttl">Reporte Admin — Excel</div><div class="dl-dsc">Datos del sistema en Excel con gráficas.</div><a href="{% url 'exportar_admin_excel' %}" class="btn btn-ok"><i class="fas fa-file-excel"></i> Descargar Excel</a></div>
+                <div class="dl-card"><div class="dl-ico">📑</div><div class="dl-ttl">Reporte Empresario — PDF</div><div class="dl-dsc">Estadísticas por empresario en PDF.</div><a href="{% url 'exportar_empresario_pdf' %}" class="btn btn-gh"><i class="fas fa-file-pdf"></i> Descargar PDF</a></div>
+                <div class="dl-card"><div class="dl-ico">📈</div><div class="dl-ttl">Reporte Empresario — Excel</div><div class="dl-dsc">Detalle de establecimientos en Excel.</div><a href="{% url 'exportar_empresario_excel' %}" class="btn btn-tl"><i class="fas fa-file-excel"></i> Descargar Excel</a></div>
+                <div class="dl-card"><div class="dl-ico">📜</div><div class="dl-ttl">Historia Completa — PDF</div><div class="dl-dsc">Exporta toda la historia de Popayán.</div><a href="{% url 'pdf_historia_completa' %}" class="btn btn-gh"><i class="fas fa-scroll"></i> Descargar PDF</a></div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</main>
+
+<!-- ════════════════ MODAL EDITAR USUARIO ════════════════ -->
+<div class="modal-overlay" id="modal-usuario">
+    <div class="modal">
+        <div class="modal-hd">
+            <div>
+                <div class="modal-title"><i class="fas fa-user-gear" style="color:var(--purp);font-size:16px;"></i> Editar Permisos</div>
+                <div class="modal-sub" id="modal-sub-txt"></div>
+            </div>
+            <button class="modal-x" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-user-info">
+            <div class="modal-av" id="modal-av"></div>
+            <div>
+                <div id="modal-nombre" style="font-weight:700;font-size:14px;"></div>
+                <div id="modal-email" style="font-size:12px;color:var(--txt3);margin-top:2px;"></div>
+            </div>
+        </div>
+        <div class="modal-fields">
+            <div class="modal-field">
+                <label><i class="fas fa-user-tag" style="color:var(--purp);margin-right:5px;"></i> Rol del Usuario</label>
+                <select id="modal-rol" class="modal-select">
+                    {% for r in todos_roles %}<option value="{{ r.id }}">{{ r.rol }}</option>{% endfor %}
+                </select>
+                <div class="modal-hint">Define qué acciones puede realizar el usuario.</div>
+            </div>
+            <div class="modal-field">
+                <label><i class="fas fa-store" style="color:var(--teal);margin-right:5px;"></i> Tipo de Establecimiento</label>
+                <select id="modal-tipo" class="modal-select">
+                    <option value="">— Sin tipo asignado —</option>
+                    {% for t in todos_tipos %}<option value="{{ t.id }}">{{ t.nombre }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="modal-status">
+                <div class="modal-status-info">
+                    <strong>Estado de la Cuenta</strong>
+                    <span>Desactivar impide que el usuario inicie sesión.</span>
+                </div>
+                <label class="tg"><input type="checkbox" id="modal-activo"><span class="tg-sl"></span></label>
+            </div>
+        </div>
+        <div class="modal-ft">
+            <button type="button" onclick="closeModal()" class="btn btn-gh"><i class="fas fa-xmark"></i> Cancelar</button>
+            <button type="button" onclick="guardarEdicionUsuario()" class="btn btn-purp" id="btn-guardar-modal">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ MODAL CONFIRMACIÓN ════════════════ -->
+<div class="modal-overlay" id="modal-confirm">
+    <div class="modal confirm-modal">
+        <div class="confirm-ico" id="confirm-ico"></div>
+        <div class="confirm-title" id="confirm-title"></div>
+        <div class="confirm-msg"  id="confirm-msg"></div>
+        <div style="display:flex;gap:9px;justify-content:flex-end;">
+            <button class="btn btn-gh" onclick="closeConfirm()"><i class="fas fa-xmark"></i> Cancelar</button>
+            <button class="btn" id="btn-confirm-ok" onclick="ejecutarConfirmacion()"><i class="fas fa-check"></i> Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ MODAL EDITAR CATEGORÍA ════════════════ -->
+<div class="modal-overlay" id="modal-categoria">
+    <div class="modal" style="max-width:440px;">
+        <div class="modal-hd">
+            <div>
+                <div class="modal-title">
+                    <i class="fas fa-tags" style="color:var(--red);font-size:16px;"></i> Editar Categoría
+                </div>
+                <div class="modal-sub" id="modal-cat-sub"></div>
+            </div>
+            <button class="modal-x" onclick="closeCatModal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="modal-fields">
+            <div class="modal-field">
+                <label>Nombre *</label>
+                <input type="text" id="modal-cat-nombre" class="modal-input" placeholder="Nombre de la categoría">
+            </div>
+            <div class="modal-field">
+                <label>Descripción</label>
+                <textarea id="modal-cat-desc" class="modal-input" style="min-height:80px;resize:vertical;" placeholder="Descripción opcional…"></textarea>
+            </div>
+            <div class="modal-field">
+                <label>Color</label>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <input type="color" id="modal-cat-color" style="width:50px;height:40px;border-radius:9px;border:1.5px solid var(--brd2);background:var(--surf2);cursor:pointer;padding:3px;">
+                    <span id="modal-cat-color-hex" style="font-size:12px;color:var(--txt3);"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-ft">
+            <button type="button" onclick="closeCatModal()" class="btn btn-gh">
+                <i class="fas fa-xmark"></i> Cancelar
+            </button>
+            <button type="button" onclick="guardarEdicionCat()" class="btn" id="btn-guardar-cat"
+                style="background:var(--red);color:#fff;border:none;">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+
+<script>
+    /* ══════════════════════════════════════════════════════════
+   CONSTANTES GLOBALES
+══════════════════════════════════════════════════════════ */
+const CSRF = '{{ csrf_token }}';
+
+const URLS = {
+    eliminarUsuario:  (id) => `/ajax/usuarios/${id}/eliminar/`,
+    suspenderUsuario: (id) => `/ajax/usuarios/${id}/suspender/`,
+    activarUsuario:   (id) => `/ajax/usuarios/${id}/activar/`,
+    editarUsuario:    (id) => `/ajax/usuarios/${id}/editar/`,
+    eliminarEstab:    (id) => `/ajax/establecimientos/${id}/eliminar/`,
+    activarEstab:     (id) => `/ajax/establecimientos/${id}/activar/`,
+    stats:            ()   => `/ajax/dashboard/stats/`,
+};
+
+/* ══════════════════════════════════════════════════════════
+   FETCH HELPER  — POST JSON con CSRF
+══════════════════════════════════════════════════════════ */
+async function postJSON(url, body = {}) {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': CSRF,
+        },
+        body: JSON.stringify(body),
+    });
+    return res.json();
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════ */
+function showToast(msg, type = 'ok') {
+    const icons  = { ok: 'fas fa-check-circle', bad: 'fas fa-circle-xmark', warn: 'fas fa-triangle-exclamation' };
+    const colors = { ok: 'var(--ok)', bad: 'var(--bad)', warn: 'var(--warn)' };
+    const t = document.createElement('div');
+    t.className = `toast t-${type}`;
+    t.innerHTML = `<i class="toast-ico ${icons[type]}" style="color:${colors[type]};"></i><span class="toast-msg">${msg}</span>`;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => {
+        t.style.animation = 'slideOut .25s ease forwards';
+        setTimeout(() => t.remove(), 260);
+    }, 3500);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MODAL DE CONFIRMACIÓN  (reutilizable)
+══════════════════════════════════════════════════════════ */
+let _confirmCallback = null;
+
+function openConfirm({ titulo, msg, tipo = 'danger', labelOk = 'Confirmar', cb }) {
+    _confirmCallback = cb;
+    const ico   = document.getElementById('confirm-ico');
+    const tit   = document.getElementById('confirm-title');
+    const txt   = document.getElementById('confirm-msg');
+    const btnOk = document.getElementById('btn-confirm-ok');
+
+    ico.className  = `confirm-ico ${tipo}`;
+    ico.innerHTML  = tipo === 'danger' ? '<i class="fas fa-trash-can"></i>' : '<i class="fas fa-triangle-exclamation"></i>';
+    tit.textContent = titulo;
+    txt.textContent = msg;
+
+    const colorMap = { danger: 'var(--bad)', warn: 'var(--warn)' };
+    btnOk.style.background = colorMap[tipo] || 'var(--bad)';
+    btnOk.style.color      = '#fff';
+    btnOk.style.border     = 'none';
+    btnOk.innerHTML        = `<i class="fas fa-check"></i> ${labelOk}`;
+
+    document.getElementById('modal-confirm').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeConfirm() {
+    document.getElementById('modal-confirm').classList.remove('open');
+    document.body.style.overflow = '';
+    _confirmCallback = null;
+}
+
+async function ejecutarConfirmacion() {
+    if (typeof _confirmCallback === 'function') {
+        document.getElementById('btn-confirm-ok').disabled = true;
+        document.getElementById('btn-confirm-ok').innerHTML = '<i class="fas fa-spinner spin"></i> Procesando…';
+        await _confirmCallback();
+        document.getElementById('btn-confirm-ok').disabled = false;
+    }
+    closeConfirm();
+}
+
+/* ══════════════════════════════════════════════════════════
+   ANIMACIÓN: quitar fila de tabla
+══════════════════════════════════════════════════════════ */
+function removeRow(rowId) {
+    const row = document.getElementById(rowId);
+    if (!row) return;
+    row.classList.add('removing');
+    setTimeout(() => row.remove(), 320);
+}
+
+/* ══════════════════════════════════════════════════════════
+   USUARIOS — ELIMINAR
+══════════════════════════════════════════════════════════ */
+function confirmarEliminarUsuario(userId, nombre) {
+    openConfirm({
+        titulo: 'Eliminar usuario',
+        msg: `¿Estás seguro de que deseas eliminar permanentemente a "${nombre}"? Esta acción no se puede deshacer.`,
+        tipo: 'danger',
+        labelOk: 'Eliminar',
+        cb: async () => {
+            try {
+                const data = await postJSON(URLS.eliminarUsuario(userId));
+                if (data.success) {
+                    removeRow(`row-user-${userId}`);
+                    showToast(data.message, 'ok');
+                    actualizarContadorUsuarios(-1);
+                } else {
+                    showToast(data.error || 'No se pudo eliminar el usuario.', 'bad');
+                }
+            } catch {
+                showToast('Error de conexión. Inténtalo de nuevo.', 'bad');
+            }
+        }
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   USUARIOS — SUSPENDER
+══════════════════════════════════════════════════════════ */
+function confirmarSuspender(userId, nombre) {
+    openConfirm({
+        titulo: 'Suspender usuario',
+        msg: `¿Suspender la cuenta de "${nombre}"? El usuario no podrá iniciar sesión.`,
+        tipo: 'warn',
+        labelOk: 'Suspender',
+        cb: async () => {
+            try {
+                const data = await postJSON(URLS.suspenderUsuario(userId));
+                if (data.success) {
+                    const estadoCell = document.getElementById(`estado-${userId}`);
+                    if (estadoCell) {
+                        estadoCell.innerHTML = '<span class="tag t-bad"><span class="status-dot status-bad"></span>Suspendido</span>';
+                    }
+                    const row = document.getElementById(`row-user-${userId}`);
+                    if (row) {
+                        const banBtn = row.querySelector('[title="Suspender"]');
+                        if (banBtn) {
+                            banBtn.outerHTML = `<button class="btn btn-ok btn-sm btn-icon" title="Activar"
+                                onclick="activarUsuario(${userId}, this)">
+                                <i class="fas fa-check"></i>
+                            </button>`;
+                        }
+                    }
+                    showToast(data.message, 'warn');
+                } else {
+                    showToast(data.error || 'No se pudo suspender.', 'bad');
+                }
+            } catch {
+                showToast('Error de conexión.', 'bad');
+            }
+        }
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   USUARIOS — ACTIVAR
+══════════════════════════════════════════════════════════ */
+async function activarUsuario(userId, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner spin"></i>';
+    try {
+        const data = await postJSON(URLS.activarUsuario(userId));
+        if (data.success) {
+            const estadoCell = document.getElementById(`estado-${userId}`);
+            if (estadoCell) {
+                estadoCell.innerHTML = '<span class="tag t-ok"><span class="status-dot status-ok"></span>Activo</span>';
+            }
+            btn.outerHTML = `<button class="btn btn-bd btn-sm btn-icon" title="Suspender"
+                onclick="confirmarSuspender(${userId}, 'este usuario')">
+                <i class="fas fa-ban"></i>
+            </button>`;
+            showToast(data.message, 'ok');
+        } else {
+            showToast(data.error || 'No se pudo activar.', 'bad');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   USUARIOS — MODAL EDITAR (AJAX)
+══════════════════════════════════════════════════════════ */
+let _modalUserId = null;
+let _modalUrl    = null;
+
+function openModal(btn) {
+    _modalUserId = btn.dataset.id;
+    _modalUrl    = btn.dataset.url;
+
+    document.getElementById('modal-nombre').textContent  = btn.dataset.nombre;
+    document.getElementById('modal-email').textContent   = btn.dataset.email;
+    document.getElementById('modal-sub-txt').textContent = `ID ${btn.dataset.id}`;
+    document.getElementById('modal-av').textContent      = btn.dataset.nombre.charAt(0).toUpperCase();
+
+    const selRol    = document.getElementById('modal-rol');
+    const selTipo   = document.getElementById('modal-tipo');
+    const chkActivo = document.getElementById('modal-activo');
+
+    if (btn.dataset.rol) selRol.value = btn.dataset.rol;
+    selTipo.value     = btn.dataset.tipo  || '';
+    chkActivo.checked = btn.dataset.activo === 'true';
+
+    document.getElementById('modal-usuario').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('modal-usuario').classList.remove('open');
+    document.body.style.overflow = '';
+    _modalUserId = null;
+    _modalUrl    = null;
+}
+
+async function guardarEdicionUsuario() {
+    if (!_modalUrl) return;
+
+    const btnGuardar = document.getElementById('btn-guardar-modal');
+    btnGuardar.disabled = true;
+    btnGuardar.innerHTML = '<i class="fas fa-spinner spin"></i> Guardando…';
+
+    const payload = {
+        rol:                  document.getElementById('modal-rol').value,
+        tipo_establecimiento: document.getElementById('modal-tipo').value || null,
+        is_active:            document.getElementById('modal-activo').checked,
+    };
+
+    try {
+        const data = await postJSON(_modalUrl, payload);
+        if (data.success) {
+            const tipoCell = document.getElementById(`tipo-${_modalUserId}`);
+            if (tipoCell && data.usuario) tipoCell.textContent = data.usuario.tipo || '—';
+
+            const estadoCell = document.getElementById(`estado-${_modalUserId}`);
+            if (estadoCell && data.usuario) {
+                const cls = data.usuario.is_active ? 't-ok'    : 't-bad';
+                const dot = data.usuario.is_active ? 'status-ok' : 'status-bad';
+                const txt = data.usuario.is_active ? 'Activo'  : 'Suspendido';
+                estadoCell.innerHTML = `<span class="tag ${cls}"><span class="status-dot ${dot}"></span>${txt}</span>`;
+            }
+            showToast(data.message, 'ok');
+            closeModal();
+        } else {
+            showToast(data.error || 'No se pudo guardar.', 'bad');
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+    } finally {
+        btnGuardar.disabled = false;
+        btnGuardar.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ESTABLECIMIENTOS — DESACTIVAR (soft delete)
+   ▸ En lista-sitios: actualiza estado sin quitar la fila
+   ▸ En overview:     quita la fila (top 5 solo muestra activos)
+══════════════════════════════════════════════════════════ */
+function confirmarEliminarEstab(estabId, nombre) {
+    openConfirm({
+        titulo: 'Desactivar establecimiento',
+        msg: `¿Desactivar el sitio "${nombre}"? Podrá reactivarse desde el panel de administración.`,
+        tipo: 'warn',
+        labelOk: 'Desactivar',
+        cb: async () => {
+            try {
+                const data = await postJSON(URLS.eliminarEstab(estabId));
+                if (data.success) {
+                    // ── Lista-sitios: cambiar estado sin eliminar fila ──
+                    const rowList = document.getElementById(`row-estab-list-${estabId}`);
+                    if (rowList) {
+                        rowList.dataset.activo = 'false';
+                        const estadoCell = document.getElementById(`estado-estab-${estabId}`);
+                        if (estadoCell) estadoCell.innerHTML = '<span class="tag t-bad"><span class="status-dot status-bad"></span>Inactivo</span>';
+                        const acciones = document.getElementById(`acciones-estab-${estabId}`);
+                        if (acciones) {
+                            acciones.innerHTML = `<button class="btn btn-ok btn-sm"
+                                onclick="reactivarEstab(${estabId}, '${nombre.replace(/'/g,"\\'")}', this)">
+                                <i class="fas fa-check"></i> Reactivar
+                            </button>`;
+                        }
+                    }
+                    // ── Overview: quitar fila del top ──
+                    removeRow(`row-estab-${estabId}`);
+
+                    // ── Decrementar contador y re-aplicar filtros ──
+                    const sv = document.getElementById('sv-establecimientos');
+                    if (sv) sv.textContent = Math.max(0, parseInt(sv.textContent) - 1);
+                    aplicarFiltrosSitios();
+
+                    showToast(data.message, 'ok');
+                } else {
+                    showToast(data.error || 'No se pudo desactivar el sitio.', 'bad');
+                }
+            } catch {
+                showToast('Error de conexión.', 'bad');
+            }
+        }
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   ESTABLECIMIENTOS — REACTIVAR
+══════════════════════════════════════════════════════════ */
+async function reactivarEstab(estabId, nombre, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner spin"></i>';
+    try {
+        const data = await postJSON(URLS.activarEstab(estabId));
+        if (data.success) {
+            // Actualizar badge de estado
+            const estadoCell = document.getElementById(`estado-estab-${estabId}`);
+            if (estadoCell) estadoCell.innerHTML = '<span class="tag t-ok"><span class="status-dot status-ok"></span>Activo</span>';
+
+            // Actualizar data-activo para que el filtro lo tome en cuenta
+            const row = document.getElementById(`row-estab-list-${estabId}`);
+            if (row) row.dataset.activo = 'true';
+
+            // Cambiar botón reactivar → desactivar
+            const acciones = document.getElementById(`acciones-estab-${estabId}`);
+            if (acciones) {
+                acciones.innerHTML = `<button class="btn btn-bd btn-sm"
+                    onclick="confirmarEliminarEstab(${estabId}, '${nombre.replace(/'/g,"\\'")}')">
+                    <i class="fas fa-ban"></i> Desactivar
+                </button>`;
+            }
+
+            // Incrementar contador y re-aplicar filtros
+            const sv = document.getElementById('sv-establecimientos');
+            if (sv) sv.textContent = parseInt(sv.textContent) + 1;
+            aplicarFiltrosSitios();
+
+            showToast(data.message, 'ok');
+        } else {
+            showToast(data.error || 'No se pudo reactivar.', 'bad');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Reactivar';
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Reactivar';
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ESTABLECIMIENTOS — FILTROS COMBINADOS
+   Filtra por: estado · tipo · búsqueda · orden
+══════════════════════════════════════════════════════════ */
+function aplicarFiltrosSitios() {
+    const estado = document.getElementById('filtro-estado-sitios')?.value  || 'activos';
+    const tipo   = document.getElementById('filtro-tipo-sitios')?.value    || 'todos';
+    const orden  = document.getElementById('filtro-orden-sitios')?.value   || 'nombre';
+    const buscar = (document.getElementById('buscar-sitio')?.value || '').toLowerCase().trim();
+
+    const tbody = document.querySelector('#tbl-sitios tbody');
+    if (!tbody) return;
+    const rows = Array.from(tbody.querySelectorAll('tr[data-activo]'));
+
+    let visibles = 0;
+
+    rows.forEach(row => {
+        const rowActivo = row.dataset.activo;
+        const rowTipo   = (row.dataset.tipo   || '').toLowerCase();
+        const rowNombre = (row.dataset.nombre  || '').toLowerCase();
+
+        const passEstado = estado === 'todos'
+            ? true
+            : estado === 'activos'
+                ? rowActivo === 'true'
+                : rowActivo === 'false';
+
+        const passTipo   = tipo === 'todos'  ? true : rowTipo.includes(tipo);
+        const passBuscar = buscar === ''     ? true : rowNombre.includes(buscar);
+
+        const visible = passEstado && passTipo && passBuscar;
+        row.style.display = visible ? '' : 'none';
+        if (visible) visibles++;
+    });
+
+    // ── Ordenar las filas visibles ──────────────────────────────
+    const visibleRows = rows.filter(r => r.style.display !== 'none');
+    visibleRows.sort((a, b) => {
+        if (orden === 'visitas') {
+            return parseInt(b.dataset.visitas || '0') - parseInt(a.dataset.visitas || '0');
+        }
+        return (a.dataset.nombre || '').localeCompare(b.dataset.nombre || '', 'es');
+    });
+    visibleRows.forEach(r => tbody.appendChild(r));
+
+    // ── Conteo ──────────────────────────────────────────────────
+    const conteo = document.getElementById('sitios-conteo');
+    if (conteo) {
+        const activos   = rows.filter(r => r.dataset.activo === 'true').length;
+        const inactivos = rows.filter(r => r.dataset.activo === 'false').length;
+        conteo.textContent = `${visibles} mostrados · ${activos} activos · ${inactivos} inactivos`;
+    }
+
+    // ── Mensaje "sin resultados" ─────────────────────────────────
+    const noRes = document.getElementById('sitios-no-resultados');
+    if (noRes) noRes.style.display = visibles === 0 ? 'block' : 'none';
+}
+
+function limpiarFiltrosSitios() {
+    const est = document.getElementById('filtro-estado-sitios');
+    const tip = document.getElementById('filtro-tipo-sitios');
+    const ord = document.getElementById('filtro-orden-sitios');
+    const bus = document.getElementById('buscar-sitio');
+    if (est) est.value = 'todos';
+    if (tip) tip.value = 'todos';
+    if (ord) ord.value = 'nombre';
+    if (bus) bus.value = '';
+    aplicarFiltrosSitios();
+}
+
+/* ══════════════════════════════════════════════════════════
+   ACTUALIZAR CONTADORES UI
+══════════════════════════════════════════════════════════ */
+function actualizarContadorUsuarios(delta = 0) {
+    const sv = document.getElementById('sv-usuarios');
+    if (sv) sv.textContent = Math.max(0, parseInt(sv.textContent) + delta);
+    const qa = document.getElementById('qa-count-usr');
+    if (sv && qa) qa.textContent = `${sv.textContent} registrados`;
+    const sb = document.getElementById('sb-count-usuarios');
+    if (sb && sv) sb.textContent = sv.textContent;
+}
+
+/* ══════════════════════════════════════════════════════════
+   REFRESH STATS  (AJAX)
+══════════════════════════════════════════════════════════ */
+async function refreshStats() {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    const icon = btn.querySelector('i');
+    if (icon) icon.classList.add('spin');
+
+    try {
+        const data = await fetch(URLS.stats()).then(r => r.json());
+        if (data.success) {
+            const s = data.stats;
+            const map = {
+                'sv-establecimientos': s.total_establecimientos,
+                'sv-usuarios':         s.usuarios_registrados,
+                'mv-activos':          s.usuarios_registrados,
+                'mv-suspendidos':      s.usuarios_suspendidos,
+                'mv-publicadas':       s.noticias_publicadas,
+                'mv-borrador':         s.noticias_borrador,
+                'mv-destacadas':       s.noticias_destacadas,
+                'mv-turistas':         s.roles?.turista      ?? 0,
+                'mv-empresarios':      s.roles?.empresario   ?? 0,
+            };
+            Object.entries(map).forEach(([id, val]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '.3';
+                    setTimeout(() => { el.textContent = val; el.style.opacity = '1'; }, 200);
+                }
+            });
+            showToast('Estadísticas actualizadas', 'ok');
+        }
+    } catch {
+        showToast('No se pudieron actualizar las estadísticas.', 'bad');
+    } finally {
+        btn.disabled = false;
+        if (icon) icon.classList.remove('spin');
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SIDEBAR / NAV
+══════════════════════════════════════════════════════════ */
+function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sb-overlay');
+    sb.classList.toggle('open');
+    ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sb-overlay').style.display = 'none';
+}
+function toggleGrp(id) { document.getElementById(id).classList.toggle('open'); }
+
+function searchNav(q) {
+    q = q.toLowerCase();
+    document.querySelectorAll('.sub-item, .nav-item').forEach(el => {
+        el.style.display = !q || el.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   PANEL SPA
+══════════════════════════════════════════════════════════ */
+const PANEL_LABELS = {
+    'overview':       'Resumen General',
+    'crear-noticia':  'Crear Noticia',
+    'lista-noticias': 'Todas las Noticias',
+    'crear-cat':      'Crear Categoría',
+    'lista-cat':      'Categorías',
+    'agregar-sitio':  'Agregar Sitio',
+    'lista-sitios':   'Todos los Sitios',
+    'crear-tipo':     'Crear Tipo',
+    'lista-tipos':    'Tipos de Sitio',
+    'lista-usuarios': 'Gestión de Usuarios',
+    'crear-rol':      'Crear Rol',
+    'lista-roles':    'Roles del Sistema',
+    'docs':           'Documentos',
+    'lista-resenas': 'Reseñas de Sitios',
+};
+
+function showPanel(name, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('act'));
+    const target = document.getElementById('panel-' + name);
+    if (target) { target.classList.add('act'); target.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+    document.getElementById('tb-panel-name').textContent = PANEL_LABELS[name] || name;
+    document.querySelectorAll('.nav-item, .sub-item').forEach(n => n.classList.remove('act'));
+    if (el) {
+        el.classList.add('act');
+        const grp = el.closest('.grp');
+        if (grp) grp.classList.add('open');
+    } else {
+        document.querySelectorAll(`[data-panel="${name}"]`).forEach(n => {
+            n.classList.add('act');
+            const grp = n.closest('.grp');
+            if (grp) grp.classList.add('open');
+        });
+    }
+    // Si navegamos a lista-sitios, re-aplicar filtros para que el conteo sea correcto
+    if (name === 'lista-sitios') setTimeout(aplicarFiltrosSitios, 50);
+    if (name === 'lista-resenas') setTimeout(cargarResenas, 50);
+    closeSidebar();
+    history.replaceState(null, '', '#' + name);
+}
+
+window.addEventListener('load', () => {
+    const hash = location.hash.slice(1);
+    if (hash && document.getElementById('panel-' + hash)) showPanel(hash);
+});
+
+/* ══════════════════════════════════════════════════════════
+   FILTRO TABLA (genérico — para noticias, usuarios, etc.)
+══════════════════════════════════════════════════════════ */
+function filterTable(input, tableId) {
+    const q    = input.value.toLowerCase();
+    const rows = document.querySelectorAll('#' + tableId + ' tbody tr');
+    rows.forEach(row => {
+        const txt = (row.dataset.search || row.textContent).toLowerCase();
+        row.style.display = txt.includes(q) ? '' : 'none';
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOTIFICACIONES
+══════════════════════════════════════════════════════════ */
+function toggleNotif() { document.getElementById('notif-panel').classList.toggle('open'); }
+function markAllRead() {
+    document.querySelectorAll('.notif-unread').forEach(el => el.classList.remove('notif-unread'));
+    document.getElementById('notif-dot').style.display = 'none';
+    showToast('Notificaciones marcadas como leídas', 'ok');
+}
+document.addEventListener('click', e => {
+    if (!e.target.closest('#tb-notif') && !e.target.closest('#notif-panel')) {
+        document.getElementById('notif-panel').classList.remove('open');
+    }
+});
+
+/* ══════════════════════════════════════════════════════════
+   AUTO CLOSE ALERTS
+══════════════════════════════════════════════════════════ */
+setTimeout(() => {
+    document.querySelectorAll('.alert').forEach(a => {
+        a.style.transition = 'opacity .4s';
+        a.style.opacity    = '0';
+        setTimeout(() => a.remove(), 400);
+    });
+}, 5000);
+
+/* ══════════════════════════════════════════════════════════
+   CLOSE MODAL AL HACER CLICK FUERA / ESC
+══════════════════════════════════════════════════════════ */
+document.getElementById('modal-usuario').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+});
+document.getElementById('modal-confirm').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeConfirm();
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeConfirm(); }
+    if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        document.getElementById('sb-search-in').focus();
+    }
+});
+
+/* ══════════════════════════════════════════════════════════
+   FECHA EN TOPBAR
+══════════════════════════════════════════════════════════ */
+document.getElementById('tb-date').textContent =
+    new Date().toLocaleDateString('es-CO', { weekday: 'short', month: 'short', day: 'numeric' });
+
+/* ══════════════════════════════════════════════════════════
+   CHARTS
+══════════════════════════════════════════════════════════ */
+const COLORS  = ['rgba(56,217,192,.8)','rgba(139,124,246,.8)','rgba(245,166,35,.8)','rgba(224,91,75,.8)','rgba(79,142,247,.8)','rgba(52,211,153,.8)'];
+const BORDERS = ['rgba(56,217,192,1)','rgba(139,124,246,1)','rgba(245,166,35,1)','rgba(224,91,75,1)','rgba(79,142,247,1)','rgba(52,211,153,1)'];
+const GRID    = { color: 'rgba(30,36,54,.6)' };
+const TICK    = { color: '#5a6180', font: { family: 'Plus Jakarta Sans', size: 11 } };
+const BASE_OPTS = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+        legend: { display: false },
+        tooltip: { backgroundColor: '#1a1f2e', borderColor: '#252d42', borderWidth: 1,
+                   titleColor: '#e8ecf5', bodyColor: '#9ba3c0', padding: 10, cornerRadius: 10 }
+    }
+};
+
+const gE = {{ grafica_establecimientos|safe }};
+const gU = {{ grafica_usuarios|safe }};
+
+function buildLegend(labels, colors, containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = labels.map((l, i) =>
+        `<div class="cl-item"><div class="cl-dot" style="background:${colors[i % colors.length]};"></div>${l}</div>`
+    ).join('');
+}
+
+let chartEstab = null;
+
+function initCharts() {
+    chartEstab = new Chart(document.getElementById('chartEstab'), {
+        type: 'bar',
+        data: {
+            labels: gE.labels,
+            datasets: [{ label: 'Sitios', data: gE.data, backgroundColor: COLORS,
+                         borderColor: BORDERS, borderWidth: 1.5, borderRadius: 6, borderSkipped: false }]
+        },
+        options: { ...BASE_OPTS, scales: { x: { ticks: TICK, grid: GRID }, y: { ticks: TICK, grid: GRID, beginAtZero: true } } }
+    });
+    buildLegend(gE.labels, BORDERS, 'legend-estab');
+
+    new Chart(document.getElementById('chartUsers'), {
+        type: 'doughnut',
+        data: {
+            labels: gU.labels,
+            datasets: [{ data: gU.data, backgroundColor: COLORS, borderColor: '#0e1117', borderWidth: 3 }]
+        },
+        options: { ...BASE_OPTS, cutout: '65%' }
+    });
+    buildLegend(gU.labels, BORDERS, 'legend-users');
+}
+initCharts();
+
+function setChartType(type, btn) {
+    document.querySelectorAll('.ct-btn').forEach(b => b.classList.remove('act'));
+    btn.classList.add('act');
+    if (!chartEstab) return;
+    chartEstab.destroy();
+    chartEstab = new Chart(document.getElementById('chartEstab'), {
+        type,
+        data: {
+            labels: gE.labels,
+            datasets: [{ label: 'Sitios', data: gE.data, backgroundColor: COLORS, borderColor: BORDERS,
+                         borderWidth: 1.5, ...(type === 'bar' ? { borderRadius: 6, borderSkipped: false } : {}) }]
+        },
+        options: { ...BASE_OPTS, ...(type === 'bar'
+            ? { scales: { x: { ticks: TICK, grid: GRID }, y: { ticks: TICK, grid: GRID, beginAtZero: true } } }
+            : { cutout: '60%' }) }
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOTICIAS — AJAX
+══════════════════════════════════════════════════════════ */
+function confirmarSuspenderNoticia(slug, titulo) {
+    openConfirm({
+        titulo: 'Suspender noticia',
+        msg: `¿Suspender "${titulo}"? Dejará de ser visible pero podrás reactivarla o eliminarla después.`,
+        tipo: 'warn',
+        labelOk: 'Suspender',
+        cb: async () => {
+            try {
+                const data = await postJSON(`/ajax/noticias/${slug}/suspender/`);
+                if (data.success) {
+                    const estadoCell = document.getElementById(`estado-noticia-${slug}`);
+                    if (estadoCell) estadoCell.innerHTML = '<span class="tag t-warn"><span class="status-dot"></span>Borrador/Suspendida</span>';
+                    const btnEstado = document.getElementById(`btn-estado-noticia-${slug}`);
+                    if (btnEstado) {
+                        btnEstado.innerHTML = `<button class="btn btn-ok btn-sm btn-icon" title="Reactivar noticia"
+                            onclick="reactivarNoticia('${slug}', '${titulo.replace(/'/g,"\\'")}', this)">
+                            <i class="fas fa-check"></i></button>`;
+                    }
+                    const btnEliminar = document.getElementById(`btn-eliminar-noticia-${slug}`);
+                    if (btnEliminar) {
+                        btnEliminar.innerHTML = `<button class="btn btn-bd btn-sm btn-icon" title="Eliminar definitivamente"
+                            style="background:var(--bad-dim);border-color:rgba(248,113,113,.4);"
+                            onclick="confirmarEliminarNoticiaDefinitivo('${slug}', '${titulo.replace(/'/g,"\\'")}')">
+                            <i class="fas fa-trash"></i></button>`;
+                    }
+                    showToast(data.message, 'warn');
+                } else {
+                    showToast(data.error || 'No se pudo suspender.', 'bad');
+                }
+            } catch {
+                showToast('Error de conexión.', 'bad');
+            }
+        }
+    });
+}
+
+async function reactivarNoticia(slug, titulo, btn) {
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spin"></i>'; }
+    try {
+        const data = await postJSON(`/ajax/noticias/${slug}/reactivar/`);
+        if (data.success) {
+            const estadoCell = document.getElementById(`estado-noticia-${slug}`);
+            if (estadoCell) estadoCell.innerHTML = '<span class="tag t-ok"><span class="status-dot status-ok"></span>Publicada</span>';
+            const btnEstado = document.getElementById(`btn-estado-noticia-${slug}`);
+            if (btnEstado) {
+                btnEstado.innerHTML = `<button class="btn btn-bd btn-sm btn-icon" title="Suspender noticia"
+                    onclick="confirmarSuspenderNoticia('${slug}', '${titulo.replace(/'/g,"\\'")}')">
+                    <i class="fas fa-ban"></i></button>`;
+            }
+            const btnEliminar = document.getElementById(`btn-eliminar-noticia-${slug}`);
+            if (btnEliminar) btnEliminar.innerHTML = '';
+            showToast(data.message, 'ok');
+        } else {
+            showToast(data.error || 'No se pudo reactivar.', 'bad');
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i>'; }
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i>'; }
+    }
+}
+
+function confirmarEliminarNoticiaDefinitivo(slug, titulo) {
+    openConfirm({
+        titulo: 'Eliminar noticia definitivamente',
+        msg: `¿Eliminar permanentemente "${titulo}"? Esta acción no se puede deshacer.`,
+        tipo: 'danger',
+        labelOk: 'Eliminar para siempre',
+        cb: async () => {
+            try {
+                const data = await postJSON(`/ajax/noticias/${slug}/eliminar/`);
+                if (data.success) {
+                    removeRow(`row-noticia-${slug}`);
+                    showToast(data.message, 'ok');
+                } else {
+                    showToast(data.error || 'No se pudo eliminar.', 'bad');
+                }
+            } catch {
+                showToast('Error de conexión.', 'bad');
+            }
+        }
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   CATEGORÍAS — CRUD AJAX
+══════════════════════════════════════════════════════════ */
+document.getElementById('cat-color').addEventListener('input', function () {
+    document.getElementById('cat-color-hex').textContent = this.value;
+});
+document.getElementById('modal-cat-color').addEventListener('input', function () {
+    document.getElementById('modal-cat-color-hex').textContent = this.value;
+});
+
+function limpiarFormCat() {
+    document.getElementById('cat-nombre').value = '';
+    document.getElementById('cat-descripcion').value = '';
+    document.getElementById('cat-color').value = '#e05b4b';
+    document.getElementById('cat-color-hex').textContent = '#e05b4b';
+    document.getElementById('cat-activo').checked = true;
+    document.getElementById('cat-form-msgs').innerHTML = '';
+}
+
+async function crearCategoria() {
+    const nombre = document.getElementById('cat-nombre').value.trim();
+    if (!nombre) {
+        document.getElementById('cat-form-msgs').innerHTML =
+            '<div class="alert a-bad" style="margin-bottom:12px;"><i class="fas fa-circle-exclamation"></i> El nombre es obligatorio.</div>';
+        return;
+    }
+
+    const btn = document.getElementById('btn-crear-cat');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner spin"></i> Creando…';
+
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', CSRF);
+    formData.append('nombre', nombre);
+    formData.append('descripcion', document.getElementById('cat-descripcion').value.trim());
+    formData.append('color', document.getElementById('cat-color').value);
+    if (document.getElementById('cat-activo').checked) formData.append('activo', 'on');
+
+    try {
+        const res = await fetch("{% url 'crear_categoria' %}", {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': CSRF },
+            body: formData,
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            document.getElementById('cat-form-msgs').innerHTML =
+                `<div class="alert a-ok" style="margin-bottom:12px;"><i class="fas fa-circle-check"></i> ${data.message}</div>`;
+            limpiarFormCat();
+            agregarFilaCat(data.categoria);
+            showToast(data.message, 'ok');
+            setTimeout(() => {
+                const msg = document.getElementById('cat-form-msgs');
+                if (msg) msg.innerHTML = '';
+            }, 4000);
+        } else {
+            const errMsg = data.errors
+                ? Object.values(data.errors).join(' · ')
+                : (data.error || 'Error al crear la categoría.');
+            document.getElementById('cat-form-msgs').innerHTML =
+                `<div class="alert a-bad" style="margin-bottom:12px;"><i class="fas fa-circle-exclamation"></i> ${errMsg}</div>`;
+        }
+    } catch {
+        document.getElementById('cat-form-msgs').innerHTML =
+            '<div class="alert a-bad" style="margin-bottom:12px;"><i class="fas fa-circle-exclamation"></i> Error de conexión.</div>';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Crear Categoría';
+    }
+}
+
+function agregarFilaCat(cat) {
+    const emptyRow = document.getElementById('row-cat-empty');
+    if (emptyRow) emptyRow.remove();
+
+    const estadoHtml  = cat.activo ? '<span class="tag t-ok">Activa</span>' : '<span class="tag t-bad">Inactiva</span>';
+    const toggleClass = cat.activo ? 'btn-bd' : 'btn-ok';
+    const toggleIcon  = cat.activo ? 'fa-ban'  : 'fa-check';
+    const toggleTitle = cat.activo ? 'Suspender' : 'Activar';
+
+    const tr = document.createElement('tr');
+    tr.id = `row-cat-${cat.id}`;
+    tr.dataset.search = cat.nombre.toLowerCase();
+    tr.innerHTML = `
+        <td><strong id="cat-nombre-${cat.id}">${cat.nombre}</strong></td>
+        <td>
+            <span id="cat-color-dot-${cat.id}" style="display:inline-block;width:14px;height:14px;border-radius:4px;background:${cat.color};margin-right:5px;vertical-align:middle;"></span>
+            <span id="cat-color-val-${cat.id}" style="font-size:11px;color:var(--txt3);">${cat.color}</span>
+        </td>
+        <td id="cat-estado-${cat.id}">${estadoHtml}</td>
+        <td id="cat-count-${cat.id}">0</td>
+        <td>
+            <div class="acts">
+                <button class="btn btn-purp btn-sm btn-icon" title="Editar"
+                    onclick="abrirEditarCat(${cat.id}, '${cat.nombre.replace(/'/g,"\\'")}', '${cat.descripcion.replace(/'/g,"\\'")}', '${cat.color}')">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <button class="btn ${toggleClass} btn-sm btn-icon" id="btn-toggle-cat-${cat.id}" title="${toggleTitle}"
+                    onclick="toggleCategoria(${cat.id}, '${cat.nombre.replace(/'/g,"\\'")}')">
+                    <i class="fas ${toggleIcon}"></i>
+                </button>
+                <button class="btn btn-bd btn-sm btn-icon" title="Eliminar definitivamente"
+                    style="background:var(--bad-dim);border-color:rgba(248,113,113,.4);"
+                    onclick="confirmarEliminarCategoria(${cat.id}, '${cat.nombre.replace(/'/g,"\\'")}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>`;
+
+    document.getElementById('tbody-cat-inline').appendChild(tr);
+    tr.style.opacity = '0';
+    requestAnimationFrame(() => { tr.style.transition = 'opacity .3s'; tr.style.opacity = '1'; });
+}
+
+let _catEditId = null;
+
+function abrirEditarCat(id, nombre, descripcion, color) {
+    _catEditId = id;
+    document.getElementById('modal-cat-sub').textContent   = `ID ${id}`;
+    document.getElementById('modal-cat-nombre').value      = nombre;
+    document.getElementById('modal-cat-desc').value        = descripcion;
+    document.getElementById('modal-cat-color').value       = color;
+    document.getElementById('modal-cat-color-hex').textContent = color;
+    document.getElementById('modal-categoria').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCatModal() {
+    document.getElementById('modal-categoria').classList.remove('open');
+    document.body.style.overflow = '';
+    _catEditId = null;
+}
+
+async function guardarEdicionCat() {
+    if (!_catEditId) return;
+    const nombre = document.getElementById('modal-cat-nombre').value.trim();
+    if (!nombre) { showToast('El nombre es obligatorio.', 'bad'); return; }
+
+    const btn = document.getElementById('btn-guardar-cat');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner spin"></i> Guardando…';
+
+    try {
+        const data = await postJSON(`/ajax/categorias/${_catEditId}/editar/`, {
+            nombre,
+            descripcion: document.getElementById('modal-cat-desc').value.trim(),
+            color:       document.getElementById('modal-cat-color').value,
+        });
+
+        if (data.success) {
+            const c      = data.categoria;
+            const nomEl  = document.getElementById(`cat-nombre-${_catEditId}`);
+            const dotEl  = document.getElementById(`cat-color-dot-${_catEditId}`);
+            const valEl  = document.getElementById(`cat-color-val-${_catEditId}`);
+            if (nomEl) nomEl.textContent      = c.nombre;
+            if (dotEl) dotEl.style.background = c.color;
+            if (valEl) valEl.textContent      = c.color;
+            showToast(data.message, 'ok');
+            closeCatModal();
+        } else {
+            showToast(data.error || 'No se pudo guardar.', 'bad');
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+    }
+}
+
+async function toggleCategoria(catId, nombre) {
+    try {
+        const data = await postJSON(`/ajax/categorias/${catId}/toggle/`);
+        if (data.success) {
+            const estadoCell = document.getElementById(`cat-estado-${catId}`);
+            const toggleBtn  = document.getElementById(`btn-toggle-cat-${catId}`);
+            if (estadoCell) {
+                estadoCell.innerHTML = data.activo
+                    ? '<span class="tag t-ok">Activa</span>'
+                    : '<span class="tag t-bad">Inactiva</span>';
+            }
+            if (toggleBtn) {
+                toggleBtn.className = `btn ${data.activo ? 'btn-bd' : 'btn-ok'} btn-sm btn-icon`;
+                toggleBtn.title     = data.activo ? 'Suspender' : 'Activar';
+                toggleBtn.innerHTML = `<i class="fas ${data.activo ? 'fa-ban' : 'fa-check'}"></i>`;
+            }
+            showToast(data.message, data.activo ? 'ok' : 'warn');
+        } else {
+            showToast(data.error || 'No se pudo cambiar el estado.', 'bad');
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+    }
+}
+
+function confirmarEliminarCategoria(catId, nombre) {
+    openConfirm({
+        titulo: 'Eliminar categoría',
+        msg: `¿Eliminar permanentemente "${nombre}"? Solo es posible si no tiene noticias asociadas.`,
+        tipo: 'danger',
+        labelOk: 'Eliminar',
+        cb: async () => {
+            try {
+                const data = await postJSON(`/ajax/categorias/${catId}/eliminar/`);
+                if (data.success) {
+                    removeRow(`row-cat-${catId}`);
+                    showToast(data.message, 'ok');
+                } else {
+                    showToast(data.error || 'No se pudo eliminar.', 'bad');
+                }
+            } catch {
+                showToast('Error de conexión.', 'bad');
+            }
+        }
+    });
+}
+
+document.getElementById('modal-categoria').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeCatModal();
+});
+
+/* ══ TELEGRAM PANEL ══ */
+function toggleTgPanel() {
+    const panel = document.getElementById('tg-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', e => {
+    const wrap = document.getElementById('tg-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('tg-panel').style.display = 'none';
+    }
+});
+
+/* ══════════════════════════════════════════════════════════
+   INIT — ejecutar al cargar el DOM
+══════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    // Aplicar filtro de sitios (solo activos por defecto)
+    setTimeout(aplicarFiltrosSitios, 100);
+});
+
+/* ══════════════════════════════════════════════════════════
+   RESEÑAS — CRUD AJAX
+══════════════════════════════════════════════════════════ */
+let _resenasData = [];
+
+async function cargarResenas() {
+    const tbody = document.getElementById('tbody-resenas');
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+        <i class="fas fa-spinner spin" style="font-size:24px;opacity:.3;display:block;margin-bottom:10px;"></i>
+        <p>Cargando…</p></div></td></tr>`;
+
+    try {
+        const res = await fetch('/ajax/resenas/');
+        const data = await res.json();
+
+        if (!data.success) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>Error al cargar reseñas</p></div></td></tr>`;
+            return;
+        }
+
+        _resenasData = data.resenas;
+        actualizarStatsResenas(_resenasData);
+        renderizarResenas(_resenasData);
+
+        // Actualizar badge del sidebar
+        const sbBadge = document.getElementById('sb-count-resenas');
+        if (sbBadge) sbBadge.textContent = data.total;
+
+    } catch {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>Error de conexión</p></div></td></tr>`;
+    }
+}
+
+function actualizarStatsResenas(resenas) {
+    document.getElementById('rs-total').textContent = resenas.length;
+    document.getElementById('rs-5').textContent  = resenas.filter(r => r.calificacion === 5).length;
+    document.getElementById('rs-4').textContent  = resenas.filter(r => r.calificacion === 4).length;
+    document.getElementById('rs-3').textContent  = resenas.filter(r => r.calificacion === 3).length;
+    document.getElementById('rs-12').textContent = resenas.filter(r => r.calificacion <= 2).length;
+    document.getElementById('resenas-subtitulo').textContent =
+        `${resenas.length} reseña${resenas.length !== 1 ? 's' : ''} en total`;
+}
+
+function estrellasHTML(cal) {
+    return Array.from({length: 5}, (_, i) =>
+        `<i class="fas fa-star" style="font-size:11px;color:${i < cal ? 'var(--gold)' : 'var(--brd2)'};"></i>`
+    ).join('');
+}
+
+function renderizarResenas(lista) {
+    const tbody = document.getElementById('tbody-resenas');
+
+    if (!lista.length) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+            <i class="fas fa-star"></i><p>Sin reseñas registradas</p></div></td></tr>`;
+        document.getElementById('resenas-conteo').textContent = '';
+        document.getElementById('resenas-no-resultados').style.display = 'none';
+        return;
+    }
+
+    tbody.innerHTML = lista.map(r => `
+        <tr id="row-resena-${r.id}" data-cal="${r.calificacion}"
+            data-search="${r.usuario_nombre.toLowerCase()} ${r.establecimiento.toLowerCase()}">
+            <td>
+                <div class="user-row">
+                    <div class="av" style="background:linear-gradient(135deg,var(--purp),var(--teal));">
+                        ${r.usuario_nombre.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="user-info">
+                        <strong>${r.usuario_nombre}</strong>
+                        <small>${r.usuario_email}</small>
+                    </div>
+                </div>
+            </td>
+            <td><strong>${r.establecimiento}</strong></td>
+            <td><span class="tag t-teal">${r.tipo}</span></td>
+            <td>
+                <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
+                    <div>${estrellasHTML(r.calificacion)}</div>
+                    <span style="font-size:11px;color:var(--txt3);font-weight:600;">${r.calificacion}/5</span>
+                </div>
+            </td>
+            <td style="max-width:260px;">
+                ${r.comentario
+                    ? `<span style="font-size:12px;color:var(--txt2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"
+                        title="${r.comentario.replace(/"/g,'&quot;')}">${r.comentario}</span>`
+                    : `<span style="font-size:11px;color:var(--txt3);font-style:italic;">Sin comentario</span>`
+                }
+            </td>
+            <td style="color:var(--txt3);font-size:12px;white-space:nowrap;">${r.fecha}</td>
+            <td>
+                <div class="acts">
+                    ${r.comentario ? `
+                    <button class="btn btn-gh btn-sm btn-icon" title="Ver comentario completo"
+                        onclick="verComentarioCompleto(${r.id}, '${r.usuario_nombre.replace(/'/g,"\\'")}',
+                            '${r.establecimiento.replace(/'/g,"\\'")}', ${r.calificacion},
+                            \`${r.comentario.replace(/`/g,"\\`")}\`)">
+                        <i class="fas fa-eye"></i>
+                    </button>` : ''}
+                    <button class="btn btn-bd btn-sm btn-icon" title="Eliminar reseña"
+                        onclick="confirmarEliminarResena(${r.id}, '${r.usuario_nombre.replace(/'/g,"\\'")}',
+                            '${r.establecimiento.replace(/'/g,"\\'")}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    document.getElementById('resenas-conteo').textContent = `${lista.length} reseña${lista.length !== 1 ? 's' : ''}`;
+    document.getElementById('resenas-no-resultados').style.display = 'none';
+}
+
+function filtrarResenas() {
+    const cal    = document.getElementById('filtro-calificacion-resenas').value;
+    const buscar = (document.getElementById('buscar-resena').value || '').toLowerCase().trim();
+
+    const filtradas = _resenasData.filter(r => {
+        const passCal    = cal === 'todas' ? true : r.calificacion === parseInt(cal);
+        const passSearch = buscar === '' ? true :
+            r.usuario_nombre.toLowerCase().includes(buscar) ||
+            r.establecimiento.toLowerCase().includes(buscar) ||
+            (r.comentario || '').toLowerCase().includes(buscar);
+        return passCal && passSearch;
+    });
+
+    if (filtradas.length === 0 && _resenasData.length > 0) {
+        document.getElementById('tbody-resenas').innerHTML = '';
+        document.getElementById('resenas-no-resultados').style.display = 'block';
+        document.getElementById('resenas-conteo').textContent = '0 reseñas';
+    } else {
+        document.getElementById('resenas-no-resultados').style.display = 'none';
+        renderizarResenas(filtradas);
+    }
+}
+
+function limpiarFiltrosResenas() {
+    document.getElementById('filtro-calificacion-resenas').value = 'todas';
+    document.getElementById('buscar-resena').value = '';
+    renderizarResenas(_resenasData);
+}
+
+/* Modal ver comentario completo */
+function verComentarioCompleto(id, usuario, sitio, cal, comentario) {
+    openConfirm({
+        titulo: `Reseña de ${usuario}`,
+        msg: `Sitio: ${sitio}\n\nCalificación: ${'★'.repeat(cal)}${'☆'.repeat(5-cal)}\n\n"${comentario}"`,
+        tipo: 'warn',
+        labelOk: 'Eliminar esta reseña',
+        cb: async () => {
+            await _eliminarResenaAjax(id, usuario, sitio);
+        }
+    });
+    // Cambiar el icono y color del confirm a info
+    document.getElementById('confirm-ico').className = 'confirm-ico warn';
+    document.getElementById('confirm-ico').innerHTML = '<i class="fas fa-comment-dots"></i>';
+    const btnOk = document.getElementById('btn-confirm-ok');
+    btnOk.style.background = 'var(--bad)';
+    btnOk.innerHTML = '<i class="fas fa-trash"></i> Eliminar reseña';
+}
+
+function confirmarEliminarResena(id, usuario, sitio) {
+    openConfirm({
+        titulo: 'Eliminar reseña',
+        msg: `¿Eliminar permanentemente la reseña de "${usuario}" sobre "${sitio}"? Esta acción no se puede deshacer.`,
+        tipo: 'danger',
+        labelOk: 'Eliminar',
+        cb: async () => {
+            await _eliminarResenaAjax(id, usuario, sitio);
+        }
+    });
+}
+
+async function _eliminarResenaAjax(id, usuario, sitio) {
+    try {
+        const data = await postJSON(`/ajax/resenas/${id}/eliminar/`);
+        if (data.success) {
+            // Quitar de la data local
+            _resenasData = _resenasData.filter(r => r.id !== id);
+            removeRow(`row-resena-${id}`);
+            actualizarStatsResenas(_resenasData);
+            showToast(data.message, 'ok');
+        } else {
+            showToast(data.error || 'No se pudo eliminar la reseña.', 'bad');
+        }
+    } catch {
+        showToast('Error de conexión.', 'bad');
+    }
+}
+
+/* Cargar reseñas al navegar al panel */
+const _origShowPanel = showPanel;
+// Reemplazamos showPanel para interceptar la navegación a lista-resenas
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/noticia.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_menu.css' %}">
+    <title>{{ titulo }} - Popayán</title>
+    <link rel="shortcut icon" href="{% static 'img/imagen_2025-03-16_185953883-removebg-preview.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    
+    <style>
+        .noticias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .noticia-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .noticia-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .noticia-imagen {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .noticia-content {
+            padding: 20px;
+        }
+
+        .noticia-categoria {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #000;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+
+        .noticia-titulo {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #000;
+            line-height: 1.3;
+        }
+
+        .noticia-resumen {
+            color: #666;
+            line-height: 1.5;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+
+        .noticia-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        .ranking-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .noticias-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero-container">
+        <!-- Navbar -->
+        <nav class="navbar" id="navbar">
+            <a href="{% url 'home' %}" class="logo-nav">
+                <img src="{% static 'img/home/logo.png' %}" alt="Popayán Tour Logo">
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'noticia' %}"><i class="fas fa-arrow-left"></i> Volver a Noticias</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-fire"></i> {{ titulo }}</h1>
+                <p>Las noticias con mayor número de visitas</p>
+            </div>
+
+            {% if noticias %}
+                <div class="noticias-grid">
+                    {% for noticia in noticias %}
+                    <a href="{% url 'detalle_noticia' noticia.slug %}" style="text-decoration: none; color: inherit;">
+                        <div class="noticia-card">
+                            <div class="ranking-badge">#{{ forloop.counter }}</div>
+                            
+                            {% if noticia.imagen_principal %}
+                                <img src="{{ noticia.imagen_principal.url }}" alt="{{ noticia.titulo }}" class="noticia-imagen">
+                            {% else %}
+                                <img src="{% static 'img/congresoG1.png' %}" alt="Imagen por defecto" class="noticia-imagen">
+                            {% endif %}
+
+                            <div class="noticia-content">
+                                <span class="noticia-categoria">{{ noticia.categoria.nombre }}</span>
+                                <h3 class="noticia-titulo">{{ noticia.titulo|truncatewords:12 }}</h3>
+                                
+                                {% if noticia.resumen %}
+                                    <p class="noticia-resumen">{{ noticia.resumen|truncatewords:15 }}</p>
+                                {% else %}
+                                    <p class="noticia-resumen">{{ noticia.contenido|truncatewords:15|striptags }}</p>
+                                {% endif %}
+
+                                <div class="noticia-footer">
+                                    <div class="noticia-fecha">
+                                        <i class="far fa-calendar"></i>
+                                        <span>{{ noticia.fecha_publicacion|date:"d/m/Y" }}</span>
+                                    </div>
+                                    <div class="noticia-visitas">
+                                        <i class="far fa-eye"></i>
+                                        <span>{{ noticia.visitas_totales }} visitas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state" style="text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-newspaper" style="font-size: 5em; color: #ddd; margin-bottom: 20px;"></i>
+                    <h2>No hay noticias populares aún</h2>
+                    <p style="color: #666;">Ninguna noticia ha recibido visitas todavía.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="logo-section">
+                <div class="logo-footer">
+                    <img src="{% static 'img/home/logo_blanco.png' %}" alt="Logo Popayán Tour">
+                </div>
+                <div class="linea-horizontal"></div>
+            </div>
+
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Acerca de</h3>
+                    <ul>
+                        <li><a href="#">¿Quiénes somos?</a></li>
+                        <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li>Correo: <br>popayanalltour</li>
+                        <li>Línea gratuita: <br> 312 231 1230</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Redes Sociales</h3>
+                    <ul class="social-icons">
+                        <li><i class="fab fa-instagram"></i>
+                            <a href="https://www.instagram.com/popayanalltour/">@PopayanAllTour</a>
+                        </li>
+                        <li><i class="fab fa-facebook"></i>
+                            <a href="https://www.facebook.com/profile.php?id=61578069024241">Popayan AllTour</a>
+                        </li>
+                        <li><i class="fab fa-youtube"></i> @popayanAlltour5002</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; PopayanAllTour | Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
