@@ -171,15 +171,15 @@ if os.environ.get('DATABASE_URL'):
 else:
     # En desarrollo local (usa tus variables del .env)
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_H0n2SmtgpwDO',
-        'HOST': 'ep-lucky-forest-at5vs9ok-pooler.c-9.us-east-1.aws.neon.tech',
-        'PORT': '5432',
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
